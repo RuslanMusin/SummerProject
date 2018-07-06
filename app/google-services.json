@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "804902116099",
+    "firebase_url": "https://summerproject-990ac.firebaseio.com",
+    "project_id": "summerproject-990ac",
+    "storage_bucket": "summerproject-990ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804902116099:android:36e7fba75d95a410",
+        "android_client_info": {
+          "package_name": "com.summer.itis.summerproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804902116099-ok9fl4kk8n25urt90e3rkc08fmoif30i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.summer.itis.summerproject",
+            "certificate_hash": "7700ab663490a043dacaab29c72da3a663ab5daa"
+          }
+        },
+        {
+          "client_id": "804902116099-66e1oub5a7419oiiqvgu0i6igjg3hlid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoIU3zSKabJKNmWQ6thvw2iQEG2o6q030"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804902116099-66e1oub5a7419oiiqvgu0i6igjg3hlid.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
