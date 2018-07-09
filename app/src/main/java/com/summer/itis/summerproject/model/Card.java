@@ -1,10 +1,14 @@
 package com.summer.itis.summerproject.model;
 
+import com.summer.itis.summerproject.model.AbstractCard;
+
 public class Card {
 
     private String id;
 
-    private String wikiUrl;
+    private String cardId;
+
+    private AbstractCard abstractCard;
 
     private Integer intelligence;
 
@@ -24,12 +28,20 @@ public class Card {
         this.id = id;
     }
 
-    public String getWikiUrl() {
-        return wikiUrl;
+    public String getCardId() {
+        return cardId;
     }
 
-    public void setWikiUrl(String wikiUrl) {
-        this.wikiUrl = wikiUrl;
+    public void setCardId(String cardId) {
+        this.cardId = cardId;
+    }
+
+    public AbstractCard getAbstractCard() {
+        return abstractCard;
+    }
+
+    public void setAbstractCard(AbstractCard abstractCard) {
+        this.abstractCard = abstractCard;
     }
 
     public Integer getIntelligence() {

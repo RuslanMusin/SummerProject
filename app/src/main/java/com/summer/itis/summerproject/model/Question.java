@@ -11,13 +11,7 @@ public class Question {
 
     private String question;
 
-    private List<Integer> rightAnswers;
-
-    private List<String> answers;
-
-    private String photoUrl;
-
-    private String wikiUrl;
+    private List<Answer> answers;
 
     public String getId() {
         return id;
@@ -35,35 +29,11 @@ public class Question {
         this.question = question;
     }
 
-    public List<Integer> getRightAnswers() {
-        return rightAnswers;
-    }
-
-    public void setRightAnswers(List<Integer> rightAnswers) {
-        this.rightAnswers = rightAnswers;
-    }
-
-    public List<String> getAnswers() {
+    public List<Answer> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<String> answers) {
+    public void setAnswers(List<Answer> answers) {
         this.answers = answers;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
-    public String getWikiUrl() {
-        return wikiUrl;
-    }
-
-    public void setWikiUrl(String wikiUrl) {
-        this.wikiUrl = wikiUrl;
     }
 }

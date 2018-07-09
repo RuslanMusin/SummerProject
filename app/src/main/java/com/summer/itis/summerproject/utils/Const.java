@@ -1,5 +1,7 @@
 package com.summer.itis.summerproject.utils;
 
+import com.google.gson.Gson;
+
 /**
  * Created by Ruslan on 18.02.2018.
  */
@@ -62,9 +64,29 @@ public class Const {
     public static final String TEST_ONE_TYPE = "test_one_type";
     public static final String TEST_MANY_TYPE = "test_many_type";
 
-
     //image path
     public static final String IMAGE_START_PATH = "images/users/";
+    public static final String STUB_PATH = "stub";
+
+
+    public static final Gson gsonConverter = new Gson();
+    public static final String COMA = ",";
+
+    //API
+    //query
+    public static final String FORMAT = "xml";
+    public static final String ACTION_QUERY = "query";
+    public static final String PROP = "extracts|pageimages|description";
+    public static final String EXINTRO = "1";
+    public static final String EXPLAINTEXT = "1";
+    public static final String PIPROP = "original";
+    public static final String PILICENSE = "any";
+    public static final String TITLES = "Толстой, Лев Николаевич";
+    //opensearch
+    public static final String ACTION_SEARCH = "opensearch";
+    public static final String UTF_8 = "1";
+    public static final String NAMESPACE = "0";
+    public static final String SEARCH = "Лев Толстой";
 
     //Others
     public static final int MAX_UPLOAD_RETRY_MILLIS = 60000; //1 minute

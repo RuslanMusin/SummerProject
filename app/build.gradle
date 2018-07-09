@@ -20,6 +20,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'API_ENDPOINT', baseUrl
+    }
 
 
     compileOptions {
@@ -92,6 +95,12 @@ dependencies {
     // Gson
     implementation "com.google.code.gson:gson:${gson}"
 
+    compile 'com.squareup.retrofit2:converter-simplexml:2.3.0'
+
+    implementation 'com.annimon:stream:1.2.0'
+
+
+
     // Moxy
     implementation "com.arello-mobile:moxy:${moxy}"
     implementation "com.arello-mobile:moxy-app-compat:${moxy}"
@@ -101,6 +110,8 @@ dependencies {
     implementation "com.squareup.picasso:picasso:${picasso}"
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:${okhttp3downloader}"
     implementation "commons-codec:commons-codec:${commons_codec}"
+
+    implementation 'fastily:jwiki:1.6.0'
 
 }
 

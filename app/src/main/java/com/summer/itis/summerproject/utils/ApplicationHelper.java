@@ -29,8 +29,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.summer.itis.summerproject.Application;
 import com.summer.itis.summerproject.model.User;
-import com.summer.itis.summerproject.model.repository.RepositoryProvider;
-import com.summer.itis.summerproject.model.repository.json.UserRepository;
+import com.summer.itis.summerproject.repository.RepositoryProvider;
+import com.summer.itis.summerproject.repository.json.UserRepository;
 import com.summer.itis.summerproject.ui.base.NavigationPresenter;
 import com.summer.itis.summerproject.ui.start.login.LoginActivity;
 

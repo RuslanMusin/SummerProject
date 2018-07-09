@@ -1,6 +1,9 @@
 package com.summer.itis.summerproject.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.summer.itis.summerproject.api.Card;
+
+import java.util.List;
 
 @IgnoreExtraProperties
 public class User {
@@ -12,6 +15,16 @@ public class User {
     private String username;
 
     private String photoUrl;
+
+    private String desc;
+
+    private String score;
+
+    private List<Card> cards;
+
+    private List<Test> tests;
+
+    private String role;
 
     public User() {
     }
@@ -27,6 +40,22 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     public String getEmail() {
