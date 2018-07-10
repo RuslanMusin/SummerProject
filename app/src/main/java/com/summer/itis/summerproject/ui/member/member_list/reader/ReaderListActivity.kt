@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.member.member_list.reader
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,12 +13,10 @@ import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.Toast
-
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
@@ -26,61 +25,12 @@ import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.MemberAdapter
 import com.summer.itis.summerproject.ui.member.member_list.fragment.ReaderListFragment
-
-
-import java.util.ArrayList
-
-import io.reactivex.disposables.Disposable
-
-import com.summer.itis.summerproject.utils.Const.FILTER_YEAR
-import com.summer.itis.summerproject.utils.Const.TAG_LOG
-import com.summer.itis.summerproject.utils.Const.MESSAGING_KEY
-import com.summer.itis.summerproject.utils.Const.MESSAGING_TYPE
-import com.summer.itis.summerproject.utils.Const.PAGE_SIZE
-import com.summer.itis.summerproject.utils.Const.ZERO_OFFSET
-import com.summer.itis.summerproject.utils.Const.DEFAULT_BOOK_SORT
-import com.summer.itis.summerproject.utils.Const.ID_KEY
-import com.summer.itis.summerproject.utils.Const.NAME_KEY
-import com.summer.itis.summerproject.utils.Const.PHOTO_KEY
-import com.summer.itis.summerproject.utils.Const.AUTHOR_KEY
-import com.summer.itis.summerproject.utils.Const.BOOK_KEY
-import com.summer.itis.summerproject.utils.Const.CROSSING_KEY
-import com.summer.itis.summerproject.utils.Const.USER_KEY
-import com.summer.itis.summerproject.utils.Const.POINT_KEY
-import com.summer.itis.summerproject.utils.Const.WATCHER_TYPE
-import com.summer.itis.summerproject.utils.Const.OWNER_TYPE
-import com.summer.itis.summerproject.utils.Const.RESTRICT_OWNER_TYPE
-import com.summer.itis.summerproject.utils.Const.FOLLOWER_TYPE
-import com.summer.itis.summerproject.utils.Const.ADD_FRIEND
-import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
-import com.summer.itis.summerproject.utils.Const.ADD_REQUEST
-import com.summer.itis.summerproject.utils.Const.REMOVE_REQUEST
-import com.summer.itis.summerproject.utils.Const.READER_LIST_TYPE
-import com.summer.itis.summerproject.utils.Const.READER_LIST
 import com.summer.itis.summerproject.utils.Const.FRIEND_LIST
+import com.summer.itis.summerproject.utils.Const.READER_LIST
 import com.summer.itis.summerproject.utils.Const.REQUEST_LIST
-import com.summer.itis.summerproject.utils.Const.SEP
-import com.summer.itis.summerproject.utils.Const.QUERY_END
-import com.summer.itis.summerproject.utils.Const.QUERY_TYPE
-import com.summer.itis.summerproject.utils.Const.DEFAULT_TYPE
-import com.summer.itis.summerproject.utils.Const.TEST_ONE_TYPE
-import com.summer.itis.summerproject.utils.Const.TEST_MANY_TYPE
-import com.summer.itis.summerproject.utils.Const.IMAGE_START_PATH
-import com.summer.itis.summerproject.utils.Const.STUB_PATH
-import com.summer.itis.summerproject.utils.Const.COMA
-import com.summer.itis.summerproject.utils.Const.FORMAT
-import com.summer.itis.summerproject.utils.Const.ACTION_QUERY
-import com.summer.itis.summerproject.utils.Const.PROP
-import com.summer.itis.summerproject.utils.Const.EXINTRO
-import com.summer.itis.summerproject.utils.Const.EXPLAINTEXT
-import com.summer.itis.summerproject.utils.Const.PIPROP
-import com.summer.itis.summerproject.utils.Const.PILICENSE
-import com.summer.itis.summerproject.utils.Const.TITLES
-import com.summer.itis.summerproject.utils.Const.ACTION_SEARCH
-import com.summer.itis.summerproject.utils.Const.UTF_8
-import com.summer.itis.summerproject.utils.Const.NAMESPACE
-import com.summer.itis.summerproject.utils.Const.SEARCH
-import com.summer.itis.summerproject.utils.Const.MAX_UPLOAD_RETRY_MILLIS
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import io.reactivex.disposables.Disposable
+import java.util.*
 
 
 class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
@@ -92,7 +42,7 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
     private var adapter: MemberAdapter? = null
 
     @InjectPresenter
-    internal var presenter: ReaderListPresenter? = null
+    lateinit var presenter: ReaderListPresenter
 
     private var isLoading = false
     private var currentType: String? = null

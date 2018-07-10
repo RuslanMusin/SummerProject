@@ -4,12 +4,14 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 android {
-    compileSdkVersion 28
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.summer.itis.summerproject"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -95,16 +97,15 @@ dependencies {
     // Gson
     implementation "com.google.code.gson:gson:${gson}"
 
-    compile 'com.squareup.retrofit2:converter-simplexml:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-simplexml:2.3.0'
 
     implementation 'com.annimon:stream:1.2.0'
-
-
 
     // Moxy
     implementation "com.arello-mobile:moxy:${moxy}"
     implementation "com.arello-mobile:moxy-app-compat:${moxy}"
     annotationProcessor "com.arello-mobile:moxy-compiler:${moxy}"
+    kapt "com.arello-mobile:moxy-compiler:${moxy}"
 
     // Picasso
     implementation "com.squareup.picasso:picasso:${picasso}"

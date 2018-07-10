@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static com.summer.itis.summerproject.utils.Const.SEP;
 
-public class GameRepository {
+public class OldGameRepository {
 
     private DatabaseReference databaseReference;
 
@@ -24,8 +24,7 @@ public class GameRepository {
     private final String FIELD_GAME_ID = "gameId";
 
 
-
-    public GameRepository() {
+    public OldGameRepository() {
         this.databaseReference = FirebaseDatabase.getInstance().getReference().child(TABLE_NAME);
     }
 

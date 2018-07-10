@@ -2,10 +2,7 @@ package com.summer.itis.summerproject.repository
 
 import com.summer.itis.summerproject.repository.api.WikiApiRepository
 import com.summer.itis.summerproject.repository.api.WikiApiRepositoryImpl
-import com.summer.itis.summerproject.repository.json.CardRepository
-import com.summer.itis.summerproject.repository.json.QuestionRepository
-import com.summer.itis.summerproject.repository.json.TestRepository
-import com.summer.itis.summerproject.repository.json.UserRepository
+import com.summer.itis.summerproject.repository.json.*
 
 
 class RepositoryProvider {
@@ -42,6 +39,10 @@ class RepositoryProvider {
                 }
                 return field
             }
+
+        val gamesRepository: GamesRepository by lazy {
+            GamesRepository()
+        }
 
         var wikiApiRepository: WikiApiRepository? = null
             get() {

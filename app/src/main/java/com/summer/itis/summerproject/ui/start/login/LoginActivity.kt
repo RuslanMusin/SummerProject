@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.start.login
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,23 +10,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-
-
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.GameOne
-import com.summer.itis.summerproject.repository.json.GameRepository
+import com.summer.itis.summerproject.repository.json.OldGameRepository
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.start.registration.RegistrationActivity
-
-import java.util.ArrayList
-
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import java.util.*
 
 /**
  * Created by Ruslan on 18.02.2018.
@@ -48,7 +44,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     private val gameId: String? = null
 
-    private val gameRepository: GameRepository? = null
+    private val gameRepository: OldGameRepository? = null
 
     private val gameOne: GameOne? = null
 
@@ -108,7 +104,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         when (view.id) {
 
             R.id.btn_enter -> {
-                /*  gameRepository = new GameRepository();
+                /*  gameRepository = new OldGameRepository();
                 gameOne = new GameOne();
                 gameOne.setCardId("nameCard1");
                 gameOne.setScore(0);

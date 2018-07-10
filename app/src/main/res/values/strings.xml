@@ -227,4 +227,9 @@
     <string name="support">Поддержка</string>
 
 
+    <!--Game-->
+    <string name="find_game">Find Game</string>
+    <string name="game_searching">Ищем игру</string>
+
+
 </resources>
