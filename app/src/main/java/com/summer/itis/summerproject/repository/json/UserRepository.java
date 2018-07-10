@@ -161,8 +161,8 @@ public class UserRepository {
     }
 
     public void addFriend(String userId, String friendId) {
-        Map<String, Object> userValues = UserRelation.toMap(userId, REMOVE_FRIEND);
-        Map<String, Object> friendValues = UserRelation.toMap(friendId, REMOVE_FRIEND);
+        Map<String, Object> userValues = UserRelation.Companion.toMap(userId, REMOVE_FRIEND);
+        Map<String, Object> friendValues = UserRelation.Companion.toMap(friendId, REMOVE_FRIEND);
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(USER_FRIENDS + SEP + userId + SEP + friendId, friendValues);
         childUpdates.put(USER_FRIENDS + SEP + friendId + SEP + userId, userValues);
@@ -171,7 +171,7 @@ public class UserRepository {
     }
 
     public void removeFriend(String userId, String friendId) {
-        Map<String, Object> userValues = UserRelation.toMap(userId, REMOVE_REQUEST);
+        Map<String, Object> userValues = UserRelation.Companion.toMap(userId, REMOVE_REQUEST);
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(USER_FRIENDS + SEP + userId + SEP + friendId, null);
         childUpdates.put(USER_FRIENDS + SEP + friendId + SEP + userId, userValues);
@@ -180,8 +180,8 @@ public class UserRepository {
     }
 
     public void addFriendRequest(String userId, String friendId) {
-        Map<String, Object> friendValues = UserRelation.toMap(friendId, REMOVE_FRIEND);
-        Map<String, Object> userValues = UserRelation.toMap(userId, ADD_FRIEND);
+        Map<String, Object> friendValues = UserRelation.Companion.toMap(friendId, REMOVE_FRIEND);
+        Map<String, Object> userValues = UserRelation.Companion.toMap(userId, ADD_FRIEND);
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(USER_FRIENDS + SEP + userId + SEP + friendId, friendValues);
         childUpdates.put(USER_FRIENDS + SEP + friendId + SEP + userId, userValues);

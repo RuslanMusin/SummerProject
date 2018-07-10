@@ -48,7 +48,7 @@ class ApplicationHelper {
             get() = FirebaseStorage.getInstance().reference
 
         fun loadUserPhoto(photoView: ImageView) {
-            val storageReference = FirebaseStorage.getInstance().reference.child(currentUser!!.photoUrl)
+            val storageReference = currentUser!!.photoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
 
             Glide.with(photoView.context)
                     .load(storageReference)

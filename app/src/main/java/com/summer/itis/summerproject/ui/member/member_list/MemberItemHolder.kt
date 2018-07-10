@@ -34,7 +34,7 @@ class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 ImageLoadHelper.loadPictureByDrawableDefault(imageView, R.drawable.ic_person_black_24dp)
             } else {
                 //                ImageLoadHelper.loadPicture(imageView, item.getPhotoUrl());
-                val imageReference = ApplicationHelper.storageReference.child(item.photoUrl)
+                val imageReference = ApplicationHelper.storageReference.child(item.photoUrl!!)
 
                 Glide.with(imageView.context)
                         .load(imageReference)

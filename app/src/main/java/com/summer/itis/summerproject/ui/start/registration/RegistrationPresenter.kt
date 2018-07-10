@@ -84,7 +84,7 @@ class RegistrationPresenter(private val regView: RegistrationActivity) {
         regView.user = user
 
         if (path != "path") {
-            val childRef = ApplicationHelper.storageReference.child(user.photoUrl)
+            val childRef = ApplicationHelper.storageReference.child(user.photoUrl!!)
 
             //uploading the image
             val uploadTask = childRef.putFile(regView.imageUri!!)

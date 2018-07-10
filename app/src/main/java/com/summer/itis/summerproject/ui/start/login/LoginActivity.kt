@@ -171,8 +171,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun setQueries() {
-        val queryOne = gameRepository!!.readPoint(gameId).child(gameOne!!.enemyId)
-        queryOne.addValueEventListener(object : ValueEventListener {
+        val queryOne = gameOne!!.enemyId?.let { gameRepository!!.readPoint(gameId).child(it) }
+        queryOne?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val comments = ArrayList<GameOne>()
                 val point = dataSnapshot.getValue(GameOne::class.java)
@@ -189,8 +189,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             }
         })
 
-        val queryTwo = gameRepository.readPoint(gameId).child(gameOne.enemyId)
-        queryTwo.addValueEventListener(object : ValueEventListener {
+        val queryTwo = gameOne.enemyId?.let { gameRepository?.readPoint(gameId)?.child(it) }
+        queryTwo?.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val comments = ArrayList<GameOne>()
                 val point = dataSnapshot.getValue(GameOne::class.java)

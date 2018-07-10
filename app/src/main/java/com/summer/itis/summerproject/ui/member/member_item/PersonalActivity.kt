@@ -91,10 +91,10 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
         val path = user!!.photoUrl
         if (path != "path") {
-            val imageReference = ApplicationHelper.storageReference.child(user!!.photoUrl)
+            val imageReference = user!!.photoUrl?.let { ApplicationHelper.storageReference.child(it) }
 
 
-            Log.d(TAG_LOG, "name " + imageReference.path)
+            Log.d(TAG_LOG, "name " + (imageReference?.path ?: ""))
 
             Glide.with(this@PersonalActivity)
                     .load(imageReference)
