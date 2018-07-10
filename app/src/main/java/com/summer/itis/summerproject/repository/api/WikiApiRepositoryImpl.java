@@ -11,14 +11,14 @@ import com.summer.itis.summerproject.model.pojo.query.Api;
 import com.summer.itis.summerproject.model.pojo.query.Page;
 import com.summer.itis.summerproject.model.pojo.query.Pages;
 import com.summer.itis.summerproject.model.pojo.query.Query;
+import com.summer.itis.summerproject.utils.Const;
 import com.summer.itis.summerproject.utils.RxUtils;
 
 import java.util.List;
 
 import io.reactivex.Single;
 
-import static com.summer.itis.summerproject.utils.Const.ACTION_QUERY;
-import static com.summer.itis.summerproject.utils.Const.ACTION_SEARCH;
+import static android.app.SearchManager.QUERY;
 import static com.summer.itis.summerproject.utils.Const.EXINTRO;
 import static com.summer.itis.summerproject.utils.Const.EXPLAINTEXT;
 import static com.summer.itis.summerproject.utils.Const.FORMAT;
@@ -26,29 +26,29 @@ import static com.summer.itis.summerproject.utils.Const.NAMESPACE;
 import static com.summer.itis.summerproject.utils.Const.PILICENSE;
 import static com.summer.itis.summerproject.utils.Const.PIPROP;
 import static com.summer.itis.summerproject.utils.Const.PROP;
-
+import static com.summer.itis.summerproject.utils.Const.SEARCH;
 
 public class WikiApiRepositoryImpl implements WikiApiRepository {
 
     @NonNull
     @Override
     public Single<List<Item>> opensearch(String query) {
-        return ApiFactory.getWikiService()
-                .opensearch(FORMAT,ACTION_SEARCH,query,NAMESPACE)
+        return ApiFactory.Companion.getWikiService()
+                .opensearch(FORMAT, SEARCH,query, NAMESPACE)
                 .map(SearchSuggestion::getSection)
                 .map(Section ::getItem)
-                .compose(RxUtils.asyncSingle());
+                .compose(RxUtils.Companion.asyncSingle());
     }
 
     @NonNull
     @Override
     public Single<List<Page>> query(String query) {
         return ApiFactory.getWikiService()
-                .query(FORMAT,ACTION_QUERY,PROP,EXINTRO,EXPLAINTEXT,PIPROP,PILICENSE,query)
+                .query(FORMAT, QUERY, PROP, EXINTRO, EXPLAINTEXT, PIPROP, PILICENSE,query)
                 .map(Api::getQuery)
                 .map(Query ::getPages)
                 .map(Pages::getPage)
-                .compose(RxUtils.asyncSingle());
+                .compose(RxUtils.Companion.asyncSingle());
     }
 
  /*   @Override

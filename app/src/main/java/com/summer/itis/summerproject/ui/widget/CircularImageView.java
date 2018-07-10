@@ -32,7 +32,7 @@ import android.util.Log;
 
 import com.summer.itis.summerproject.R;
 
-
+//ФОТКА В КРУЖОЧКЕ
 public class CircularImageView extends android.support.v7.widget.AppCompatImageView {
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 

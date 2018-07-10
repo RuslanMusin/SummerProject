@@ -4,6 +4,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.summer.itis.summerproject.api.Card;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @IgnoreExtraProperties
@@ -20,10 +21,10 @@ public class Test {
     private String authorName;
 
     @Exclude
-    private List<Question> questions;
+    private List<Question> questions = new ArrayList<>();
 
     @Exclude
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     @Exclude
     private Card card;

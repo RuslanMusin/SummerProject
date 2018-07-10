@@ -70,7 +70,7 @@
     <string name="books">Книги</string>
     <string name="friends">Друзья</string>
     <string name="tests">Тесты</string>
-    <string name="cards">Карточки</string>
+    <string name="card">Карточки</string>
     <string name="game">Игра</string>
     <string name="book_crossing">BookCrossing</string>
     <string name="logout">Выйти</string>
@@ -212,7 +212,7 @@
     <string name="add_card">Добавить карточку</string>
     <string name="added_cards">Добавленные:</string>
     <string name="create_questions">Создать вопросы</string>
-    <string name="question">Вопрос</string>
+    <string name="qustionId">Вопрос</string>
     <string name="add_answer">Добавить ответ</string>
     <string name="next_question">Следующий вопрос</string>
     <string name="finish_questions">Завершить</string>
@@ -220,5 +220,11 @@
     <string name="select_test_type">Выберите тип теста</string>
     <string name="test_type_one">Один ответ</string>
     <string name="test_type_many">Много ответов</string>
+    <string name="intelligence">Интеллект</string>
+    <string name="strength">Сила</string>
+    <string name="prestige">Влияние</string>
+    <string name="hp">Здоровье</string>
+    <string name="support">Поддержка</string>
+
 
 </resources>

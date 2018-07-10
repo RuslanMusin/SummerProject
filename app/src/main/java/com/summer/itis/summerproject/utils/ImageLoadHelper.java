@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import com.summer.itis.summerproject.R;
 
+//КЛАСС ДЛЯ РАБОТЫ С ФОТКАМИ.НЕ ИСПОЛЬЗОВАТЬ, ПЕРЕЖИТОК ПРОШЛОГО,ЮЗАТЬ GLIDE
 public final class ImageLoadHelper {
 
     private ImageLoadHelper() {

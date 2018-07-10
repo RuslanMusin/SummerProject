@@ -1,4 +1,6 @@
-package com.summer.itis.summerproject;/*
+package com.summer.itis.summerproject
+
+/*
  *  Copyright 2017 Rozdoum
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +18,18 @@ package com.summer.itis.summerproject;/*
  */
 
 
-import com.summer.itis.summerproject.utils.ApplicationHelper;
+import com.summer.itis.summerproject.utils.ApplicationHelper
 
-public class Application extends android.app.Application {
+class Application : android.app.Application() {
 
-    public static final String TAG = Application.class.getSimpleName();
+    override fun onCreate() {
+        super.onCreate()
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+        ApplicationHelper.initUserState(this)
+    }
 
-        ApplicationHelper.initUserState(this);
+    companion object {
+
+        val TAG = Application::class.java.simpleName
     }
 }
