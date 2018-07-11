@@ -16,6 +16,7 @@ class FindGamePresenter() : MvpPresenter<FindGameView>() {
     }
 
     fun cancelSearching() {
-        gamesRepository.cancelSearchGame { viewState.showNotSearching() };
+        gamesRepository.cancelSearchGame();
+        viewState.showNotSearching()
     }
 }

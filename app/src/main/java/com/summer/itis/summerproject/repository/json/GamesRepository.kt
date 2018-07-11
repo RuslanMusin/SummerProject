@@ -18,6 +18,8 @@ class GamesRepository {
 
     var nowLobbyDbRef: DatabaseReference? = null
 
+    var nowSearchingDbRef: DatabaseReference? = null
+
     //var onFind: (() -> Unit)? =null
 
     fun startSearchGame(onFind: () -> (Unit)) {
@@ -53,10 +55,10 @@ class GamesRepository {
         nowLobbyDbRef!!.setValue(lobby)
 
 //        var nowSearchingDbRef = searchingDbRef.push()
-        var nowSearchingDbRef = searchingDbRef.child(nowLobbyDbRef!!.key!!)
-        nowSearchingDbRef.setValue(nowLobbyDbRef!!.key)
+        nowSearchingDbRef = searchingDbRef.child(nowLobbyDbRef!!.key!!)
+        nowSearchingDbRef!!.setValue(nowLobbyDbRef!!.key)
 
-        nowSearchingDbRef.onDisconnect().removeValue()
+        nowSearchingDbRef!!.onDisconnect().removeValue()
 
         nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -64,7 +66,7 @@ class GamesRepository {
             }
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.value != "") {
+                if (dataSnapshot.exists() && dataSnapshot.value != "") {
                     onFind()
                 }
             }
@@ -82,10 +84,14 @@ class GamesRepository {
         nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondOnline).onDisconnect().setValue(false)
     }
 
-    fun cancelSearchGame(onCanceled: () -> (Unit)) {
+    //    fun cancelSearchGame(onCanceled: () -> (Unit)) {
+    fun cancelSearchGame() {
+        nowLobbyDbRef!!.child(Lobby.PARAM_playerFirstOnline).onDisconnect().cancel()
 
-        //TODO
-        onCanceled()
+        nowSearchingDbRef!!.removeValue()
+        nowLobbyDbRef!!.removeValue()
+
+//        onCanceled()
     }
 
     fun getPlayerId(): String? {
