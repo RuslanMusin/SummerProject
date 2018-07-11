@@ -18,7 +18,7 @@ import android.widget.ImageView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.ui.game.FindGameActivity
+import com.summer.itis.summerproject.ui.game.find.FindGameActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.reader.ReaderListActivity
 import com.summer.itis.summerproject.ui.start.login.LoginActivity

@@ -1,4 +1,4 @@
-package com.summer.itis.summerproject.ui.game
+package com.summer.itis.summerproject.ui.game.find
 
 import android.content.Context
 import android.content.Intent
@@ -7,11 +7,16 @@ import android.view.View
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.ui.game.play.PlayGameActivity
 import kotlinx.android.synthetic.main.activity_find_game.*
 
-public class FindGameActivity : MvpAppCompatActivity(), FindGameView {
+class FindGameActivity : MvpAppCompatActivity(), FindGameView {
+    override fun gameFinded() {
+        PlayGameActivity.start(this)
+    }
+
     @InjectPresenter
-    public lateinit var presenter: FindGamePresenter
+    lateinit var presenter: FindGamePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,11 +25,11 @@ public class FindGameActivity : MvpAppCompatActivity(), FindGameView {
         showNotSearching();
 
         btn_find_game.setOnClickListener {
-            presenter!!.findGame()
+            presenter.findGame()
         }
 
         btn_cancel.setOnClickListener {
-            presenter!!.cancelSearching()
+            presenter.cancelSearching()
         }
     }
 
