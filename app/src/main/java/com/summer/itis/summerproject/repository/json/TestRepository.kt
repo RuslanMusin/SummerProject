@@ -13,8 +13,10 @@ import io.reactivex.Single
 
 import com.summer.itis.summerproject.utils.Const.SEP
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.RxUtils
 
-class TestRepository {
+class TestRepository : Listener {
+
 
     private val databaseReference: DatabaseReference
 
@@ -27,10 +29,10 @@ class TestRepository {
 
     private val FIELD_ID = "id"
     private val FIELD_TITLE = "title"
-    private val FIELD_TEST_PHOTO = "photoUrl"
+    private val FIELD_CARD_ID = "cardId"
     private val FIELD_AUTHOR_ID = "authorId"
     private val FIELD_AUTHOR_NAME = "authorName"
-    private val FIELD_WIKI_URL = "wikiUrl"
+    private val FIELD_QUESTIONS = "questions"
     private val FIELD_DESC = "desc"
 
     init {
@@ -45,6 +47,8 @@ class TestRepository {
         result[FIELD_TITLE] = test.title
         result[FIELD_AUTHOR_ID] = test.authorId
         result[FIELD_AUTHOR_NAME] = test.authorName
+        result[FIELD_CARD_ID] = test.cardId
+        result[FIELD_QUESTIONS] = test.questions
 
         return result
     }
@@ -62,75 +66,86 @@ class TestRepository {
         return result
     }
 
-    fun createTest(test: Test, user: User) {
-        val crossingKey = databaseReference.push().key
-        test.id = crossingKey
-        test.authorId = user.id
-        test.authorName = user.username
-
-        val crossingValues = toMap(test)
-
-        val childUpdates = HashMap<String, Any>()
-        childUpdates["$TABLE_NAME/$crossingKey"] = crossingValues
-
-        val questionRepository = QuestionRepository()
-        questionRepository.setDatabaseReference(TEST_QUESTIONS + SEP + test.id)
-        for (question in test.questions) {
-
-            val crossingIdValues = questionRepository.toMap(question)
-            childUpdates[TEST_QUESTIONS + SEP + test.id + SEP + question.id] = crossingIdValues
-        }
-
+    override fun createTest(test: Test, user: User,type: String) {
         val card = test.card
-
-        Log.d(TAG_LOG,"abstract")
-        val wikiUrl = card?.abstractCard?.wikiUrl;
         val abstractCardRepository = AbstracCardRepository()
-        val cardId = wikiUrl?.let { abstractCardRepository.findAbstractCard(it) }
-        if(cardId == null) {
-            val abstractCard = card?.abstractCard
-            val abstractCardValues = abstractCardRepository.toMap(abstractCard)
-            childUpdates[ABSTRACT_CARDS + SEP + abstractCard?.id] = abstractCardValues
-            card?.cardId = abstractCard?.id
+        if(type.equals("read")) {
+            Log.d(TAG_LOG,"read")
+            abstractCardRepository.findAbstractCard(test, user,this)
         } else {
-            card.cardId = cardId.toString()
+            val childUpdates = HashMap<String, Any>()
+            Log.d(TAG_LOG,"create")
+            val crossingKey = databaseReference.push().key
+            test.id = crossingKey
+
+            Log.d(TAG_LOG, "abstract")
+            val abstractCard = card?.abstractCard
+            val cardId = abstractCard?.id
+            if (cardId == null) {
+                Log.d(TAG_LOG,"createAbs")
+                val abstractCardValues = abstractCardRepository.toMap(abstractCard)
+                childUpdates[ABSTRACT_CARDS + SEP + abstractCard?.id] = abstractCardValues
+                card?.cardId = abstractCard?.id
+                card?.testId = test.id
+            } else {
+                Log.d(TAG_LOG,"no create abs")
+            }
+            Log.d(TAG_LOG, "after abstract")
+            val cardRepository = CardRepository()
+            val crossingIdValues = cardRepository.toMap(card)
+            childUpdates[TEST_CARDS + SEP + card?.id] = crossingIdValues
+
+
+            test.authorId = user.id
+            test.authorName = user.username
+            test.cardId = card?.id
+
+            val crossingValues = toMap(test)
+
+            childUpdates["$TABLE_NAME/$crossingKey"] = crossingValues
+
+            val questionRepository = QuestionRepository()
+            questionRepository.setDatabaseReference(TEST_QUESTIONS + SEP + test.id)
+           /* for (question in test.questions) {
+
+                val crossingIdValues = questionRepository.toMap(question)
+                childUpdates[TEST_QUESTIONS + SEP + test.id + SEP + question.id] = crossingIdValues
+
+                *//*for(answer in question.answers) {
+                    val answerValues = answerRepository.toMap(answer)
+                    childUpdates[TEST_ANSWERS + SEP + ]
+                }*//*
+            }*/
+
+
+            databaseReference.root.updateChildren(childUpdates)
         }
-
-        val cardRepository = CardRepository()
-        cardRepository.setDatabaseReference(TEST_CARDS + SEP + test.id)
-        val crossingIdValues = cardRepository.toMap(card)
-        childUpdates[TEST_CARDS + SEP + test.id + SEP + card?.id] = crossingIdValues
-
-        databaseReference.root.updateChildren(childUpdates)
     }
 
-    fun readTest(testId: String): Single<Test> {
-        var flag: Boolean = false;
-        var test: Test? = null
-        val query: Query = databaseReference.child(testId)
-        query.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                test = dataSnapshot.getValue(Test::class.java)
-                flag = true
-            }
+    fun readTest(testId: String?): Single<Test> {
+        var test: Test?
+        val query: Query = databaseReference.child(testId!!)
+        val single : Single<Test> =  Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    test = dataSnapshot.getValue(Test::class.java)
+                    test?.let { e.onSuccess(it) }
+                }
 
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-        })
-        while(!flag) {
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
 
         }
-        return Single.just(test)
+        return single.compose(RxUtils.asyncSingle())
     }
+
 
     fun deleteCrossing(pointId: String) {
         databaseReference.child(pointId).removeValue()
     }
 
     fun loadDefaultTests(): Single<MutableList<Test?>> {
-        var flag: Boolean = false;
+        var flag: Boolean = false
         var tests: MutableList<Test?>? = ArrayList()
         val query: Query = databaseReference.limitToFirst(100)
         query.addListenerForSingleValueEvent(object: ValueEventListener {

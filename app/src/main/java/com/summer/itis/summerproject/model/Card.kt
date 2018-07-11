@@ -11,8 +11,7 @@ class Card {
 
     var cardId: String? = null
 
-    @Exclude
-    var abstractCard: AbstractCard? = AbstractCard()
+    var testId: String? = null
 
     var intelligence: Int? = null
 
@@ -23,4 +22,10 @@ class Card {
     var hp: Int? = null
 
     var strength: Int? = null
+
+    @Exclude
+    var abstractCard: AbstractCard? = AbstractCard()
+
+    @Exclude
+    var test: Test = Test()
 }

@@ -18,7 +18,8 @@ class Test {
 
     var authorName: String? = null
 
-    @Exclude
+    var cardId: String? = null
+
     var questions: MutableList<Question> = ArrayList()
 
     @Exclude

@@ -4,17 +4,13 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
 
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.string.email
-import com.summer.itis.summerproject.R.string.password
+import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.model.pojo.query.Page
@@ -24,6 +20,7 @@ import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.RxUtils
 
 class LoginPresenter(private val logView: LoginActivity) {
 
@@ -47,12 +44,45 @@ class LoginPresenter(private val logView: LoginActivity) {
         Log.d(TAG_LOG, sep);
     }
 
+    fun setTest(test: Test) {
+        Log.d(TAG_LOG, "title " + test.title);
+        Log.d(TAG_LOG, "desc " + test.authorId);
+        Log.d(TAG_LOG, "extract " + test.authorName);
+    }
+
+    fun readCard(card: Card) {
+        Log.d(TAG_LOG, "cardId " + card.cardId);
+        Log.d(TAG_LOG, "testId " + card.testId);
+        Log.d(TAG_LOG, "intelligence " + card.intelligence);
+
+        val abstractCard = card.abstractCard
+        Log.d(TAG_LOG, "wikiUrl " + abstractCard?.wikiUrl);
+        Log.d(TAG_LOG, "desc " + abstractCard?.description);
+        Log.d(TAG_LOG, "name " + abstractCard?.name);
+
+        val test = card.test
+        Log.d(TAG_LOG, "test author " + test.authorName);
+        Log.d(TAG_LOG, "test title " + test.title);
+        val question  = test.questions[0]
+        Log.d(TAG_LOG, "question " + question.question);
+        for(answer in question.answers){
+            Log.d(TAG_LOG, "answer = " + answer.text);
+        }
+
+
+    }
+
     fun signIn(email: String, password: String) {
        /* val sep: String = "-----------";
         RepositoryProvider.wikiApiRepository.opensearch("Лев Толстой").subscribe(this::setList);
         RepositoryProvider.wikiApiRepository.query("Толстой, Лев Николаевич").subscribe(this::setPages);*/
 
-        Log.d(TAG_LOG, "signIn:$email")
+//        RepositoryProvider.testRepository?.readTest("-LH8d3j8GpNDVem9pWRo")?.subscribe(this::setTest)
+        RepositoryProvider.cardRepository
+                ?.readCard("-LH9PIX0TlQ-h33CymC9")
+                ?.subscribe(this::readCard)
+
+     /*   Log.d(TAG_LOG, "signIn:$email")
         if (!validateForm(email, password)) {
             return
         }
@@ -75,7 +105,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                     }
 
                     logView.hideProgressDialog()
-                }
+                }*/
     }
         fun validateForm(email: String, password: String): Boolean {
             var valid = true

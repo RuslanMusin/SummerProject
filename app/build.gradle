@@ -80,6 +80,8 @@ dependencies {
     implementation "com.akaita.java:rxjava2-debug:${rxdebug}"
     implementation "org.reactivestreams:reactive-streams:${reactive_streams}"
 
+//    compile 'com.github.FrangSierra:RxFirebase:1.5.0'
+
     // Firebase
     implementation "com.google.firebase:firebase-auth:${firebase}"
     implementation "com.google.firebase:firebase-database:${firebase}"

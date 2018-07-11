@@ -212,8 +212,6 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
 
     private fun prepareQuestion() {
 
-        radioButtons!!.clear()
-        editTexts!!.clear()
         answers = ArrayList()
         for (i in radioButtons!!.indices) {
             val answer = Answer()
@@ -224,9 +222,12 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
             answers!!.add(answer)
         }
 
+        radioButtons!!.clear()
+        editTexts!!.clear()
+
         question!!.question = etQuestion!!.text.toString()
         //        question.setPhotoUrl(imageUri.getPath());
-        question!!.answers = answers
+        question!!.answers = answers as ArrayList<Answer>
         addTestView!!.setQuestion(question!!)
 
     }

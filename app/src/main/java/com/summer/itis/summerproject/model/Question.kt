@@ -9,5 +9,5 @@ class Question {
 
     var question: String? = null
 
-    var answers: List<Answer>? = null
+    var answers: MutableList<Answer> = ArrayList()
 }

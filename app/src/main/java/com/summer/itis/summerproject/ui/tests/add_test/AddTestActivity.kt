@@ -55,7 +55,7 @@ class AddTestActivity : NavigationBaseActivity(), AddTestView {
     }
 
     override fun createTest() {
-        RepositoryProvider.testRepository!!.createTest(test!!, ApplicationHelper.currentUser!!)
+        RepositoryProvider.testRepository!!.createTest(test!!, ApplicationHelper.currentUser!!,"read")
 
     }
 
