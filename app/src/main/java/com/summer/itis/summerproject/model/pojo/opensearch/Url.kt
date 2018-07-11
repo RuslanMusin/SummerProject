@@ -7,11 +7,10 @@ import org.simpleframework.xml.Text
 
 @Root
 class Url {
-    @Text
+    @field:Text
     var content: String? = null
 
-    @Attribute
-    var space: String? = null
+    @field:Attribute(required = false) var space: String? = null
 
     override fun toString(): String {
         return "ClassPojo [content = $content]"

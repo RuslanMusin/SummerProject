@@ -7,24 +7,23 @@ import org.simpleframework.xml.Root
 
 @Root
 class Page {
-    @Attribute
-    var ns: String? = null
-    @Attribute
-    var title: String? = null
-    @Element(required = false)
-    var original: Original? = null
-    @Attribute
-    var description: String? = null
-    @Attribute
-    var _idx: String? = null
-    @Attribute
-    var descriptionsource: String? = null
-    @Element
-    var extract: Extract? = null
-    @Attribute
-    var pageid: String? = null
 
-    @Attribute(required = false)
-    var space: String? = null
+    @field:Attribute(required = false) var ns: String? = null
+
+    @field:Attribute(name="title") var title: String? = null
+
+    @field:Element(required = false) var original: Original? = null
+
+    @field:Attribute var description: String? = null
+
+    @field:Attribute(required = false) var _idx: String? = null
+
+    @field:Attribute(required = false) var descriptionsource: String? = null
+
+    @field:Element var extract: Extract? = null
+
+    @field:Attribute(required = false) var pageid: String? = null
+
+    @field:Attribute(required = false) var space: String? = null
 }
 

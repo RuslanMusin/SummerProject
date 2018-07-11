@@ -13,7 +13,6 @@ import android.widget.TextView
 
 import com.bumptech.glide.Glide
 
-import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
@@ -96,11 +95,11 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
             Log.d(TAG_LOG, "name " + (imageReference?.path ?: ""))
 
-            Glide.with(this@PersonalActivity)
+            Glide.with(this)
                     .load(imageReference)
                     .into(ivPhoto!!)
         } else {
-            Glide.with(this@PersonalActivity)
+            Glide.with(this)
                     .load(R.drawable.ic_person_black_24dp)
                     .into(ivPhoto!!)
         }
@@ -143,25 +142,25 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     private fun actWithUser() {
         when (type) {
             ADD_FRIEND -> {
-                UserRepository().addFriend(UserRepository.getCurrentId(), user!!.id)
+                user!!.id?.let { UserRepository().addFriend(UserRepository.currentId, it) }
                 type = REMOVE_FRIEND
                 btnAddFriend!!.setText(R.string.remove_friend)
             }
 
             ADD_REQUEST -> {
-                UserRepository().addFriendRequest(UserRepository.getCurrentId(), user!!.id)
+                user!!.id?.let { UserRepository().addFriendRequest(UserRepository.currentId, it) }
                 type = REMOVE_REQUEST
                 btnAddFriend!!.setText(R.string.remove_request)
             }
 
             REMOVE_FRIEND -> {
-                UserRepository().removeFriend(UserRepository.getCurrentId(), user!!.id)
+                user!!.id?.let { UserRepository().removeFriend(UserRepository.currentId, it) }
                 type = ADD_FRIEND
                 btnAddFriend!!.setText(R.string.add_friend)
             }
 
             REMOVE_REQUEST -> {
-                UserRepository().removeFriendRequest(UserRepository.getCurrentId(), user!!.id)
+                user!!.id?.let { UserRepository().removeFriendRequest(UserRepository.currentId, it) }
                 type = ADD_REQUEST
                 btnAddFriend!!.setText(R.string.add_friend)
             }
@@ -169,7 +168,7 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     }
 
     private fun changeData() {
-        //        startActivity(ChangeUserDataActivity.makeIntent(PersonalActivity.this));
+        //        startActivity(ChangeUserDataActivity.makeIntent(TestActivity.this));
     }
 
     companion object {

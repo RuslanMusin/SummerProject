@@ -12,7 +12,6 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.model.db_dop_models.ElementId
-import com.summer.itis.summerproject.model.db_dop_models.Identified
 import com.summer.itis.summerproject.repository.RepositoryProvider
 
 import java.util.ArrayList

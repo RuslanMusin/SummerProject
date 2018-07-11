@@ -2,7 +2,6 @@ package com.summer.itis.summerproject.model
 
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import com.summer.itis.summerproject.api.Card
 
 import java.util.ArrayList
 
@@ -20,10 +19,10 @@ class Test {
     var authorName: String? = null
 
     @Exclude
-    var questions: List<Question> = ArrayList()
+    var questions: MutableList<Question> = ArrayList()
 
     @Exclude
-    var comments: List<Comment> = ArrayList()
+    var comments: MutableList<Comment> = ArrayList()
 
     @Exclude
     var card: Card? = null

@@ -13,7 +13,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.email
+import com.summer.itis.summerproject.R.string.password
 import com.summer.itis.summerproject.model.User
+import com.summer.itis.summerproject.model.pojo.opensearch.Item
+import com.summer.itis.summerproject.model.pojo.query.Page
 
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.repository.json.UserRepository
@@ -23,34 +27,33 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 
 class LoginPresenter(private val logView: LoginActivity) {
 
-    /*private void setList(List<Item> itemList) {
-        for(Item item : itemList) {
-            Log.d(TAG_LOG,"text " + item.getText().getContent());
-            Log.d(TAG_LOG,"desc " + item.getDescription().getContent());
-            Log.d(TAG_LOG,"url " + item.getUrl().getContent());
+    fun setList(itemList: List<Item>) {
+        for (item in itemList) {
+            Log.d(TAG_LOG, "text " + item.text?.content);
+            Log.d(TAG_LOG, "desc " + item.description?.content);
+            Log.d(TAG_LOG, "url " + item.url?.content);
         }
     }
 
-    private void setPages(List<Page> itemList) {
-        String sep = "-----------";
-        Log.d(TAG_LOG,sep);
-        for(Page item : itemList) {
-            Log.d(TAG_LOG,"title " + item.getTitle());
-            Log.d(TAG_LOG,"desc " + item.getDescription());
-            Log.d(TAG_LOG,"extract " + item.getExtract().getContent());
-            Log.d(TAG_LOG,"url " + item.getOriginal().getSource());
+    fun setPages(itemList: List<Page>) {
+        val sep: String = "-----------";
+        Log.d(TAG_LOG, sep);
+        for (item in itemList) {
+            Log.d(TAG_LOG, "title " + item.title);
+            Log.d(TAG_LOG, "desc " + item.description);
+            Log.d(TAG_LOG, "extract " + item.extract?.content);
+            Log.d(TAG_LOG, "url " + item.original?.source);
         }
-        Log.d(TAG_LOG,sep);
-    }*/
+        Log.d(TAG_LOG, sep);
+    }
 
     fun signIn(email: String, password: String) {
-        /*  String sep = "-----------";
-        RepositoryProvider.getWikiApiRepository().opensearch("Лев Толстой").subscribe(this::setList);
-        RepositoryProvider.getWikiApiRepository().query("Толстой, Лев Николаевич").subscribe(this::setPages);
-*/
+       /* val sep: String = "-----------";
+        RepositoryProvider.wikiApiRepository.opensearch("Лев Толстой").subscribe(this::setList);
+        RepositoryProvider.wikiApiRepository.query("Толстой, Лев Николаевич").subscribe(this::setPages);*/
 
         Log.d(TAG_LOG, "signIn:$email")
-        if (!validateForm()) {
+        if (!validateForm(email, password)) {
             return
         }
 
@@ -74,46 +77,43 @@ class LoginPresenter(private val logView: LoginActivity) {
                     logView.hideProgressDialog()
                 }
     }
+        fun validateForm(email: String, password: String): Boolean {
+            var valid = true
 
-    fun validateForm(): Boolean {
-        var valid = true
+            if (TextUtils.isEmpty(email)) {
+                logView.tiUsername!!.error = logView.getString(R.string.enter_correct_name)
+                valid = false
+            } else {
+                logView.tiUsername!!.error = null
+            }
 
-        val email = logView.etUsername!!.text.toString()
-        if (TextUtils.isEmpty(email)) {
-            logView.tiUsername!!.error = logView.getString(R.string.enter_correct_name)
-            valid = false
-        } else {
-            logView.tiUsername!!.error = null
+            if (TextUtils.isEmpty(password)) {
+                logView.tiPassword!!.error = logView.getString(R.string.enter_correct_password)
+                valid = false
+            } else {
+                logView.tiPassword!!.error = null
+            }
+
+            return valid
         }
 
-        val password = logView.etPassword!!.text.toString()
-        if (TextUtils.isEmpty(password)) {
-            logView.tiPassword!!.error = logView.getString(R.string.enter_correct_password)
-            valid = false
-        } else {
-            logView.tiPassword!!.error = null
+        fun updateUI(firebaseUser: FirebaseUser?) {
+            logView.hideProgressDialog()
+            if (firebaseUser != null) {
+                val reference = RepositoryProvider.userRepository?.readUser(UserRepository.currentId)
+                reference?.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val user = dataSnapshot.getValue(User::class.java)
+                        ApplicationHelper.currentUser = user
+                        logView.goToProfile()
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+
+                    }
+                })
+            } else {
+                logView.showError()
+            }
         }
-
-        return valid
-    }
-
-    fun updateUI(firebaseUser: FirebaseUser?) {
-        logView.hideProgressDialog()
-        if (firebaseUser != null) {
-            val reference = RepositoryProvider.userRepository?.readUser(UserRepository.getCurrentId())
-            reference?.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val user = dataSnapshot.getValue(User::class.java)
-                    ApplicationHelper.currentUser = user
-                    logView.goToProfile()
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            })
-        } else {
-            logView.showError()
-        }
-    }
 }

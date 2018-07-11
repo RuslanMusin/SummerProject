@@ -12,10 +12,6 @@ import com.summer.itis.summerproject.ui.member.member_list.MemberAdapter
 
 import io.reactivex.disposables.Disposable
 
-/**
- * Created by valera071998@gmail.com on 16.03.2018.
- */
-
 @StateStrategyType(AddToEndSingleStrategy::class)
 interface ReaderListView : MvpView, BaseAdapter.OnItemClickListener<User> {
 
@@ -46,5 +42,5 @@ interface ReaderListView : MvpView, BaseAdapter.OnItemClickListener<User> {
 
     fun changeAdapter(position: Int)
 
-    fun changeDataSet(friends: List<User>)
+    fun changeDataSet(friends: MutableList<User>)
 }

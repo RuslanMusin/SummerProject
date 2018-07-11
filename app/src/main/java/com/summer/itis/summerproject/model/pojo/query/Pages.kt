@@ -4,6 +4,6 @@ import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 
 class Pages {
-    @ElementList(inline = true, required = false)
-    var page: List<Page>? = null
+
+    @field: ElementList(inline = true, required = false) var pages: List<Page>? = null
 }

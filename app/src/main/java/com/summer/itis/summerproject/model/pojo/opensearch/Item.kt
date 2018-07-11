@@ -7,19 +7,14 @@ import org.simpleframework.xml.Root
 
 @Root(name = "Item")
 class Item {
-    @Element(name = "Text")
-    var text: com.summer.itis.summerproject.model.pojo.opensearch.Text? = null
+    @field:Element(name = "Text") var text: Text? = null
 
-    @Element(name = "Url")
-    var url: com.summer.itis.summerproject.model.pojo.opensearch.Url? = null
+    @field:Element(name = "Url") var url: Url? = null
 
-    @Element(name = "Description", required = false)
-    var description: com.summer.itis.summerproject.model.pojo.opensearch.Description? = null
+    @field:Element(name = "Description", required = false) var description: Description? = null
 
-    @Element(name = "Image", required = false)
-    var image: com.summer.itis.summerproject.model.pojo.opensearch.Image? = null
+    @field:Element(name = "Image", required = false) var image: Image? = null
 
-    @Attribute(required = false)
-    var space: String? = null
+    @field:Attribute(required = false) var space: String? = null
 }
 
