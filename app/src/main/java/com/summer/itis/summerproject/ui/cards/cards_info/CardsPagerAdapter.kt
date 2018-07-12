@@ -1,4 +1,4 @@
-package com.summer.itis.summerproject.ui.cards.card_pager
+package com.summer.itis.summerproject.ui.cards.cards_info
 
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager

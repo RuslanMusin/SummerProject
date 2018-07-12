@@ -1,9 +1,12 @@
 package com.summer.itis.summerproject.model
 
+import android.os.Parcel
+import android.os.Parcelable
+import android.os.Parcelable.Creator
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-class AbstractCard {
+class AbstractCard() : Parcelable{
 
     var id: String? = null
 
@@ -17,5 +20,35 @@ class AbstractCard {
 
     var wikiUrl: String? = null
 
+    constructor(parcel: Parcel) : this() {
+        id = parcel.readString()
+        name = parcel.readString()
+        photoUrl = parcel.readString()
+        extract = parcel.readString()
+        description = parcel.readString()
+        wikiUrl = parcel.readString()
+    }
 
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
+        parcel.writeString(name)
+        parcel.writeString(photoUrl)
+        parcel.writeString(extract)
+        parcel.writeString(description)
+        parcel.writeString(wikiUrl)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Creator<AbstractCard> {
+        override fun createFromParcel(parcel: Parcel): AbstractCard {
+            return AbstractCard(parcel)
+        }
+
+        override fun newArray(size: Int): Array<AbstractCard?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

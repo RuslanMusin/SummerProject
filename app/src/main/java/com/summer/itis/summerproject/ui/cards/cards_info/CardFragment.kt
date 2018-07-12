@@ -1,4 +1,4 @@
-package com.summer.itis.summerproject.ui.cards.card_pager
+package com.summer.itis.summerproject.ui.cards.cards_info
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,12 +11,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Card
-import com.summer.itis.summerproject.ui.cards.card_states.CardStatesActivity
 
 /**
  * Created by Home on 11.07.2018.
  */
 class CardFragment : Fragment(),OnClickListener{
+
+    override fun onClick(v: View?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     lateinit var tv_name: TextView
     lateinit var iv_port: ImageView
@@ -47,18 +50,18 @@ class CardFragment : Fragment(),OnClickListener{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val arg = arguments
         val card = arg?.getParcelable<Card>("CARD")
-        tv_name.setText(card?.name)
-        tv_description.setText(card?.desc)
+        tv_name.setText(card?.abstractCard?.name)
+        tv_description.setText(card?.abstractCard?.description)
     }
 
 
-    override fun onClick(v: View?) {
-        when(v?.id){
-            R.id.btn_state -> CardStatesActivity.start(activity!!)
-            R.id.btn_test -> println()// TODO redirect
-            R.id.btn_wiki -> println()// TODO WebView
-        }
-    }
+//    override fun onClick(v: View?) {
+//        when(v?.id){
+//            R.id.btn_state -> CardStatesActivity.start(activity!!)
+//            R.id.btn_test -> println()// TODO redirect
+//            R.id.btn_wiki -> println()// TODO WebView
+//        }
+//    }
 
     private fun initViews(view: View){
         tv_name = view.findViewById(R.id.tv_name)

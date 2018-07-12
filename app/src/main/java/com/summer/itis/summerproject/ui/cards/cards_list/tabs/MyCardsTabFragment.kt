@@ -2,6 +2,7 @@ package com.summer.itis.summerproject.ui.cards.cards_list.tabs
 
 import android.content.Intent
 import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
 import com.summer.itis.summerproject.ui.cards.cards_list.tabs.AbstractCardsTabFragment
 import java.util.ArrayList
 
@@ -9,10 +10,6 @@ import java.util.ArrayList
  * Created by Home on 10.07.2018.
  */
 class MyCardsTabFragment(): AbstractCardsTabFragment() {
-
-    override fun onItemClick(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     companion object {
         fun newInstance(): MyCardsTabFragment {
@@ -39,10 +36,10 @@ class MyCardsTabFragment(): AbstractCardsTabFragment() {
         return cards
     }
 
-//    override fun onItemClick(position: Int) {
-//        val intent = Intent(activity, CardsActivity::class.java)
-//        intent.putExtra("POS", position)
-//        intent.putParcelableArrayListExtra("ARR", cards)
-//        activity?.startActivity(intent)
-//    }
+    override fun onItemClick(position: Int) {
+        val intent = Intent(activity, CardsActivity::class.java)
+        intent.putExtra("POS", position)
+        intent.putParcelableArrayListExtra("ARR", cards)
+        activity?.startActivity(intent)
+    }
 }

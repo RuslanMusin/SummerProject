@@ -1,6 +1,5 @@
-package com.summer.itis.summerproject.ui.cards.card_pager
+package com.summer.itis.summerproject.ui.cards.cards_info
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
