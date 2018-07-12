@@ -4,11 +4,9 @@ import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
 
 class Query {
-    @Element
-    var content: String? = null
+    @field:Element var content: String? = null
 
-    @Attribute
-    var space: String? = null
+    @field:Attribute(required = false) var space: String? = null
 
     override fun toString(): String {
         return "ClassPojo [content = $content]"

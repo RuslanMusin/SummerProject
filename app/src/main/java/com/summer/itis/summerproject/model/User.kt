@@ -1,7 +1,7 @@
 package com.summer.itis.summerproject.model
 
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import com.summer.itis.summerproject.api.Card
 
 @IgnoreExtraProperties
 class User {
@@ -18,11 +18,13 @@ class User {
 
     var score: String? = null
 
+    private val role: String? = null
+
+    @Exclude
     private val cards: List<Card>? = null
 
+    @Exclude
     private val tests: List<Test>? = null
-
-    private val role: String? = null
 
     constructor() {}
 

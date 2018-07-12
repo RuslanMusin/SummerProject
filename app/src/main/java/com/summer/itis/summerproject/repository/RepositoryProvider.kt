@@ -1,8 +1,10 @@
 package com.summer.itis.summerproject.repository
 
+import android.util.Log
 import com.summer.itis.summerproject.repository.api.WikiApiRepository
 import com.summer.itis.summerproject.repository.api.WikiApiRepositoryImpl
 import com.summer.itis.summerproject.repository.json.*
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 
 
 class RepositoryProvider {
@@ -44,13 +46,11 @@ class RepositoryProvider {
             GamesRepository()
         }
 
-        var wikiApiRepository: WikiApiRepository? = null
-            get() {
-                if (field == null) {
-                    this.wikiApiRepository = WikiApiRepositoryImpl()
-                }
-                return field
-            }
+        val wikiApiRepository: WikiApiRepository by lazy {
+            Log.d(TAG_LOG,"wikiRepo")
+            WikiApiRepositoryImpl()
+        }
+
 
     }
 }

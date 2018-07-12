@@ -53,6 +53,11 @@ object Const {
     const val FRIEND_LIST = "friends"
     const val REQUEST_LIST = "requests"
 
+    //Test list types
+    const val OFFICIAL_LIST = "OFFICIAL"
+    const val USER_LIST = "USER"
+    const val MY_LIST = "MY"
+
     //Firebase constants
     const val SEP = "/"
     const val QUERY_END = "\uf8ff"

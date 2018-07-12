@@ -84,9 +84,9 @@ class ReaderListFragment : Fragment() {
     fun loadPeople() {
         when (type) {
 
-            FRIEND_LIST -> parentView!!.loadFriends(UserRepository.getCurrentId())
+            FRIEND_LIST -> parentView!!.loadFriends(UserRepository.currentId)
 
-            REQUEST_LIST -> parentView!!.loadRequests(UserRepository.getCurrentId())
+            REQUEST_LIST -> parentView!!.loadRequests(UserRepository.currentId)
 
             else -> parentView!!.loadReaders()
         }

@@ -19,6 +19,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
@@ -30,6 +31,7 @@ import com.summer.itis.summerproject.utils.Const.READER_LIST
 import com.summer.itis.summerproject.utils.Const.REQUEST_LIST
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import io.reactivex.disposables.Disposable
+import java.lang.reflect.Member
 import java.util.*
 
 
@@ -116,9 +118,9 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
                     when (currentType) {
                         READER_LIST -> presenter!!.loadReadersByQuery(query)
 
-                        FRIEND_LIST -> presenter!!.loadFriendsByQuery(query, UserRepository.getCurrentId())
+                        FRIEND_LIST -> presenter!!.loadFriendsByQuery(query, UserRepository.currentId)
 
-                        REQUEST_LIST -> presenter!!.loadRequestByQuery(query, UserRepository.getCurrentId())
+                        REQUEST_LIST -> presenter!!.loadRequestByQuery(query, UserRepository.currentId)
                     }
                     if (!finalSearchView.isIconified) {
                         finalSearchView.isIconified = true
@@ -171,7 +173,7 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
         Toast.makeText(this, error.message, Toast.LENGTH_LONG).show()
     }
 
-    override fun changeDataSet(users: List<User>) {
+    override fun changeDataSet(users: MutableList<User>) {
         adapter!!.changeDataSet(users)
     }
 

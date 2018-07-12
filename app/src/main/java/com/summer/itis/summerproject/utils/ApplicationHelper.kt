@@ -66,7 +66,7 @@ class ApplicationHelper {
                     LoginActivity.start(application)
                 } else {
                     Log.d(TAG_LOG, "try to login")
-                    val reference = RepositoryProvider.userRepository?.readUser(UserRepository.getCurrentId())
+                    val reference = RepositoryProvider.userRepository?.readUser(UserRepository.currentId)
                     reference?.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val user = dataSnapshot.getValue(User::class.java)

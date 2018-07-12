@@ -1,5 +1,8 @@
 package com.summer.itis.summerproject.model
 
+import com.google.firebase.database.IgnoreExtraProperties
+
+@IgnoreExtraProperties
 class AbstractCard {
 
     var id: String? = null
@@ -13,4 +16,6 @@ class AbstractCard {
     var description: String? = null
 
     var wikiUrl: String? = null
+
+
 }

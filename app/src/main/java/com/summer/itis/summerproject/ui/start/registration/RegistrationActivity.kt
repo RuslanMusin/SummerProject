@@ -1,24 +1,17 @@
 package com.summer.itis.summerproject.ui.start.registration
 
 import android.app.Activity
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v7.widget.AppCompatButton
-import android.util.Log
 import android.view.View
-import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 
-
-import com.google.android.gms.common.api.Status
 
 import com.google.firebase.auth.FirebaseAuth
 import com.summer.itis.summerproject.R
@@ -26,8 +19,6 @@ import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.start.login.LoginActivity
-
-import java.util.Calendar
 
 
 class RegistrationActivity : BaseActivity(), View.OnClickListener {

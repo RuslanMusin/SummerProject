@@ -22,7 +22,7 @@
         <activity android:name=".ui.member.member_item.PersonalActivity" />
         <activity android:name=".ui.member.member_list.reader.ReaderListActivity" />
         <activity android:name=".ui.tests.add_test.AddTestActivity" />
-        <activity android:name=".ui.cards.add_card_list.AddCardListListActivity" />
+        <activity android:name=".ui.cards.add_card_list.AddCardListActivity" />
         <activity android:name=".ui.cards.add_card.AddCardActivity" />
         <activity android:name=".ui.game.find.FindGameActivity" />
         <activity android:name=".ui.game.play.PlayGameActivity"></activity>

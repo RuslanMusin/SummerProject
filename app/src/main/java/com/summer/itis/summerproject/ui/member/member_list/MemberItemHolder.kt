@@ -8,7 +8,6 @@ import android.widget.TextView
 
 import com.bumptech.glide.Glide
 
-import com.google.firebase.storage.StorageReference
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.utils.ApplicationHelper
@@ -33,7 +32,7 @@ class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             if (item.photoUrl == R.drawable.ic_person_black_24dp.toString()) {
                 ImageLoadHelper.loadPictureByDrawableDefault(imageView, R.drawable.ic_person_black_24dp)
             } else {
-                //                ImageLoadHelper.loadPicture(imageView, item.getPhotoUrl());
+                //                ImageLoadHelper.loadPicture(imageView, items.getPhotoUrl());
                 val imageReference = ApplicationHelper.storageReference.child(item.photoUrl!!)
 
                 Glide.with(imageView.context)

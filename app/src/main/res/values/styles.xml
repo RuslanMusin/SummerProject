@@ -54,19 +54,19 @@
     </style>
 
   <!--  <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <items name="colorPrimary">@color/primary</items>
+        <items name="colorPrimaryDark">@color/primary_dark</items>
+        <items name="colorAccent">@color/accent</items>
 
-        <item name="android:windowBackground">@color/primary</item>
+        <items name="android:windowBackground">@color/primary</items>
 
-        <item name="colorControlNormal">@color/iron</item>
-        <item name="colorControlActivated">@color/white</item>
-        <item name="colorControlHighlight">@color/white</item>
-        <item name="android:textColorHint">@color/iron</item>
+        <items name="colorControlNormal">@color/iron</items>
+        <items name="colorControlActivated">@color/white</items>
+        <items name="colorControlHighlight">@color/white</items>
+        <items name="android:textColorHint">@color/iron</items>
 
-        <item name="colorButtonNormal">@color/primary_darker</item>
-        <item name="android:colorButtonNormal">@color/primary_darker</item>
+        <items name="colorButtonNormal">@color/primary_darker</items>
+        <items name="android:colorButtonNormal">@color/primary_darker</items>
     </style>
 -->
 </resources>
