@@ -25,6 +25,7 @@
         <activity android:name=".ui.cards.add_card_list.AddCardListActivity" />
         <activity android:name=".ui.cards.add_card.AddCardActivity" />
         <activity android:name=".ui.cards.cards_list.activity.CardsListActivity" />
+        <activity android:name=".ui.cards.cards_info.CardsActivity" />
         <activity android:name=".ui.game.find.FindGameActivity" />
         <activity android:name=".ui.game.play.PlayGameActivity"></activity>
     </application>
