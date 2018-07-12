@@ -15,6 +15,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.password
+import com.summer.itis.summerproject.R.string.username
 import com.summer.itis.summerproject.model.GameOne
 import com.summer.itis.summerproject.repository.json.OldGameRepository
 import com.summer.itis.summerproject.ui.base.BaseActivity
@@ -110,10 +112,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 gameOne.setScore(0);
                 gameOne.setQustionId("question1");
                 gameId = gameRepository.createGameOne(gameOne);*/
-                /*String username = etUsername.getText().toString();
-                String password = etPassword.getText().toString();*/
-                val username = "rust@ma.ru"
-                val password = "rustamka"
+                val username = etUsername?.getText().toString();
+                val password = etPassword?.getText().toString();
+               /* val username = "rust@ma.ru"
+                val password = "rustamka"*/
                 presenter!!.signIn(username, password)
             }
 

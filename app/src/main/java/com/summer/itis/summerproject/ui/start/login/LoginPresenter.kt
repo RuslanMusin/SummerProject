@@ -78,11 +78,11 @@ class LoginPresenter(private val logView: LoginActivity) {
         RepositoryProvider.wikiApiRepository.query("Толстой, Лев Николаевич").subscribe(this::setPages);*/
 
 //        RepositoryProvider.testRepository?.readTest("-LH8d3j8GpNDVem9pWRo")?.subscribe(this::setTest)
-        RepositoryProvider.cardRepository
+      /*  RepositoryProvider.cardRepository
                 ?.readCard("-LH9PIX0TlQ-h33CymC9")
-                ?.subscribe(this::readCard)
+                ?.subscribe(this::readCard)*/
 
-     /*   Log.d(TAG_LOG, "signIn:$email")
+        Log.d(TAG_LOG, "signIn:$email")
         if (!validateForm(email, password)) {
             return
         }
@@ -105,7 +105,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                     }
 
                     logView.hideProgressDialog()
-                }*/
+                }
     }
         fun validateForm(email: String, password: String): Boolean {
             var valid = true
