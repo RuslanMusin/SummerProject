@@ -98,7 +98,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         tiPassword = findViewById(R.id.ti_password)
 
         presenter = LoginPresenter(this)
-        enterBtn!!.performClick()
+//        enterBtn!!.performClick()
     }
 
     override fun onClick(view: View) {
