@@ -95,6 +95,6 @@ class GamesRepository {
     }
 
     fun getPlayerId(): String? {
-        return UserRepository.getCurrentId()
+        return UserRepository.currentId
     }
 }
