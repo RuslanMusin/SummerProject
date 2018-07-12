@@ -18,7 +18,7 @@ class User {
 
     var score: String? = null
 
-    private val role: String? = null
+    var role: String? = null
 
     @Exclude
     private val cards: List<Card>? = null

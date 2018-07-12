@@ -38,19 +38,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     var etUsername: EditText? = null
     var etPassword: EditText? = null
 
-    //get-set
-
     var fireAuth: FirebaseAuth? = null
 
     private var presenter: LoginPresenter? = null
 
-    private val gameId: String? = null
-
-    private val gameRepository: OldGameRepository? = null
-
-    private val gameOne: GameOne? = null
-
-    private val gameTwo: GameOne? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,23 +53,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     private fun checkUserSession() {
         fireAuth = FirebaseAuth.getInstance()
 
-        /*FirebaseUser user = fireAuth.getCurrentUser();
-        if(user != null) {
-            DatabaseReference reference = RepositoryProvider.getUserRepository().readUser(user.getUid());
-            reference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    ApplicationHelper.setCurrentUser(user);
-                    goToBookList();
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        } else {*/
         initViews()
 
     }
@@ -98,7 +72,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         tiPassword = findViewById(R.id.ti_password)
 
         presenter = LoginPresenter(this)
-//        enterBtn!!.performClick()
+        enterBtn!!.performClick()
     }
 
     override fun onClick(view: View) {
@@ -106,16 +80,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         when (view.id) {
 
             R.id.btn_enter -> {
-                /*  gameRepository = new OldGameRepository();
-                gameOne = new GameOne();
-                gameOne.setCardId("nameCard1");
-                gameOne.setScore(0);
-                gameOne.setQustionId("question1");
-                gameId = gameRepository.createGameOne(gameOne);*/
-                val username = etUsername?.getText().toString();
-                val password = etPassword?.getText().toString();
-               /* val username = "rust@ma.ru"
-                val password = "rustamka"*/
+                /*val username = etUsername?.getText().toString();
+                val password = etPassword?.getText().toString();*/
+                val username = "rust@ma.ru"
+                val password = "rustamka"
                 presenter!!.signIn(username, password)
             }
 
@@ -128,82 +96,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun goToRegistration() {
-        /*   gameTwo = new GameOne();
-        gameTwo.setCardId("nameCard2");
-        gameTwo.setScore(0);
-        gameTwo.setQustionId("question2");
-        gameTwo.setEnemyId(gameOne.getId());
-        gameRepository.createGameTwo(gameTwo,gameId,this);*/
-
-
         RegistrationActivity.start(this)
-    }
-
-    fun listen() {
-        val query = gameRepository!!.readPoint(gameId)
-        query.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val comments = ArrayList<GameOne>()
-                for (postSnapshot in dataSnapshot.children) {
-                    val point = postSnapshot.getValue(GameOne::class.java)
-                    Log.d(TAG_LOG, point!!.id)
-                    Log.d(TAG_LOG, point.qustionId)
-                    Log.d(TAG_LOG, point.cardId)
-                    Log.d(TAG_LOG, point.score.toString())
-
-                    if (point.id != gameTwo!!.id) {
-                        gameOne!!.enemyId = gameTwo.id
-                        gameRepository.setEnemy(gameOne)
-                        setQueries()
-                    }
-                    comments.add(point)
-
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG_LOG, "loadPost:onCancelled", databaseError.toException())
-            }
-        })
-
-    }
-
-    private fun setQueries() {
-        val queryOne = gameOne!!.enemyId?.let { gameRepository!!.readPoint(gameId).child(it) }
-        queryOne?.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val comments = ArrayList<GameOne>()
-                val point = dataSnapshot.getValue(GameOne::class.java)
-                Log.d(TAG_LOG, "one")
-                Log.d(TAG_LOG, point!!.id)
-                Log.d(TAG_LOG, point.qustionId)
-                Log.d(TAG_LOG, point.cardId)
-                Log.d(TAG_LOG, point.score.toString())
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG_LOG, "loadPost:onCancelled", databaseError.toException())
-            }
-        })
-
-        val queryTwo = gameOne.enemyId?.let { gameRepository?.readPoint(gameId)?.child(it) }
-        queryTwo?.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val comments = ArrayList<GameOne>()
-                val point = dataSnapshot.getValue(GameOne::class.java)
-                Log.d(TAG_LOG, "two")
-                Log.d(TAG_LOG, point!!.id)
-                Log.d(TAG_LOG, point.qustionId)
-                Log.d(TAG_LOG, point.cardId)
-                Log.d(TAG_LOG, point.score.toString())
-
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG_LOG, "loadPost:onCancelled", databaseError.toException())
-            }
-        })
     }
 
     fun showError() {

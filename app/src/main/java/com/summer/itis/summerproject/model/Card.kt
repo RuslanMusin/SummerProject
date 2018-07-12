@@ -23,6 +23,8 @@ class Card {
 
     var strength: Int? = null
 
+    var type: String? = null
+
     @Exclude
     var abstractCard: AbstractCard? = AbstractCard()
 

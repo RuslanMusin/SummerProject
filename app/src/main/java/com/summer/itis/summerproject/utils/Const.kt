@@ -69,6 +69,14 @@ object Const {
     const val TEST_ONE_TYPE = "test_one_type"
     const val TEST_MANY_TYPE = "test_many_type"
 
+    //GameType
+    const val OFFICIAL_TYPE = "official_type"
+    const val USER_TYPE = "user_type"
+
+    //UserType
+    const val ADMIN_ROLE = "admin_role"
+    const val USER_ROLE = "user_role"
+
     //image path
     const val IMAGE_START_PATH = "images/users/"
     const val STUB_PATH = "stub"

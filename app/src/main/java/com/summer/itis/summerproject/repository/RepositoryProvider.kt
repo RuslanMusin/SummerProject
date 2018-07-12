@@ -46,6 +46,10 @@ class RepositoryProvider {
             GamesRepository()
         }
 
+        val abstractCardRepository: AbstractCardRepository by lazy {
+            AbstractCardRepository()
+        }
+
         val wikiApiRepository: WikiApiRepository by lazy {
             Log.d(TAG_LOG,"wikiRepo")
             WikiApiRepositoryImpl()

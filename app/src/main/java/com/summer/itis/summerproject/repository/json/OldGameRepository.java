@@ -64,8 +64,6 @@ public class OldGameRepository {
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put(TABLE_NAME + SEP + gameId + SEP + crossing.getId(), pointValues);
         databaseReference.getRoot().updateChildren(childUpdates);
-
-        loginActivity.listen();
     }
 
     public String createGameOne(GameOne crossing) {
