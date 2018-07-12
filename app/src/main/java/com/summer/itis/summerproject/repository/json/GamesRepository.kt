@@ -84,14 +84,13 @@ class GamesRepository {
         nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondOnline).onDisconnect().setValue(false)
     }
 
-    //    fun cancelSearchGame(onCanceled: () -> (Unit)) {
-    fun cancelSearchGame() {
+    fun cancelSearchGame(onCanceled: () -> (Unit)) {
+//    fun cancelSearchGame() {
         nowLobbyDbRef!!.child(Lobby.PARAM_playerFirstOnline).onDisconnect().cancel()
 
-        nowSearchingDbRef!!.removeValue()
+        nowSearchingDbRef!!.removeValue().addOnSuccessListener { onCanceled() }
         nowLobbyDbRef!!.removeValue()
 
-//        onCanceled()
     }
 
     fun getPlayerId(): String? {
