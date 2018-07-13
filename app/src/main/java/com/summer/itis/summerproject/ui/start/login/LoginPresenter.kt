@@ -176,7 +176,20 @@ class LoginPresenter(private val logView: LoginActivity) {
                             Log.d(TAG_LOG, "after second finish")
                             cardRepository?.addCardAfterGame(r.id!!, it.id!!, userTwo.id!!)?.subscribe { m ->
                                 Log.d(TAG_LOG, "after game")
-                                findMyTests()
+                                separate()
+                                cardRepository!!.readCard("-LHGEGXTiGMR1jrQJE2h").subscribe { l ->
+                                    Log.d(TAG_LOG, "after second readCard")
+                                    val test3: Test = l.test
+                                    test3.card = l
+                                    val userThree: User = User()
+                                    userThree.id = "AnH9HJjuEmNx6z6H7MK1Aq695FQ2"
+                                    testRepository!!.finishTest(test3, userThree).subscribe { y ->
+                                        Log.d(TAG_LOG, "after second finish")
+                                        separate()
+                                        findMyTests()
+                                    }
+
+                                }
                             }
 
                         }
@@ -186,7 +199,13 @@ class LoginPresenter(private val logView: LoginActivity) {
                 }
             }
         }
+//        findMyTests()
 
+
+    }
+
+    fun separate() {
+        Log.d(TAG_LOG,"\n------------------\n")
     }
 
     fun findMyTests() {
@@ -195,8 +214,9 @@ class LoginPresenter(private val logView: LoginActivity) {
                 Log.d(TAG_LOG, "myTests")
                 for (test in e) {
                     Log.d(TAG_LOG, "author = " + test.authorName)
-                    Log.d(TAG_LOG, "test title" + test.title)
+                    Log.d(TAG_LOG, "test title = " + test.title)
                 }
+                separate()
                 this.findTestsByType()
 
             }
@@ -204,16 +224,16 @@ class LoginPresenter(private val logView: LoginActivity) {
     }
 
     fun findTestsByType() {
-        ApplicationHelper.currentUser?.id?.let {
-            testRepository?.findTestsByType(it, OFFICIAL_TYPE)?.subscribe { e ->
+            testRepository?.findTestsByType("AnH9HJjuEmNx6z6H7MK1Aq695FQ2", OFFICIAL_TYPE)?.subscribe { e ->
                 Log.d(TAG_LOG, "official_tests")
                 for (test in e) {
                     Log.d(TAG_LOG, "author = " + test.authorName)
-                    Log.d(TAG_LOG, "test title" + test.title)
+                    Log.d(TAG_LOG, "test title = " + test.title)
                 }
+                separate()
                 this.findOfficialMyCards()
             }
-        }
+
     }
 
     fun findOfficialMyCards() {
@@ -221,9 +241,10 @@ class LoginPresenter(private val logView: LoginActivity) {
             cardRepository?.findOfficialMyCards(it)?.subscribe { e ->
                 Log.d(TAG_LOG, "official_cards")
                 for (card in e) {
-                    Log.d(TAG_LOG, "card intelligence = " + card.intelligence)
-                    Log.d(TAG_LOG, "card tyoe" + card.type)
+                    Log.d(TAG_LOG, "card id = " + card.id)
+                    Log.d(TAG_LOG, "card type = " + card.type)
                 }
+                separate()
                 this.findMyCards()
             }
         }
@@ -235,9 +256,10 @@ class LoginPresenter(private val logView: LoginActivity) {
             cardRepository?.findMyCards(it)?.subscribe { e ->
                 Log.d(TAG_LOG, "user_cards")
                 for (card in e) {
-                    Log.d(TAG_LOG, "card intelligence = " + card.intelligence)
-                    Log.d(TAG_LOG, "card tyoe" + card.type)
+                    Log.d(TAG_LOG, "card id = " + card.id)
+                    Log.d(TAG_LOG, "card type = " + card.type)
                 }
+                separate()
                 this.findDefaultAbstractCardStates()
             }
         }
@@ -247,23 +269,24 @@ class LoginPresenter(private val logView: LoginActivity) {
         cardRepository?.findDefaultAbstractCardStates("-LHEWO92FO6szrtwuU4-")?.subscribe { e ->
             Log.d(TAG_LOG, "default_card_states")
             for (card in e) {
-                Log.d(TAG_LOG, "card intelligence = " + card.intelligence)
-                Log.d(TAG_LOG, "card tyoe" + card.type)
+                Log.d(TAG_LOG, "card id = " + card.id)
+                Log.d(TAG_LOG, "card type = " + card.type)
             }
+            separate()
             this.findMyAbstractCardStates()
         }
-
     }
 
     fun findMyAbstractCardStates() {
         ApplicationHelper.currentUser?.id?.let {
-            cardRepository?.findMyAbstractCardStates("-LHEWO92FO6szrtwuU4-", it)?.subscribe { e ->
+            cardRepository?.findMyAbstractCardStates("-LHEW5Yke-A-EtXQDqbG", it)?.subscribe { e ->
             Log.d(TAG_LOG, "my_card_states")
             for (card in e) {
-                Log.d(TAG_LOG, "card intelligence = " + card.intelligence)
-                Log.d(TAG_LOG, "card tyoe" + card.type)
+                Log.d(TAG_LOG, "card id = " + card.id)
+                Log.d(TAG_LOG, "card type = " + card.type)
             }
-            this.findDefaultAbstractCardTests()
+                separate()
+                this.findDefaultAbstractCardTests()
         }
         }
     }
@@ -273,8 +296,9 @@ class LoginPresenter(private val logView: LoginActivity) {
             Log.d(TAG_LOG, "default_card_tests")
             for (test in e) {
                 Log.d(TAG_LOG, "test title = " + test.title)
-                Log.d(TAG_LOG, "test type" + test.type)
+                Log.d(TAG_LOG, "test type = " + test.type)
             }
+            separate()
             this.findMyAbstractCardTests()
         }
 
@@ -288,6 +312,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                 Log.d(TAG_LOG, "test title = " + test.title)
                 Log.d(TAG_LOG, "test type" + test.type)
             }
+            separate()
             this.findDefaultAbstractCards()
         }
         }
@@ -301,6 +326,8 @@ class LoginPresenter(private val logView: LoginActivity) {
                     Log.d(TAG_LOG, "card name = " + card.name)
                     Log.d(TAG_LOG, "card wiki" + card.wikiUrl)
                 }
+                separate()
+
                 this.findMyAbstractCards()
             }
         }
@@ -315,6 +342,8 @@ class LoginPresenter(private val logView: LoginActivity) {
                     Log.d(TAG_LOG, "card name = " + card.name)
                     Log.d(TAG_LOG, "card wiki" + card.wikiUrl)
                 }
+                separate()
+
             }
         }
 

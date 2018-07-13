@@ -8,7 +8,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.gson.Gson
 import com.summer.itis.summerproject.model.User
-import com.summer.itis.summerproject.model.db_dop_models.UserRelation
+import com.summer.itis.summerproject.model.db_dop_models.Relation
 import com.summer.itis.summerproject.repository.json.UserRepository
 
 import com.summer.itis.summerproject.utils.Const.ADD_REQUEST
@@ -28,7 +28,7 @@ class PersonalPresenter(private val testActivity: PersonalActivity) {
                 val listener = object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            val userRelation = dataSnapshot.getValue(UserRelation::class.java)
+                            val userRelation = dataSnapshot.getValue(Relation::class.java)
                             testActivity.type = userRelation!!.relation
                         } else {
                             testActivity.type = ADD_REQUEST

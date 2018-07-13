@@ -5,15 +5,22 @@ import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.db_dop_models.ElementId
+import com.summer.itis.summerproject.model.db_dop_models.Relation
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.abstractCardRepository
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.AFTER_TEST
+import com.summer.itis.summerproject.utils.Const.BEFORE_TEST
+import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 import com.summer.itis.summerproject.utils.Const.OFFICIAL_TYPE
+import com.summer.itis.summerproject.utils.Const.SEP
+import com.summer.itis.summerproject.utils.Const.WIN_GAME
 import com.summer.itis.summerproject.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class CardRepository {
 
@@ -21,6 +28,9 @@ class CardRepository {
 
     val TABLE_NAME = "test_cards"
     val USERS_CARDS = "users_cards"
+    val USERS_TESTS = "users_tests"
+    val USERS_ABSTRACT_CARDS = "users_abstract_cards"
+
 
     private val FIELD_ID = "id"
     private val FIELD_CARD_ID = "cardId"
@@ -56,9 +66,9 @@ class CardRepository {
         return result
     }
 
-    fun toMapId(cardId: String?): Map<String, Any?> {
+    fun toMapId( value: String?): Map<String, Any?> {
         val result = HashMap<String, Any?>()
-        result[FIELD_ID] = cardId
+        result[FIELD_ID] = value
         return result
     }
 
@@ -72,33 +82,66 @@ class CardRepository {
     }
 
     fun addCardAfterGame(cardId: String , winnerId: String, loserId: String): Single<Boolean> {
-        val single : Single<Boolean> = Single.create { e ->
+        val single: Single<Boolean> = Single.create { e ->
             val childUpdates = HashMap<String, Any>()
-            val addCardValues = toMapId(cardId)
-            childUpdates[USERS_CARDS + Const.SEP + winnerId] = addCardValues
-            val removeCardValues = toMapId(null)
-            childUpdates[USERS_CARDS + Const.SEP + loserId] = removeCardValues
-
             this.readCard(cardId)
-                    .subscribe{card ->
-                        card.cardId?.let {
-                            this.findMyAbstractCardStates(it,winnerId)
-                                    .subscribe{winnerCards ->
-                                        if(winnerCards.size == 0) {
-                                            val addAbstractCardValues = abstractCardRepository.toMapId(it)
-                                            childUpdates[USERS_CARDS + Const.SEP + winnerId] = addAbstractCardValues
-                                        }
-                                        this.findMyAbstractCardStates(it,loserId)
-                                            .subscribe{loserCards ->
-                                                if(winnerCards.size == 1) {
-                                                    val removeAbstractCardValues = abstractCardRepository.toMapId(null)
-                                                    childUpdates[USERS_CARDS + Const.SEP + loserId] = removeAbstractCardValues
-                                                }
-                                                databaseReference.root.updateChildren(childUpdates)
-                                                e.onSuccess(true)
-                                            }
+                    .subscribe { card ->
+                        val test: Test? = card?.test
+                        test?.id?.let {
+                            testRepository.changeStatus(it, winnerId, WIN_GAME).subscribe { relationWinner ->
+                                if (LOSE_GAME.equals(relationWinner.relBefore) || BEFORE_TEST.equals(relationWinner.relBefore)) {
+                                    var addTestValues: Map<String, Any?> = HashMap()
+                                    if (LOSE_GAME.equals(relationWinner.relBefore)) {
+                                        addTestValues = testRepository.toMap(test?.id, AFTER_TEST)
                                     }
+                                    if (BEFORE_TEST.equals(relationWinner.relBefore)) {
+                                        addTestValues = testRepository.toMap(test?.id, WIN_GAME)
+
+                                    }
+                                    val addCardValues = toMapId(cardId)
+                                    childUpdates[USERS_CARDS + Const.SEP + winnerId + SEP + cardId] = addCardValues
+                                    childUpdates[USERS_TESTS + Const.SEP + winnerId + SEP + test.id] = addTestValues
+                                }
+                                testRepository.changeStatus(it, loserId, LOSE_GAME).subscribe { relationLoser ->
+                                    if (WIN_GAME.equals(relationLoser.relBefore) || AFTER_TEST.equals(relationLoser.relBefore)) {
+                                        var removeTestValues: Map<String, Any?> = HashMap()
+                                        if (WIN_GAME.equals(relationLoser.relBefore)) {
+                                            removeTestValues = testRepository.toMap(null, null)
+                                        }
+                                        if (AFTER_TEST.equals(relationLoser.relBefore)) {
+                                            removeTestValues = testRepository.toMap(test.id, LOSE_GAME)
+                                        }
+                                        val removeCardValues = toMapId(null)
+                                        childUpdates[USERS_CARDS + Const.SEP + loserId + SEP + cardId] = removeCardValues
+                                        childUpdates[USERS_TESTS + Const.SEP + loserId + SEP + test.id] = removeTestValues
+                                    }
+
+                                    card.cardId!!.let {
+                                        if (LOSE_GAME.equals(relationWinner.relBefore) || BEFORE_TEST.equals(relationWinner.relBefore)) {
+                                            this.findMyAbstractCardStates(it, winnerId)
+                                                    .subscribe { winnerCards ->
+                                                        if (winnerCards.size == 0) {
+                                                            val addAbstractCardValues = abstractCardRepository.toMapId(it)
+                                                            childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + winnerId + SEP + it] = addAbstractCardValues
+                                                        }
+                                                        this.findMyAbstractCardStates(it, loserId)
+                                                                .subscribe { loserCards ->
+                                                                    if (loserCards.size == 1) {
+                                                                        val removeAbstractCardValues = abstractCardRepository.toMapId(null)
+                                                                        childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + loserId + SEP + it] = removeAbstractCardValues
+                                                                    }
+                                                                    databaseReference.root.updateChildren(childUpdates)
+                                                                    e.onSuccess(true)
+                                                                }
+                                                    }
+                                        }
+                                    }
+
+                                }
+                            }
+
                         }
+
 
                     }
         }
@@ -164,7 +207,7 @@ class CardRepository {
 
     fun findMyCards(userId: String): Single<List<Card>> {
         return Single.create { e ->
-            val query: Query = databaseReference.root.child(USERS_CARDS).orderByValue().equalTo(userId)
+            val query: Query = databaseReference.root.child(USERS_CARDS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
 
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -210,7 +253,7 @@ class CardRepository {
 
     fun findMyAbstractCardStates(abstractCardId: String, userId: String): Single<List<Card>> {
         val single: Single<List<Card>> = Single.create { e ->
-            var query: Query = databaseReference.root.child(USERS_CARDS).orderByValue().equalTo(userId)
+            var query: Query = databaseReference.root.child(USERS_CARDS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val elementIds:MutableList<String> = ArrayList()
@@ -273,13 +316,17 @@ class CardRepository {
 
     fun findMyAbstractCardTests(abstractCardId: String, userId: String): Single<List<Test>> {
         val single: Single<List<Test>> = Single.create { e ->
-            var query: Query = databaseReference.root.child(USERS_CARDS).orderByValue().equalTo(userId)
+            var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val elementIds:MutableList<String> = ArrayList()
-                    for(snapshot in dataSnapshot.children) {
-                        val elementId = snapshot.getValue(ElementId::class.java)
-                        elementId?.let { elementIds.add(it.id) }
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(Relation::class.java)
+                        elementId?.let {
+                            if (AFTER_TEST.equals(elementId.relation) || WIN_GAME.equals(elementId.relation)) {
+                                elementIds.add(it.id)
+                            }
+                        }
                     }
                     query = databaseReference.orderByChild(FIELD_CARD_ID).equalTo(abstractCardId)
                     query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -287,7 +334,13 @@ class CardRepository {
                                 val cards: MutableList<String> = ArrayList()
                                 for(snapshot in dataSnapshot.children) {
                                     val card = snapshot.getValue(Card::class.java)
-                                    card?.let { it.testId?.let { it1 -> cards.add(it1) } }
+                                    card?.let {
+                                        it.testId?.let { it1 ->
+                                            if (elementIds.contains(it1)) {
+                                                cards.add(it1)
+                                            }
+                                        }
+                                    }
                                 }
                                 val list: Single<List<Test>> = Observable.fromIterable(cards).flatMap {
                                     testRepository?.readTest(it)?.toObservable()
@@ -310,43 +363,4 @@ class CardRepository {
         }
         return single.compose(RxUtils.asyncSingle())
     }
-
-
-    /*public void createPoint(BookCrossing crossing, Point point) {
-        String pointKey = getKey(crossing.getId());
-        Map<String, Object> pointValues = toMap(point);
-
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(TABLE_NAME + SEP + crossing.getId() + SEP + pointKey, pointValues);
-        databaseReference.getRoot().updateChildren(childUpdates);
-    }
-
-    public DatabaseReference readPoint(String pointId) {
-        return databaseReference.child(pointId);
-    }
-
-    public void deletePoint(String pointId){
-        databaseReference.child(pointId).removeValue();
-    }
-
-    public void updateUser(Point point){
-        Map<String, Object> updatedValues = new HashMap<>();
-        databaseReference.child(point.getId()).updateChildren(updatedValues);
-    }
-
-    public DatabaseReference getPoints() {
-        return databaseReference.getRoot();
-    }
-
-    public Single<Query> loadPoints(String crossingId){
-        return Single.just(databaseReference.child(crossingId));
-
-    }
-
-    public Single<Query> findPoint(String crossingId, String userId){
-        DatabaseReference reference = databaseReference.child(crossingId);
-        Query query = reference.orderByChild(FIELD_EDITOR).equalTo(userId);
-        return Single.just(query);
-
-    }*/
 }

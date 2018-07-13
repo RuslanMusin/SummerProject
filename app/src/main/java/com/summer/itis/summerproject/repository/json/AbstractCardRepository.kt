@@ -50,10 +50,10 @@ class AbstractCardRepository {
         return result
     }
 
-    fun toMapId(cardId: String?): Map<String, Any?>  {
+    fun toMapId(value: String?): Map<String, Any?>  {
         val result = HashMap<String, Any?>()
 
-        result[FIELD_ID] = cardId
+        result[FIELD_ID] = value
 
         return result
     }
@@ -153,7 +153,7 @@ class AbstractCardRepository {
     }
 
     fun findDefaultAbstractCards(userId: String): Single<List<AbstractCard>> {
-        var query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).orderByValue().equalTo(userId)
+        var query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
         val single: Single<List<AbstractCard>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -191,7 +191,7 @@ class AbstractCardRepository {
 
     fun findMyAbstractCards(userId: String): Single<List<AbstractCard>> {
         val single: Single<List<AbstractCard>> = Single.create { e ->
-            val query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).orderByValue().equalTo(userId)
+            val query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     val elementIds: MutableList<String> = ArrayList()
