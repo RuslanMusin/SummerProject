@@ -33,15 +33,6 @@
             android:layout_marginBottom="24dp"
             />
 
-        <android.support.v7.widget.SearchView
-            android:id="@+id/search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:queryHint="Искать личность"
-            app:iconifiedByDefault="false" />
-
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +55,7 @@
                     android:id="@+id/seekBarIntelligence"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:progress="20"
+                    android:progress="10"
                     android:layout_weight="15"
                     android:max="50" />
                 <TextView
@@ -72,7 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="5"/>
+                    android:text="@string/default_parametr_value"/>
 
             </LinearLayout>
 
@@ -100,7 +91,7 @@
                     android:id="@+id/seekBarStrength"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:progress="20"
+                    android:progress="10"
                     android:layout_weight="15"
                     android:max="50" />
                 <TextView
@@ -108,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="5"/>
+                    android:text="@string/default_parametr_value"/>
 
             </LinearLayout>
 
@@ -136,7 +127,7 @@
                     android:id="@+id/seekBarHp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:progress="20"
+                    android:progress="10"
                     android:layout_weight="15"
                     android:max="50" />
                 <TextView
@@ -144,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="5"/>
+                    android:text="@string/default_parametr_value"/>
 
             </LinearLayout>
 
@@ -172,7 +163,7 @@
                     android:id="@+id/seekBarSupport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:progress="20"
+                    android:progress="10"
                     android:layout_weight="15"
                     android:max="50" />
                 <TextView
@@ -180,7 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="5"/>
+                    android:text="@string/default_parametr_value"/>
 
             </LinearLayout>
 
@@ -208,7 +199,7 @@
                     android:id="@+id/seekBarPrestige"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:progress="20"
+                    android:progress="10"
                     android:layout_weight="15"
                     android:max="50" />
                 <TextView
@@ -216,7 +207,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="5"/>
+                    android:text="@string/default_parametr_value"/>
 
             </LinearLayout>
 

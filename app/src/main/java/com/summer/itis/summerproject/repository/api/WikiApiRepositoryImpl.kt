@@ -27,7 +27,7 @@ class WikiApiRepositoryImpl : WikiApiRepository {
 
     override fun opensearch(query: String): Single<List<Item>> {
         return ApiFactory.wikiService
-                .opensearch(FORMAT, ACTION_SEARCH, "Лев Толстой", NAMESPACE)
+                .opensearch(FORMAT, ACTION_SEARCH, query, NAMESPACE)
                 .map<Section>(SearchSuggestion::section)
                 .map<List<Item>>(Section::items)
                 .compose(RxUtils.asyncSingle())

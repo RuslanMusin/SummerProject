@@ -10,40 +10,29 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 class RepositoryProvider {
 
     companion object {
-        var userRepository: UserRepository? = null
-            get() {
-                if (field == null) {
-                    this.userRepository = UserRepository()
-                }
-                return field
-            }
+        val testRepository: TestRepository by lazy {
+            TestRepository()
+        }
 
-        var testRepository: TestRepository? = null
-            get() {
-                if (field == null) {
-                    this.testRepository = TestRepository()
-                }
-                return field
-            }
+        val testCommentRepository: TestCommentRepository by lazy {
+            TestCommentRepository()
+        }
 
-        var cardRepository: CardRepository? = null
-            get() {
-                if (field == null) {
-                    this.cardRepository = CardRepository()
-                }
-                return field
-            }
+        val cardRepository: CardRepository by lazy {
+            CardRepository()
+        }
 
-        var questionRepository: QuestionRepository? = null
-            get() {
-                if (field == null) {
-                    this.questionRepository = QuestionRepository()
-                }
-                return field
-            }
+        val userRepository: UserRepository by lazy {
+            UserRepository()
+        }
+
 
         val gamesRepository: GamesRepository by lazy {
             GamesRepository()
+        }
+
+        val abstractCardRepository: AbstractCardRepository by lazy {
+            AbstractCardRepository()
         }
 
         val wikiApiRepository: WikiApiRepository by lazy {
