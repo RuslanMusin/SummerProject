@@ -2,12 +2,12 @@ package com.summer.itis.summerproject.repository.json
 
 import com.google.firebase.database.*
 import com.summer.itis.summerproject.model.game.Lobby
+import com.summer.itis.summerproject.model.game.LobbyPlayerData
 
-//Чет это уже не репозиторий, кажется
 class GamesRepository {
     val allDbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
 
-    val TABLE_GAMES = "games_v2"
+    val TABLE_GAMES = "games_v3"
     val gamesDbRef: DatabaseReference = allDbRef.child(TABLE_GAMES)
 
     val TABLE_SEARCHING = "searching"
@@ -20,7 +20,8 @@ class GamesRepository {
 
     var nowSearchingDbRef: DatabaseReference? = null
 
-    //var onFind: (() -> Unit)? =null
+    var currentPlayerLobbyDbRef: DatabaseReference? = null
+    var enemyPlayerLobbyDbRef: DatabaseReference? = null
 
     fun startSearchGame(onFind: () -> (Unit)) {
         searchingDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -49,18 +50,21 @@ class GamesRepository {
     //onChildAdded
 
     private fun createLobby(onFind: () -> (Unit)) {
-        var lobby = Lobby(getPlayerId(), "", true, false)
+        val lobbyPlayerData = LobbyPlayerData(getPlayerId()!!, true, null, null, null)
+        val lobby = Lobby(lobbyPlayerData, null)
 
         nowLobbyDbRef = lobbiesDbRef.push()
         nowLobbyDbRef!!.setValue(lobby)
 
-//        var nowSearchingDbRef = searchingDbRef.push()
         nowSearchingDbRef = searchingDbRef.child(nowLobbyDbRef!!.key!!)
         nowSearchingDbRef!!.setValue(nowLobbyDbRef!!.key)
 
         nowSearchingDbRef!!.onDisconnect().removeValue()
 
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondId).addValueEventListener(object : ValueEventListener {
+        currentPlayerLobbyDbRef = nowLobbyDbRef!!.child(Lobby.PARAM_creator)
+        enemyPlayerLobbyDbRef = nowLobbyDbRef!!.child(Lobby.PARAM_invited)
+
+        enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_playerId).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
@@ -70,30 +74,73 @@ class GamesRepository {
                     onFind()
                 }
             }
+
         })
 
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerFirstOnline).onDisconnect().setValue(false)
+        currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
+        //TODO remove lobby on disconnect?
     }
 
     private fun goToLobby(lobbyId: String) {
         nowLobbyDbRef = lobbiesDbRef.child(lobbyId)
 
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondId).setValue(getPlayerId())
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondOnline).setValue(true)
+        enemyPlayerLobbyDbRef = nowLobbyDbRef!!.child(Lobby.PARAM_creator)
+        currentPlayerLobbyDbRef = nowLobbyDbRef!!.child(Lobby.PARAM_invited)
 
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerSecondOnline).onDisconnect().setValue(false)
+        val lobbyPlayerData = LobbyPlayerData(getPlayerId()!!, true, null, null, null)
+        currentPlayerLobbyDbRef!!.setValue(lobbyPlayerData)
+
+        currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
     }
 
     fun cancelSearchGame(onCanceled: () -> (Unit)) {
-//    fun cancelSearchGame() {
-        nowLobbyDbRef!!.child(Lobby.PARAM_playerFirstOnline).onDisconnect().cancel()
+        currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().cancel()
+        //TODO for parent ?
 
         nowSearchingDbRef!!.removeValue().addOnSuccessListener { onCanceled() }
         nowLobbyDbRef!!.removeValue()
-
     }
 
     fun getPlayerId(): String? {
         return UserRepository.currentId
     }
+
+//    public class InGameCallbacks(
+//            val onYouWin: () -> Unit,
+//            val onEnemyWin: () -> Unit,
+//            val onEnemyDisconnectedAndYouWin: () -> Unit,
+//            val onYouDisconnectedAndLose: () -> Unit,
+//
+//            val onEnemyCardChoosen: () -> Unit,
+//            val onEnemyAnswered: () -> Unit
+//    )
+
+    var callbacks: InGameCallbacks? = null
+
+    interface InGameCallbacks {
+        fun onYouWin(cardId: String)
+        fun onEnemyWin(cardId: String)
+        fun onEnemyDisconnectedAndYouWin(cardId: String)
+        fun onYouDisconnectedAndLose(cardId: String)//лучше Card,
+        // т.к. без соединения не узнать название по Id ?
+        fun onEnemyCardChoosen(cardId: String, questionId: String)
+
+        fun onEnemyAnswered(correct: Boolean)
+    }
+
+    fun startGame(callbacks: InGameCallbacks) {
+
+        TODO()
+        //select onLoseCard
+
+    }
+
+    fun chooseNextCard(id: String) {
+        TODO()
+    }
+
+    fun answerOnLastQuestion(correct: Boolean) {
+        TODO()
+    }
+
 }

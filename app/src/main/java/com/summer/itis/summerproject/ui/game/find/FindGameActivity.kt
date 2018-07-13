@@ -12,6 +12,10 @@ import com.summer.itis.summerproject.ui.game.play.PlayGameActivity
 import kotlinx.android.synthetic.main.layout_find_game.*
 
 class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
+
+    @InjectPresenter
+    lateinit var presenter: FindGamePresenter
+
     override fun getContentLayout(): Int {
         return R.layout.activity_find_game
     }
@@ -20,12 +24,8 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
         PlayGameActivity.start(this)
     }
 
-    @InjectPresenter
-    lateinit var presenter: FindGamePresenter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_find_game)
 
         showNotSearching();
 
@@ -49,8 +49,6 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
         layout_searching.visibility = View.VISIBLE
         btn_find_game.visibility = View.GONE
 
-        //TODO disable navigation
-//        toolbar.visibility = View.GONE
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }
 

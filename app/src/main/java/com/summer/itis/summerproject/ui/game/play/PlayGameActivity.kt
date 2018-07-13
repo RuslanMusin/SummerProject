@@ -3,10 +3,14 @@ package com.summer.itis.summerproject.ui.game.play
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import com.arellomobile.mvp.MvpAppCompatActivity
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
 
-class PlayGameActivity : AppCompatActivity() {
+class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
+
+    @InjectPresenter
+    lateinit var presenter: PlayGamePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
