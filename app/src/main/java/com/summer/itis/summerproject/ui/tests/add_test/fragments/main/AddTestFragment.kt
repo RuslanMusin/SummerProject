@@ -31,10 +31,8 @@ class AddTestFragment : Fragment(), View.OnClickListener {
 
     private var tiTestName: TextInputLayout? = null
     private var tiTestDesc: TextInputLayout? = null
-    private var liAddPhoto: LinearLayout? = null
     private var btnAddCard: Button? = null
     private var tvAddedCards: TextView? = null
-    private val tvAddPhoto: TextView? = null
     private var btnCreateQuestions: Button? = null
 
     private var etTestName: EditText? = null
@@ -64,14 +62,12 @@ class AddTestFragment : Fragment(), View.OnClickListener {
         etTestName = view.findViewById(R.id.et_test_name)
         tiTestName = view.findViewById(R.id.ti_test_name)
         tiTestDesc = view.findViewById(R.id.ti_test_desc)
-        liAddPhoto = view.findViewById(R.id.li_add_photo)
         btnAddCard = view.findViewById(R.id.btn_add_card)
         btnCreateQuestions = view.findViewById(R.id.btn_create_questions)
         tvAddedCards = view.findViewById(R.id.tv_added_cards)
     }
 
     private fun setListeners() {
-        liAddPhoto!!.setOnClickListener(this)
         btnCreateQuestions!!.setOnClickListener(this)
         btnAddCard!!.setOnClickListener(this)
     }
@@ -80,10 +76,6 @@ class AddTestFragment : Fragment(), View.OnClickListener {
         when (v.id) {
 
             R.id.btn_create_questions -> {
-
-
-                //                test.setPhotoUrl(imageUri.getPath());
-
                 test!!.title = etTestName!!.text.toString()
                 test!!.desc = etTestDesc!!.text.toString()
 
@@ -100,18 +92,7 @@ class AddTestFragment : Fragment(), View.OnClickListener {
                 val intent = Intent(activity, AddCardListActivity::class.java)
                 startActivityForResult(intent, ADD_CARD)
             }
-
-            R.id.li_add_photo -> {
-            }
-        }//                addPhoto();
-    }
-
-    private fun addPhoto() {
-        val photoPickerIntent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        photoPickerIntent.addCategory(Intent.CATEGORY_OPENABLE)
-        photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG)
-        tvAddPhoto!!.setText(R.string.photo_uploaded)
+        }
     }
 
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {

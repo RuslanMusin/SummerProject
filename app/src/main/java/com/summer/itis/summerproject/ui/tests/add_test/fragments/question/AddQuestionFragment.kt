@@ -47,10 +47,15 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
     private var answers: MutableList<Answer>? = null
 
     private var editTexts: MutableList<EditText>? = null
-    private var checkBoxes: List<CheckBox>? = null
+    private var checkBoxes: MutableList<CheckBox>? = null
     private var radioButtons: MutableList<RadioButton>? = null
 
     private var testType: String? = null
+
+    private lateinit var liParams: LinearLayout.LayoutParams
+    private lateinit var tiParams: LinearLayout.LayoutParams
+    private lateinit var etParams: LinearLayout.LayoutParams
+    private lateinit var rbParams: LinearLayout.LayoutParams
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -88,48 +93,29 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setStartAnswers() {
-        val radioGroup = RadioGroup(activity)
+        /*val radioGroup = RadioGroup(activity)
         val rgParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        radioGroup.layoutParams = rgParams
+        radioGroup.layoutParams = rgParams*/
 
-
-        val liParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        liParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         liParams.setMargins(0, 8, 0, 8)
 
-        val tiParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        tiParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        tiParams.weight = 20f
+
+        etParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
 
-        val etParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        rbParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        rbParams.weight = 1f
+        rbParams.topMargin = 16
+        rbParams.bottomMargin = 4
 
-
-        val rbParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
         for (i in 0..2) {
-            val liRadio = LinearLayout(activity)
-            liRadio.orientation = LinearLayout.HORIZONTAL
-            liRadio.layoutParams = liParams
+           addAnswer()
 
-            val textInputLayout = TextInputLayout(activity!!)
-            textInputLayout.weightSum = 20f
-            textInputLayout.layoutParams = tiParams
-
-            val editText = EditText(activity)
-            editText.layoutParams = etParams
-
-            val radioButton = RadioButton(activity)
-            radioButton.layoutParams = rbParams
-
-            textInputLayout.addView(editText)
-            liRadio.addView(textInputLayout)
-            liRadio.addView(radioButton)
-
-            radioGroup.addView(liRadio)
-
-            radioButtons!!.add(radioButton)
-            editTexts!!.add(editText)
         }
-
-        liAnswers!!.addView(radioGroup)
     }
 
 
@@ -196,11 +182,8 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
 
             R.id.btn_add_answer -> {
 
-                val editText = EditText(this.activity)
-                val leftMarginParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-                leftMarginParams.setMargins(10, 10, 10, 10)
-                liAnswers!!.addView(editText)
+                addAnswer()
+
             }
 
 
@@ -209,20 +192,45 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
         }//                addPhoto();
     }
 
+    private fun addAnswer() {
+        val liRadio = LinearLayout(activity)
+        liRadio.orientation = LinearLayout.HORIZONTAL
+        liRadio.layoutParams = liParams
+
+        val textInputLayout = TextInputLayout(activity)
+        textInputLayout.layoutParams = tiParams
+
+        val editText = EditText(activity)
+        editText.layoutParams = etParams
+
+        val radioButton = CheckBox(activity)
+        radioButton.layoutParams = rbParams
+
+        textInputLayout.addView(editText)
+        liRadio.addView(textInputLayout)
+        liRadio.addView(radioButton)
+
+
+        checkBoxes?.add(radioButton)
+        editTexts!!.add(editText)
+
+        liAnswers?.addView(liRadio)
+    }
+
 
     private fun prepareQuestion() {
 
         answers = ArrayList()
-        for (i in radioButtons!!.indices) {
+        for (i in checkBoxes!!.indices) {
             val answer = Answer()
             answer.text = editTexts!![i].text.toString()
-            if (radioButtons!![i].isChecked) {
+            if (checkBoxes!![i].isChecked) {
                 answer.isRight = true
             }
             answers!!.add(answer)
         }
 
-        radioButtons!!.clear()
+        checkBoxes!!.clear()
         editTexts!!.clear()
 
         question!!.question = etQuestion!!.text.toString()

@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
 import com.google.firebase.database.IgnoreExtraProperties
+import com.google.gson.annotations.Expose
 
 @IgnoreExtraProperties
 class AbstractCard() : Parcelable{
@@ -51,4 +52,7 @@ class AbstractCard() : Parcelable{
             return arrayOfNulls(size)
         }
     }
+
+    @Expose
+    var isOwner: Boolean = false
 }

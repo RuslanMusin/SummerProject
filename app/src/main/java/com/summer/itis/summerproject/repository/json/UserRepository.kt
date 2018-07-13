@@ -13,8 +13,7 @@ import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.model.db_dop_models.ElementId
-import com.summer.itis.summerproject.model.db_dop_models.Identified
-import com.summer.itis.summerproject.model.db_dop_models.UserRelation
+import com.summer.itis.summerproject.model.db_dop_models.Relation
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -147,8 +146,8 @@ class UserRepository {
     }
 
     fun addFriend(userId: String, friendId: String) {
-        val userValues = UserRelation.toMap(userId, REMOVE_FRIEND)
-        val friendValues = UserRelation.toMap(friendId, REMOVE_FRIEND)
+        val userValues = Relation.toMap(userId, REMOVE_FRIEND)
+        val friendValues = Relation.toMap(friendId, REMOVE_FRIEND)
         val childUpdates = HashMap<String, Any>()
         childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = friendValues
         childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = userValues
@@ -157,7 +156,7 @@ class UserRepository {
     }
 
     fun removeFriend(userId: String, friendId: String) {
-        val userValues = UserRelation.toMap(userId, REMOVE_REQUEST)
+        val userValues = Relation.toMap(userId, REMOVE_REQUEST)
         val childUpdates = HashMap<String, Any?>()
         childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = null
         childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = userValues
@@ -166,8 +165,8 @@ class UserRepository {
     }
 
     fun addFriendRequest(userId: String, friendId: String) {
-        val friendValues = UserRelation.toMap(friendId, REMOVE_FRIEND)
-        val userValues = UserRelation.toMap(userId, ADD_FRIEND)
+        val friendValues = Relation.toMap(friendId, REMOVE_FRIEND)
+        val userValues = Relation.toMap(userId, ADD_FRIEND)
         val childUpdates = HashMap<String, Any>()
         childUpdates[USER_FRIENDS + SEP + userId + SEP + friendId] = friendValues
         childUpdates[USER_FRIENDS + SEP + friendId + SEP + userId] = userValues

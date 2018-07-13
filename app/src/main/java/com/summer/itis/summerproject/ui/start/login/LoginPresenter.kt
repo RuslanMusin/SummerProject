@@ -9,6 +9,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
@@ -16,8 +17,12 @@ import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.model.pojo.query.Page
 
 import com.summer.itis.summerproject.repository.RepositoryProvider
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.abstractCardRepository
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.cardRepository
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.OFFICIAL_TYPE
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.RxUtils
@@ -82,6 +87,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                 ?.readCard("-LH9PIX0TlQ-h33CymC9")
                 ?.subscribe(this::readCard)*/
 
+
         Log.d(TAG_LOG, "signIn:$email")
         if (!validateForm(email, password)) {
             return
@@ -106,6 +112,10 @@ class LoginPresenter(private val logView: LoginActivity) {
 
                     logView.hideProgressDialog()
                 }
+
+
+
+
     }
         fun validateForm(email: String, password: String): Boolean {
             var valid = true
@@ -136,6 +146,8 @@ class LoginPresenter(private val logView: LoginActivity) {
                         val user = dataSnapshot.getValue(User::class.java)
                         ApplicationHelper.currentUser = user
                         logView.goToProfile()
+
+//                        workWithDb()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -146,4 +158,195 @@ class LoginPresenter(private val logView: LoginActivity) {
                 logView.showError()
             }
         }
+
+    fun workWithDb() {
+        cardRepository?.readCard("-LHEW5YqlXQrV8quuLrd")?.subscribe { e ->
+            val test: Test = e.test
+            test.card = e
+            ApplicationHelper.currentUser?.let {
+                testRepository?.finishTest(test, it)?.subscribe { t ->
+                    Log.d(TAG_LOG, "after first finish")
+                    cardRepository!!.readCard("-LHEWO92FO6szrtwuU40").subscribe { r ->
+                        Log.d(TAG_LOG, "after second readCard")
+                        val test2: Test = r.test
+                        test2.card = r
+                        val userTwo: User = User()
+                        userTwo.id = "Dm9nt1k1YxWnonZ2t3y9YUbjHUB2"
+                        testRepository!!.finishTest(test2, userTwo).subscribe { k ->
+                            Log.d(TAG_LOG, "after second finish")
+                            cardRepository?.addCardAfterGame(r.id!!, it.id!!, userTwo.id!!)?.subscribe { m ->
+                                Log.d(TAG_LOG, "after game")
+                                separate()
+                                cardRepository!!.readCard("-LHGEGXTiGMR1jrQJE2h").subscribe { l ->
+                                    Log.d(TAG_LOG, "after second readCard")
+                                    val test3: Test = l.test
+                                    test3.card = l
+                                    val userThree: User = User()
+                                    userThree.id = "AnH9HJjuEmNx6z6H7MK1Aq695FQ2"
+                                    testRepository!!.finishTest(test3, userThree).subscribe { y ->
+                                        Log.d(TAG_LOG, "after second finish")
+                                        separate()
+                                        findMyTests()
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+//        findMyTests()
+
+
+    }
+
+    fun separate() {
+        Log.d(TAG_LOG,"\n------------------\n")
+    }
+
+    fun findMyTests() {
+        ApplicationHelper.currentUser?.id?.let {
+            testRepository?.findMyTests(it)?.subscribe { e ->
+                Log.d(TAG_LOG, "myTests")
+                for (test in e) {
+                    Log.d(TAG_LOG, "author = " + test.authorName)
+                    Log.d(TAG_LOG, "test title = " + test.title)
+                }
+                separate()
+                this.findTestsByType()
+
+            }
+        }
+    }
+
+    fun findTestsByType() {
+            testRepository?.findTestsByType("AnH9HJjuEmNx6z6H7MK1Aq695FQ2", OFFICIAL_TYPE)?.subscribe { e ->
+                Log.d(TAG_LOG, "official_tests")
+                for (test in e) {
+                    Log.d(TAG_LOG, "author = " + test.authorName)
+                    Log.d(TAG_LOG, "test title = " + test.title)
+                }
+                separate()
+                this.findOfficialMyCards()
+            }
+
+    }
+
+    fun findOfficialMyCards() {
+        ApplicationHelper.currentUser?.id?.let {
+            cardRepository?.findOfficialMyCards(it)?.subscribe { e ->
+                Log.d(TAG_LOG, "official_cards")
+                for (card in e) {
+                    Log.d(TAG_LOG, "card id = " + card.id)
+                    Log.d(TAG_LOG, "card type = " + card.type)
+                }
+                separate()
+                this.findMyCards()
+            }
+        }
+
+    }
+
+    fun findMyCards() {
+        ApplicationHelper.currentUser?.id?.let {
+            cardRepository?.findMyCards(it)?.subscribe { e ->
+                Log.d(TAG_LOG, "user_cards")
+                for (card in e) {
+                    Log.d(TAG_LOG, "card id = " + card.id)
+                    Log.d(TAG_LOG, "card type = " + card.type)
+                }
+                separate()
+                this.findDefaultAbstractCardStates()
+            }
+        }
+    }
+
+    fun findDefaultAbstractCardStates() {
+        cardRepository?.findDefaultAbstractCardStates("-LHEWO92FO6szrtwuU4-")?.subscribe { e ->
+            Log.d(TAG_LOG, "default_card_states")
+            for (card in e) {
+                Log.d(TAG_LOG, "card id = " + card.id)
+                Log.d(TAG_LOG, "card type = " + card.type)
+            }
+            separate()
+            this.findMyAbstractCardStates()
+        }
+    }
+
+    fun findMyAbstractCardStates() {
+        ApplicationHelper.currentUser?.id?.let {
+            cardRepository?.findMyAbstractCardStates("-LHEW5Yke-A-EtXQDqbG", it)?.subscribe { e ->
+            Log.d(TAG_LOG, "my_card_states")
+            for (card in e) {
+                Log.d(TAG_LOG, "card id = " + card.id)
+                Log.d(TAG_LOG, "card type = " + card.type)
+            }
+                separate()
+                this.findDefaultAbstractCardTests()
+        }
+        }
+    }
+
+    fun findDefaultAbstractCardTests() {
+        cardRepository?.findDefaultAbstractCardTests("-LHEWO92FO6szrtwuU4-")?.subscribe { e ->
+            Log.d(TAG_LOG, "default_card_tests")
+            for (test in e) {
+                Log.d(TAG_LOG, "test title = " + test.title)
+                Log.d(TAG_LOG, "test type = " + test.type)
+            }
+            separate()
+            this.findMyAbstractCardTests()
+        }
+
+    }
+
+    fun findMyAbstractCardTests() {
+        ApplicationHelper.currentUser?.id?.let {
+            cardRepository?.findMyAbstractCardTests("-LHEWO92FO6szrtwuU4-", it)?.subscribe { e ->
+            Log.d(TAG_LOG, "user_card_tests")
+            for (test in e) {
+                Log.d(TAG_LOG, "test title = " + test.title)
+                Log.d(TAG_LOG, "test type" + test.type)
+            }
+            separate()
+            this.findDefaultAbstractCards()
+        }
+        }
+    }
+
+    fun findDefaultAbstractCards() {
+        ApplicationHelper.currentUser?.id?.let {
+            abstractCardRepository.findDefaultAbstractCards(it).subscribe { e ->
+                Log.d(TAG_LOG, "default_abstract_cards")
+                for (card in e) {
+                    Log.d(TAG_LOG, "card name = " + card.name)
+                    Log.d(TAG_LOG, "card wiki" + card.wikiUrl)
+                }
+                separate()
+
+                this.findMyAbstractCards()
+            }
+        }
+
+    }
+
+    fun findMyAbstractCards() {
+        ApplicationHelper.currentUser?.id?.let {
+            abstractCardRepository.findMyAbstractCards(it).subscribe { e ->
+                Log.d(TAG_LOG, "my_abstract_cards")
+                for (card in e) {
+                    Log.d(TAG_LOG, "card name = " + card.name)
+                    Log.d(TAG_LOG, "card wiki" + card.wikiUrl)
+                }
+                separate()
+
+            }
+        }
+
+    }
+
 }

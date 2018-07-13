@@ -26,6 +26,8 @@ open class Card() : Parcelable{
 
     var strength: Int? = null
 
+    var type: String? = null
+
     @Exclude
     var abstractCard: AbstractCard? = AbstractCard()
 
