@@ -23,6 +23,7 @@ import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.reader.ReaderListActivity
 import com.summer.itis.summerproject.ui.start.login.LoginActivity
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import java.util.*
@@ -70,7 +71,7 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
         mNavigationView.setNavigationItemSelectedListener { menuItem ->
             val id = menuItem.itemId
             when (id) {
-                R.id.menu_tests -> AddTestActivity.start(this)
+                R.id.menu_tests -> TestListActivity.start(this)
 
                 R.id.menu_cards -> LoginActivity.start(this)
 

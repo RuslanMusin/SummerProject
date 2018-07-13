@@ -80,10 +80,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         when (view.id) {
 
             R.id.btn_enter -> {
-                val username = etUsername?.getText().toString();
-                val password = etPassword?.getText().toString();
-                /*val username = "rust@ma.ru"
-                val password = "rustamka"*/
+              /*  val username = etUsername?.getText().toString();
+                val password = etPassword?.getText().toString();*/
+                val username = "rust@ma.ru"
+                val password = "rustamka"
                 presenter!!.signIn(username, password)
             }
 
