@@ -27,7 +27,7 @@ class TestFragmentPresenter : MvpPresenter<TestFragmentView>() {
 
     fun createComment(crossingId: String, comment: Comment) {
         testCommentRepository.createComment(crossingId,comment)
-                .subscribe()
+                .subscribe{e -> viewState.addComment(comment)}
     }
 
 }

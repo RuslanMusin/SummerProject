@@ -16,7 +16,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -42,24 +44,25 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import com.summer.itis.summerproject.utils.ImageLoadHelper
 import kotlinx.android.synthetic.main.activity_play_game.view.*
+import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.fragment_test.*
+import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_test.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView {
+class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView {
 
     private lateinit var commentEditText: EditText
 
     internal var myFormat = "dd.MM.yyyy" //In which you need put here
     internal var sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
-    private var recyclerView: EmptyStateRecyclerView? = null
     private var adapter: CommentAdapter? = null
 
     private var comments: MutableList<Comment> = ArrayList()
 
-    private var addTestView: AddTestView? = null
     lateinit var test: Test
 
     @InjectPresenter
@@ -67,10 +70,10 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_add_test, container, false)
-        addTestView = activity as AddTestView?
+        val view = inflater.inflate(R.layout.layout_test, container, false)
 
-        val testStr: String? = savedInstanceState?.getString(TEST_JSON)
+
+        val testStr: String? = arguments?.getString(TEST_JSON)
         test = gsonConverter.fromJson(testStr,Test::class.java)
         return view
     }
@@ -80,7 +83,7 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
         initViews(view)
         initRecycler()
         setListeners()
-        test.id?.let { presenter.loadComments(it) }
+
 
         if(test.testDone == false) {
             tv_done.text = getText(R.string.test_wasnt_done)
@@ -91,8 +94,13 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
         tv_author.text = test.authorName
         (extv_desc as ExpandableTextView).text = test.desc
         nameEditText.text = test.title
-        test.imageUrl?.let { ImageLoadHelper.loadPicture(iv_crossing as ImageView, it) }
+        test.imageUrl?.let {
+            Glide.with(iv_crossing.context)
+                    .load(it)
+                    .into(iv_crossing)
+        }
 
+        test.id?.let { presenter.loadComments(it) }
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -100,8 +108,6 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
     private fun initViews(view: View) {
 
         commentEditText = view.findViewById<View>(R.id.commentEditText) as EditText
-
-        val sendButton = view.findViewById<View>(R.id.sendButton) as Button
 
         commentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -132,6 +138,7 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
     }
 
     private fun setListeners() {
+        btn_do_test.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -217,12 +224,12 @@ class TestFragment : Fragment(), View.OnClickListener, OnCommentClickListener, T
         adapter = CommentAdapter(ArrayList(), this)
         adapter?.let {
             val manager = LinearLayoutManager(this.activity)
-            recyclerView?.let {
-                recyclerView?.setLayoutManager(manager)
+            rv_comics_list.let {
+                rv_comics_list?.setLayoutManager(manager)
                 adapter?.attachToRecyclerView(it)
             }
             adapter?.setOnItemClickListener(this)
-            recyclerView?.setAdapter(adapter)
+            rv_comics_list?.setAdapter(adapter)
         }
 
 

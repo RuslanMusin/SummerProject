@@ -97,6 +97,7 @@ class TestListFragment : Fragment() {
 
         floating_button.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
+                Log.d(TAG_LOG,"act float btn")
                 AddTestActivity.start(activity as Activity)
             }
         })

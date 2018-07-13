@@ -7,6 +7,9 @@ interface TestFragmentView : MvpView {
 
     fun showComments(comments: List<Comment>)
 
+    fun addComment(comment: Comment)
+
+
 }
 
 

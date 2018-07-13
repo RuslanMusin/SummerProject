@@ -25,7 +25,7 @@ class FinishFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_finish_test, container, false)
 
-        number = savedInstanceState?.getInt(RIGHT_ANSWERS)!!
+        number = arguments?.getInt(RIGHT_ANSWERS)!!
 
         return view
     }

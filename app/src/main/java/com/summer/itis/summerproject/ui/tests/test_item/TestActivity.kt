@@ -19,13 +19,12 @@ import com.summer.itis.summerproject.ui.tests.add_test.fragments.main.AddTestFra
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import kotlinx.android.synthetic.main.fragment_test.*
 
 
 class TestActivity : NavigationBaseActivity(), TestView {
 
     internal var PLACE_PICKER_REQUEST = 1
-
-    private var toolbar: Toolbar? = null
 
     @InjectPresenter
     lateinit var presenter: TestPresenter
@@ -41,6 +40,7 @@ class TestActivity : NavigationBaseActivity(), TestView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_with_frame_and_toolbar)
+        initViews()
 
         val testStr: String = intent.getStringExtra(TEST_JSON)
         val args: Bundle = Bundle()
@@ -52,20 +52,12 @@ class TestActivity : NavigationBaseActivity(), TestView {
                     .add(containerId, TestFragment.newInstance(args))
                     .commit()
         }
-        initViews()
+
     }
 
     private fun initViews() {
-        findViews()
-        //        supportActionBar(toolbar);
         setSupportActionBar(toolbar)
-        setBackArrow(toolbar!!)
-
-    }
-
-    private fun findViews() {
-        toolbar = findViewById(R.id.toolbar)
-
+        setBackArrow(toolbar)
 
     }
 
@@ -74,7 +66,7 @@ class TestActivity : NavigationBaseActivity(), TestView {
         const val TEST_JSON: String = "test_json"
 
         fun start(activity: Activity, test: Test) {
-            val intent = Intent(activity, AddTestActivity::class.java)
+            val intent = Intent(activity, TestActivity::class.java)
             val testStr: String = gsonConverter.toJson(test)
             intent.putExtra(TEST_JSON,testStr)
             activity.startActivity(intent)

@@ -22,6 +22,7 @@ import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.repository.json.UserRepository.Companion.currentId
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
 import com.summer.itis.summerproject.ui.tests.test_list.TestAdapter
 import com.summer.itis.summerproject.ui.tests.test_list.fragment.TestListFragment
 import com.summer.itis.summerproject.utils.Const.MY_LIST
@@ -211,7 +212,8 @@ class TestListActivity : NavigationBaseActivity(), TestListView {
     }
 
     override fun showDetails(item: Test) {
-//        TestActivity.start(this, item)
+        Log.d(TAG_LOG,"show test act")
+        TestActivity.start(this, item)
     }
 
     override fun loadNextElements(i: Int) {

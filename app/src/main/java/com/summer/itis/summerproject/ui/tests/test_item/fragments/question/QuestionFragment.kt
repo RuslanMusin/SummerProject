@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.jaredrummler.materialspinner.MaterialSpinner
-import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Answer
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
@@ -19,6 +18,7 @@ import java.util.ArrayList
 
 import android.app.Activity.RESULT_OK
 import android.widget.*
+import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.tests.add_test.fragments.question.AddQuestionFragment
@@ -36,7 +36,6 @@ class QuestionFragment : Fragment(), View.OnClickListener {
     private var number: Int = 0
     private var rights: Int = 0
 
-    private var addTestView: AddTestView? = null
 
     private var answers: MutableList<Answer>? = null
 
@@ -53,12 +52,11 @@ class QuestionFragment : Fragment(), View.OnClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
 
-        val testStr: String = savedInstanceState?.getString(TEST_JSON)!!
-        number = savedInstanceState.getInt(QUESTION_NUMBER)
-        rights = savedInstanceState.getInt(RIGHT_ANSWERS)
+        val testStr: String = arguments?.getString(TEST_JSON)!!
+        number = arguments?.getInt(QUESTION_NUMBER)!!
+        rights = arguments?.getInt(RIGHT_ANSWERS)!!
         test = gsonConverter.fromJson(testStr, Test::class.java)
         question = test.questions[number]
-        addTestView = activity as AddTestView?
 
         return view
     }
@@ -187,7 +185,7 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         const val RIGHT_ANSWERS = "right_answers"
 
         fun newInstance(args: Bundle): Fragment {
-            val fragment = AddQuestionFragment()
+            val fragment = QuestionFragment()
             fragment.arguments = args
             return fragment
         }
