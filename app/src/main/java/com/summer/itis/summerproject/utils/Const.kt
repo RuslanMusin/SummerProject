@@ -69,6 +69,32 @@ object Const {
     const val TEST_ONE_TYPE = "test_one_type"
     const val TEST_MANY_TYPE = "test_many_type"
 
+    //TestRelation
+    const val WIN_GAME = "win_game"
+    const val WIN_AFTER_WIN = "after_win_test"
+    const val LOSE_AFTER_WIN = "ore_after_test"
+    const val TEST_AFTER_WIN = ""
+
+    const val AFTER_TEST = "after_test"
+    const val WIN_AFTER_TEST = "after_win_test"
+    const val TEST_AFTER_TEST = "ore_after_test"
+    const val LOSE_AFTER_TEST = ""
+
+    const val LOSE_GAME = "lose_game"
+    const val WIN_AFTER_LOSE = "after_win_test"
+    const val LOSE_AFTER_LOSE = "ore_after_test"
+    const val TEST_AFTER_LOSE = ""
+
+    const val BEFORE_TEST = "before_test"
+
+    //GameType
+    const val OFFICIAL_TYPE = "official_type"
+    const val USER_TYPE = "user_type"
+
+    //UserType
+    const val ADMIN_ROLE = "admin_role"
+    const val USER_ROLE = "user_role"
+
     //image path
     const val IMAGE_START_PATH = "images/users/"
     const val STUB_PATH = "stub"

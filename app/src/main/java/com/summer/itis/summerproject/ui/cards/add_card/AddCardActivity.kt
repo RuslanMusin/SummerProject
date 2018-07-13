@@ -27,11 +27,12 @@ import kotlinx.android.synthetic.main.layout_add_card.*
 
 class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeListener {
 
-
     private var card: Card? = null
 
     private var toolbar: Toolbar? = null
 
+    private lateinit var seekBars: List<SeekBar>
+    private var balance: Int = 50
 
     @InjectPresenter
     lateinit var presenter: AddCardPresenter
@@ -44,6 +45,7 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
 
         presenter = AddCardPresenter(this)
         card = Card()
+        seekBars = listOf<SeekBar>(seekBarSupport,seekBarIntelligence,seekBarPrestige,seekBarHp,seekBarStrength)
         item = gsonConverter.fromJson(intent.getStringExtra(ITEM_JSON), Item::class.java)
         card?.abstractCard?.wikiUrl = item!!.url!!.content
         card?.abstractCard?.description = item!!.description!!.content
@@ -75,21 +77,48 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
 
-
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        changeTvSeekbar(seekBar)
+    }
+
+    private fun changeTvSeekbar(seekBar: SeekBar?) {
+        val strProgress: String = seekBar?.progress.toString()
         when (seekBar?.id) {
+            R.id.seekBarHp -> {
+                tvHp!!.setText(strProgress)
+                balanceWithOthers(seekBar)
+            }
 
-            R.id.seekBarHp -> tvHp!!.setText(progress)
+            R.id.seekBarPrestige -> {
+                tvPrestige!!.setText(strProgress)
+            }
 
-            R.id.seekBarPrestige -> tvPrestige!!.setText(progress)
+            R.id.seekBarIntelligence -> {
+                tvIntelligence!!.setText(strProgress)
+            }
 
-            R.id.seekBarIntelligence -> tvIntelligence!!.setText(progress)
+            R.id.seekBarSupport -> {
+                tvSupport!!.setText(strProgress)
+            }
 
-            R.id.seekBarSupport -> tvSupport!!.setText(progress)
+            R.id.seekBarStrength -> {
+                tvStrength!!.setText(strProgress)
+            }
+        }
+    }
 
-            R.id.seekBarStrength -> tvStrength!!.setText(progress)
+    private fun balanceWithOthers(seekBar: SeekBar?) {
+        while(balance != 50) {
+            for (seek in seekBars) {
+                if(balance == 50) {
+                    return
+                }
+                if (!seek.equals(seekBar) && balance !=50) {
+                    seek.progress--
+                }
+            }
         }
     }
 

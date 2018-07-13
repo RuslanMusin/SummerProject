@@ -8,6 +8,6 @@ import java.util.HashMap
 @IgnoreExtraProperties
 open class ElementId : Identified {
 
-    override var id: String = ""
+    override lateinit var id: String
 
 }

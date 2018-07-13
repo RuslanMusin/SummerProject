@@ -34,7 +34,7 @@ class AddTestActivity : NavigationBaseActivity(), AddTestView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_test)
+        setContentView(R.layout.activity_with_frame_and_toolbar)
 
         val fragmentManager = supportFragmentManager
         if (fragmentManager.findFragmentById(containerId) == null) {
@@ -84,62 +84,4 @@ class AddTestActivity : NavigationBaseActivity(), AddTestView {
             activity.startActivity(intent)
         }
     }
-
-
-    /* public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit_menu, menu);
-
-        MenuItem checkItem = menu.findItem(R.id.action_check);
-        checkItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem items) {
-                String title = etTitle.getText().toString();
-                String desc = etDescription.getText().toString();
-                String key = etPhrase.getText().toString();
-
-                LatLng latLng = place.getLatLng();
-
-                long date = 0;
-                try {
-                    date = sdf.parse(etDate.getText().toString()).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                BookCrossing bookCrossing = new BookCrossing();
-                bookCrossing.setBookId(book.getId());
-                bookCrossing.setBookName(book.getName());
-                bookCrossing.setBookPhoto(book.getPhotoUrl());
-                bookCrossing.setBookAuthor(book.getAuthors().get(0));
-                bookCrossing.setDate(date);
-                bookCrossing.setKeyPhrase(key);
-                bookCrossing.setDescription(desc);
-                bookCrossing.setName(title);
-
-                Point point = new Point();
-                point.setDate(date);
-                point.setDesc(desc);
-                point.setLatitude(latLng.latitude);
-                point.setLongitude(latLng.longitude);
-                point.setPhotoUrl(place.getId());
-                point.setEditorId(UserRepository.getCurrentId());
-
-                List<Point> points = new ArrayList<>();
-                points.add(point);
-
-                bookCrossing.setPoints(points);
-
-                RepositoryProvider.getBookCrossingRepository().createCrossing(bookCrossing, UserRepository.getCurrentId());
-
-                FirebaseMessaging.getInstance().subscribeToTopic(bookCrossing.getId());
-
-                CrossingActivity.start(AddTestActivity.this,bookCrossing);
-
-                return true;
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
 }
