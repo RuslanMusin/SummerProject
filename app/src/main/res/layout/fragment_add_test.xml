@@ -63,33 +63,6 @@
                 android:hint="@string/test_desc"/>
         </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
-            android:id="@+id/li_add_photo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primary"
-            android:orientation="horizontal">
-            <ImageView android:src="@drawable/ic_add_a_photo_black_24dp"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:maxWidth="30dp"
-                android:layout_height="40dp"
-                android:layout_marginBottom="4dp"
-                android:layout_gravity="center_horizontal" />
-
-            <TextView
-                android:id="@+id/tv_add_photo"
-                android:layout_width="wrap_content"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:paddingLeft="@dimen/padding_medium"
-                android:gravity="center_vertical"
-                android:text="@string/add_photo"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text.16" />
-        </LinearLayout>
-
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_add_card"
             android:layout_width="fill_parent"

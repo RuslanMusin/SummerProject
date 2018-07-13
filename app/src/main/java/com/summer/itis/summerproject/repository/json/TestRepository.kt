@@ -50,6 +50,8 @@ class TestRepository : Listener {
     private val FIELD_QUESTIONS = "questions"
     private val FIELD_DESC = "desc"
     private val FIELD_TYPE = "type"
+    private val FIELD_IMAGE_URL = "imageUrl"
+
 
     private val FIELD_RELATION = "relation"
 
@@ -69,6 +71,8 @@ class TestRepository : Listener {
         result[FIELD_CARD_ID] = test.cardId
         result[FIELD_QUESTIONS] = test.questions
         result[FIELD_TYPE] = test.type
+        result[FIELD_IMAGE_URL] = test.imageUrl
+
 
 
         return result
@@ -186,7 +190,7 @@ class TestRepository : Listener {
                     test.authorId = user.id
                     test.authorName = user.username
                     test.cardId = card?.id
-
+                    test.imageUrl = abstractCard?.photoUrl
 
                     val crossingValues = toMap(test)
 
@@ -266,6 +270,14 @@ class TestRepository : Listener {
         return single.compose(RxUtils.asyncSingle())
     }
 
+    fun findOfficialTests(userId: String): Single<List<Test>> {
+        return findTestsByType(userId, OFFICIAL_TYPE)
+    }
+
+    fun findUserTests(userId: String): Single<List<Test>> {
+        return findTestsByType(userId, USER_TYPE)
+    }
+
     fun findTestsByType(userId: String, type: String): Single<List<Test>> {
         var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
         val single: Single<List<Test>> = Single.create { e ->
@@ -335,30 +347,6 @@ class TestRepository : Listener {
 
     fun deleteCrossing(pointId: String) {
         databaseReference.child(pointId).removeValue()
-    }
-
-    fun loadDefaultTests(): Single<MutableList<Test?>> {
-        var flag: Boolean = false
-        var tests: MutableList<Test?>? = ArrayList()
-        val query: Query = databaseReference.limitToFirst(100)
-        query.addListenerForSingleValueEvent(object: ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                for(shapshot: DataSnapshot in dataSnapshot.children) {
-                    val test = shapshot.getValue(Test::class.java)
-                    tests?.add(test)
-                }
-                flag = true
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-        })
-        while(!flag) {
-
-        }
-        return Single.just(tests)
     }
 
     /* public Single<Map<String,Query>> loadByBook(Book book) {

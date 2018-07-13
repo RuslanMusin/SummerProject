@@ -14,6 +14,10 @@ class RepositoryProvider {
             TestRepository()
         }
 
+        val testCommentRepository: TestCommentRepository by lazy {
+            TestCommentRepository()
+        }
+
         val cardRepository: CardRepository by lazy {
             CardRepository()
         }

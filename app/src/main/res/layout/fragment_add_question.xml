@@ -87,9 +87,9 @@
                     android:layout_weight="1" />
 
             </LinearLayout>
-        </LinearLayout>
+        </LinearLayout>-->
 
-        <LinearLayout
+       <!-- <LinearLayout
             android:id="@+id/li_answers1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

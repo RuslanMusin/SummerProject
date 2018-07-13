@@ -230,6 +230,8 @@
     <!--Game-->
     <string name="find_game">Find Game</string>
     <string name="game_searching">Ищем игру</string>
+    <string name="default_parametr_value">10</string>
+    <string name="authorName">Автор теста</string>
 
 
 </resources>

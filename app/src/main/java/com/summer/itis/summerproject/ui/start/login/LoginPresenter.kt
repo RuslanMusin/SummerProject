@@ -145,9 +145,9 @@ class LoginPresenter(private val logView: LoginActivity) {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val user = dataSnapshot.getValue(User::class.java)
                         ApplicationHelper.currentUser = user
-//                        logView.goToProfile()
+                        logView.goToProfile()
 
-                        workWithDb()
+//                        workWithDb()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {

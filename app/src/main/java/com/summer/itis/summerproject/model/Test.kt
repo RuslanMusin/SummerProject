@@ -25,6 +25,8 @@ class Test {
 
     var type: String? = null
 
+    var imageUrl: String? = null
+
     @Exclude
     var comments: MutableList<Comment> = ArrayList()
 
