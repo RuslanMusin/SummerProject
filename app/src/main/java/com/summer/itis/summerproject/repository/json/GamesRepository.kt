@@ -1,6 +1,7 @@
 package com.summer.itis.summerproject.repository.json
 
 import com.google.firebase.database.*
+import com.summer.itis.summerproject.model.game.CardChoose
 import com.summer.itis.summerproject.model.game.Lobby
 import com.summer.itis.summerproject.model.game.LobbyPlayerData
 
@@ -105,16 +106,6 @@ class GamesRepository {
         return UserRepository.currentId
     }
 
-//    public class InGameCallbacks(
-//            val onYouWin: () -> Unit,
-//            val onEnemyWin: () -> Unit,
-//            val onEnemyDisconnectedAndYouWin: () -> Unit,
-//            val onYouDisconnectedAndLose: () -> Unit,
-//
-//            val onEnemyCardChoosen: () -> Unit,
-//            val onEnemyAnswered: () -> Unit
-//    )
-
     var callbacks: InGameCallbacks? = null
 
     interface InGameCallbacks {
@@ -123,15 +114,52 @@ class GamesRepository {
         fun onEnemyDisconnectedAndYouWin(cardId: String)
         fun onYouDisconnectedAndLose(cardId: String)//лучше Card,
         // т.к. без соединения не узнать название по Id ?
-        fun onEnemyCardChoosen(cardId: String, questionId: String)
+        fun onEnemyCardChosen(choose: CardChoose)
 
         fun onEnemyAnswered(correct: Boolean)
     }
 
     fun startGame(callbacks: InGameCallbacks) {
 
-        TODO()
+        this.callbacks = callbacks
+
+        //TODO
         //select onLoseCard
+
+        enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_choosedCards)
+                .addChildEventListener(object : ChildEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
+
+                    override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
+
+                    override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                        val cardChoose: CardChoose = dataSnapshot.getValue(CardChoose::class.java)!!
+                        callbacks.onEnemyCardChosen(cardChoose)
+                    }
+
+                    override fun onChildRemoved(p0: DataSnapshot) {}
+                })
+
+        enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_answers)
+                .addChildEventListener(object : ChildEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
+
+                    override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
+
+                    override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                        callbacks.onEnemyAnswered(dataSnapshot.value as Boolean)
+                    }
+
+                    override fun onChildRemoved(p0: DataSnapshot) {}
+                })
 
     }
 
