@@ -57,7 +57,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
-        android:hint="Tests"
+        android:hint="Wiki"
         android:textAlignment="textStart"
         android:textColorHint="@color/white"
         android:layout_centerHorizontal="true">
@@ -71,7 +71,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="16dp"
-        android:hint="Wiki"
+        android:hint="Test"
         android:textAlignment="textStart"
         android:textColorHint="@color/white"
         android:textColor="@color/white"

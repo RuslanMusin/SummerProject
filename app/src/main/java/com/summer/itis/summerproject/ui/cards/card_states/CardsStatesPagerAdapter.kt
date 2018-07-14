@@ -18,4 +18,9 @@ class CardsStatesPagerAdapter(fm : FragmentManager,var cards : ArrayList<Card>) 
     override fun getCount(): Int {
         return cards.size
     }
+
+    fun setNewCards(cards: ArrayList<Card>){
+        this.cards = cards
+        notifyDataSetChanged()
+    }
 }

@@ -1,15 +1,36 @@
 package com.summer.itis.summerproject.ui.cards.cards_list.tabs
 
 import android.content.Intent
-import com.summer.itis.summerproject.model.Card
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.summer.itis.summerproject.model.AbstractCard
+import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
-import com.summer.itis.summerproject.ui.cards.cards_list.tabs.AbstractCardsTabFragment
 import java.util.ArrayList
 
 /**
  * Created by Home on 10.07.2018.
  */
-class MyCardsTabFragment(): AbstractCardsTabFragment() {
+class MyCardsTabFragment(): AbstractCardsTabFragment(){
+
+    override fun showDetails(card: AbstractCard) {
+        CardsActivity.start(context!!,card,cards,"My")
+    }
+
+    override fun onItemClick(item: AbstractCard) {
+        cardsPresenter.onItemClick(item)
+    }
+
+    override fun showItems(items: List<AbstractCard>) {
+        cards = items as ArrayList<AbstractCard>
+        mRecyclerViewAdapter.changeDataSet(items)
+    }
+
+    override fun handleError(error: Throwable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     companion object {
         fun newInstance(): MyCardsTabFragment {
@@ -18,28 +39,14 @@ class MyCardsTabFragment(): AbstractCardsTabFragment() {
         }
     }
 
-    override fun getCardsList(): ArrayList<Card> {
-        //ПРОСТО ТЕСТОВЫЕ ДАННЫЕ ПОКА
-        var cards = ArrayList<Card>()
-        var card = Card()
-        card.abstractCard?.name = "Name123123"
-        card.abstractCard?.description = "asdjkf.adsnflansdlnfa.dsnf,madsf"
-        var card1 = Card()
-        card1.abstractCard?.name = "Name256756756756"
-        card1.abstractCard?.description = "akjddfh;KSD;Fhsfylsiduyfilasdgfjanenanenenevbevenb"
-        var card2 = Card()
-        card2.abstractCard?.name = "Name31231"
-        card2.abstractCard?.description = "akjddfh;KSD;Fhsfylsiduyfilasdgfjanenanenenevbevenb"
-        cards.add(card)
-        cards.add(card1)
-        cards.add(card2)
-        return cards
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        var view = super.onCreateView(inflater, container, savedInstanceState)
+
+        return view
     }
 
-    override fun onItemClick(position: Int) {
-        val intent = Intent(activity, CardsActivity::class.java)
-        intent.putExtra("POS", position)
-        intent.putParcelableArrayListExtra("ARR", cards)
-        activity?.startActivity(intent)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        cardsPresenter.getUserAbstractCardsList()
     }
 }
