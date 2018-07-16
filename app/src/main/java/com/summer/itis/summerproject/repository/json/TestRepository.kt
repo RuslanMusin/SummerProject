@@ -14,6 +14,7 @@ import com.summer.itis.summerproject.utils.Const.AFTER_TEST
 import com.summer.itis.summerproject.utils.Const.BEFORE_TEST
 import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 import com.summer.itis.summerproject.utils.Const.OFFICIAL_TYPE
+import com.summer.itis.summerproject.utils.Const.QUERY_END
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -26,6 +27,7 @@ import com.summer.itis.summerproject.utils.Const.USER_TYPE
 import com.summer.itis.summerproject.utils.Const.WIN_GAME
 import com.summer.itis.summerproject.utils.RxUtils
 import io.reactivex.Observable
+import java.util.regex.Pattern
 
 class TestRepository : Listener {
 
@@ -86,6 +88,7 @@ class TestRepository : Listener {
     }
 
     fun changeStatus(testId: String, userId: String, relation: String): Single<Relation> {
+        Log.d(TAG_LOG,"change test status")
         val query: Query = databaseReference.root.child(USERS_TESTS).child(userId).child(testId)
         val single: Single<Relation> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -96,6 +99,7 @@ class TestRepository : Listener {
                 override fun onDataChange(shapshot: DataSnapshot) {
                     var testRelation: Relation? = shapshot.getValue(Relation::class.java)
                     if(testRelation != null) {
+                        Log.d(TAG_LOG,"rel not null")
                         when  {
                             WIN_GAME.equals(testRelation.relation) -> {
                                 testRelation.relBefore = WIN_GAME
@@ -135,6 +139,7 @@ class TestRepository : Listener {
                             }
                         }
                     } else {
+                        Log.d(TAG_LOG,"rel == null")
                         testRelation = Relation()
                         testRelation.relBefore = BEFORE_TEST
                     }
@@ -215,7 +220,9 @@ class TestRepository : Listener {
                                 user.id!!.let { userId ->
                                     cardRepository?.findMyAbstractCardStates(it, userId)
                                             ?.subscribe { winnerCards ->
+                                                Log.d(TAG_LOG,"add card after test")
                                                 if (winnerCards.size == 0) {
+                                                    Log.d(TAG_LOG,"add abstract card")
                                                     val addAbstractCardValues = abstractCardRepository.toMapId(it)
                                                     childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + userId + SEP + it] = addAbstractCardValues
                                                 }
@@ -276,6 +283,14 @@ class TestRepository : Listener {
 
     fun findUserTests(userId: String): Single<List<Test>> {
         return findTestsByType(userId, USER_TYPE)
+    }
+
+    fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Test>> {
+        return findTestsByTypeByQuery(query, userId, OFFICIAL_TYPE)
+    }
+
+    fun findUserTestsByQuery(query: String, userId: String): Single<List<Test>> {
+        return findTestsByTypeByQuery(query, userId, USER_TYPE)
     }
 
     fun findTestsByType(userId: String, type: String): Single<List<Test>> {
@@ -343,6 +358,76 @@ class TestRepository : Listener {
             })
         }
     }
+
+    fun findTestsByTypeByQuery(queryPart: String, userId: String, type: String): Single<List<Test>> {
+        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
+        val single: Single<List<Test>> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(Relation::class.java)
+                        elementId?.let {
+                            if(LOSE_GAME.equals(it.relation) || AFTER_TEST.equals(it.relation)) {
+                                elementIds.add(it.id)
+                            }
+                        }
+                    }
+                    query = databaseReference.orderByChild(FIELD_TITLE).startAt(queryPart).endAt(queryPart + QUERY_END)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val cards: MutableList<Test> = ArrayList()
+                            for(snapshot in dataSnapshot.children) {
+                                val card = snapshot.getValue(Test::class.java)
+                                if(card?.type.equals(type) && !card?.authorId.equals(userId)) {
+                                    if (elementIds.contains(card?.id)) {
+                                        card?.testDone = true
+                                    }
+                                    card?.let { cards.add(it) }
+                                }
+
+                            }
+                            e.onSuccess(cards)
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {}
+                    })
+
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun findMyTestsByQuery(queryPart: String, userId: String): Single<List<Test>> {
+        return Single.create { e ->
+            val pattern: Pattern = Pattern.compile("${queryPart.toLowerCase()}.*")
+            val query: Query = databaseReference.orderByChild(FIELD_AUTHOR_ID).equalTo(userId)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val tests: MutableList<Test> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val test = snapshot.getValue(Test::class.java)
+                        test?.let {
+                            if(pattern.matcher(test.title?.toLowerCase()).matches()) {
+                                tests.add(test)
+                            }
+                        }
+                    }
+                    e.onSuccess(tests)
+
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                }
+            })
+        }
+    }
+
 
 
     fun deleteCrossing(pointId: String) {

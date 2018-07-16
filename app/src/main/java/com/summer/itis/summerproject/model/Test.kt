@@ -33,6 +33,12 @@ class Test {
     @Exclude
     var card: Card? = null
 
-    @Expose
+    @Exclude
     var testDone: Boolean = false
+
+    @Exclude
+    lateinit var rightQuestions: List<Question>
+
+    @Exclude
+    lateinit var wrongQuestions: List<Question>
 }

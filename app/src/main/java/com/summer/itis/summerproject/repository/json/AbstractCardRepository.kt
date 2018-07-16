@@ -4,15 +4,18 @@ import android.os.Build.VERSION_CODES.O
 import android.util.Log
 import com.google.firebase.database.*
 import com.summer.itis.summerproject.model.AbstractCard
+import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.model.db_dop_models.ElementId
+import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.regex.Pattern
 
 class AbstractCardRepository {
 
@@ -206,6 +209,65 @@ class AbstractCardRepository {
                 override fun onCancelled(databaseError: DatabaseError) {}
             })
             }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun findDefaultAbstractCardsByQuery(queryPart: String, userId: String): Single<List<AbstractCard>> {
+        var query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
+        val single: Single<List<AbstractCard>> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(ElementId::class.java)
+                        elementId?.let { elementIds.add(it.id) }
+                    }
+                    query = databaseReference.orderByChild(FIELD_NAME).startAt(queryPart).endAt(queryPart + Const.QUERY_END)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val cards: MutableList<AbstractCard> = ArrayList()
+                            for(snapshot in dataSnapshot.children) {
+                                val card = snapshot.getValue(AbstractCard::class.java)
+                                if(elementIds.contains(card?.id)) {
+                                    card?.isOwner = true
+                                }
+                                card?.let { cards.add(it) }
+
+                            }
+                            cards.let { e.onSuccess(it) }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {}
+                    })
+
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun findMyAbstractCardsByQuery(queryPart: String, userId: String): Single<List<AbstractCard>> {
+        val single: Single<List<AbstractCard>> = Single.create { e ->
+            val query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(ElementId::class.java)
+                        elementId?.let { elementIds.add(it.id) }
+                    }
+                    findAbstractCards(elementIds).subscribe{cards ->
+                        val pattern: Pattern = Pattern.compile("${queryPart.toLowerCase()}.*")
+                        val cardsQuery: List<AbstractCard> = cards.filter { e -> pattern.matcher(e.name?.toLowerCase()).matches()}.toList()
+                        e.onSuccess(cardsQuery)
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+        }
         return single.compose(RxUtils.asyncSingle())
     }
 }

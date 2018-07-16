@@ -1,6 +1,8 @@
 package com.summer.itis.summerproject.model
 
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
+import com.google.gson.annotations.Expose
 
 @IgnoreExtraProperties
 class Question {
@@ -10,4 +12,6 @@ class Question {
     var question: String? = null
 
     var answers: MutableList<Answer> = ArrayList()
+
+    @field:Exclude var userRight: Boolean = false
 }

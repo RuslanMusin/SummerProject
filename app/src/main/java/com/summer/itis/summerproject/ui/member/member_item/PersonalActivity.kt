@@ -25,8 +25,10 @@ import com.summer.itis.summerproject.utils.Const.ADD_REQUEST
 import com.summer.itis.summerproject.utils.Const.OWNER_TYPE
 import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
 import com.summer.itis.summerproject.utils.Const.REMOVE_REQUEST
+import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.USER_KEY
+import kotlinx.android.synthetic.main.layout_personal.*
 
 
 class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
@@ -89,18 +91,13 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
         tvName!!.text = user!!.username
 
         val path = user!!.photoUrl
-        if (path != "path") {
+        if (!path.equals(STUB_PATH)) {
             val imageReference = user!!.photoUrl?.let { ApplicationHelper.storageReference.child(it) }
-
 
             Log.d(TAG_LOG, "name " + (imageReference?.path ?: ""))
 
             Glide.with(this)
                     .load(imageReference)
-                    .into(ivPhoto!!)
-        } else {
-            Glide.with(this)
-                    .load(R.drawable.ic_person_black_24dp)
                     .into(ivPhoto!!)
         }
 

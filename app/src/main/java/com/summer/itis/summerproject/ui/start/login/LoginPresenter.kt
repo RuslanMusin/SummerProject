@@ -88,6 +88,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                 ?.subscribe(this::readCard)*/
 
 
+
         Log.d(TAG_LOG, "signIn:$email")
         if (!validateForm(email, password)) {
             return
@@ -147,7 +148,7 @@ class LoginPresenter(private val logView: LoginActivity) {
                         ApplicationHelper.currentUser = user
                         logView.goToProfile()
 
-//                        workWithDb()
+//                        workWithDbCard()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -158,6 +159,14 @@ class LoginPresenter(private val logView: LoginActivity) {
                 logView.showError()
             }
         }
+
+    fun workWithDbCard() {
+        RepositoryProvider.cardRepository
+                .readCard("LHGEGXTiGMR1jrQJE2h")
+                .subscribe { card: Card? ->
+                    Log.d(TAG_LOG, "id = " + card?.id)
+                }
+    }
 
     fun workWithDb() {
         cardRepository?.readCard("-LHEW5YqlXQrV8quuLrd")?.subscribe { e ->
