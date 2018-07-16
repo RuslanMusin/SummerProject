@@ -1,9 +1,13 @@
 package com.summer.itis.summerproject.repository.json
 
+import android.util.Log
 import com.google.firebase.database.*
+import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.game.CardChoose
 import com.summer.itis.summerproject.model.game.Lobby
 import com.summer.itis.summerproject.model.game.LobbyPlayerData
+import com.summer.itis.summerproject.repository.RepositoryProvider
+import com.summer.itis.summerproject.utils.getRandom
 
 class GamesRepository {
     val allDbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
@@ -119,12 +123,15 @@ class GamesRepository {
         fun onEnemyAnswered(correct: Boolean)
     }
 
+    var lastEnemyChoose: CardChoose? = null
+
     fun startGame(callbacks: InGameCallbacks) {
 
         this.callbacks = callbacks
 
         //TODO
         //select onLoseCard
+
 
         enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_choosedCards)
                 .addChildEventListener(object : ChildEventListener {
@@ -137,8 +144,12 @@ class GamesRepository {
                     override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
 
                     override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-                        val cardChoose: CardChoose = dataSnapshot.getValue(CardChoose::class.java)!!
-                        callbacks.onEnemyCardChosen(cardChoose)
+//                        val cardChoose: CardChoose = dataSnapshot.getValue(CardChoose::class.java)!!
+//                        callbacks.onEnemyCardChosen(cardChoose)
+//                        lastEnemyChoose=cardChoose
+
+                        lastEnemyChoose = dataSnapshot.getValue(CardChoose::class.java)!!
+                        callbacks.onEnemyCardChosen(lastEnemyChoose!!)
                     }
 
                     override fun onChildRemoved(p0: DataSnapshot) {}
@@ -155,6 +166,7 @@ class GamesRepository {
                     override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
 
                     override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
+                        Log.d("Alm", "onChildAdded to enemy answers")
                         callbacks.onEnemyAnswered(dataSnapshot.value as Boolean)
                     }
 
@@ -163,12 +175,71 @@ class GamesRepository {
 
     }
 
-    fun chooseNextCard(id: String) {
-        TODO()
+    fun chooseNextCard(cardId: String) {
+//        Log.d("Alm","repo: chooseNextCard "+cardId)
+        RepositoryProvider.cardRepository.readCard(cardId).subscribe { card: Card? ->
+            //            RepositoryProvider.testRepository.readTest(t.testId)
+//            Log.d("Alm","chooseNextCard 1")
+
+            val questionId = card!!.test.questions.getRandom()!!.id
+//            RepositoryProvider.testRepository.readTest(card.testId)
+
+//            card!!.test.questions.forEach {
+//                Log.d("Alm","q id "+it.id)
+//                Log.d("Alm","q question "+it.question)
+//                Log.d("Alm","q answ size "+it.answers.size)
+//            }
+
+            val choose = CardChoose(cardId, questionId!!)
+//            Log.d("Alm","chooseNextCard 3")
+
+            currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_choosedCards).push().setValue(choose)
+//            Log.d("Alm","chooseNextCard 4")
+
+        }
     }
 
     fun answerOnLastQuestion(correct: Boolean) {
-        TODO()
+        val query: Query = enemyPlayerLobbyDbRef!!
+                .child(LobbyPlayerData.PARAM_choosedCards)
+
+                .orderByKey()
+                .limitToLast(1)
+
+//        query.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onCancelled(p0: DatabaseError) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//            }
+//
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val key = dataSnapshot.key!!
+//
+//                currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_answers)
+//                        .child(key)
+//                        .setValue(correct)
+//            }
+//        })
+
+        query.addChildEventListener(object : ChildEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
+
+            override fun onChildAdded(dataSnapshot: DataSnapshot, p1: String?) {
+                val key = dataSnapshot.key!!
+
+                currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_answers)
+                        .child(key)
+                        .setValue(correct)
+
+                query.removeEventListener(this)
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {}
+        })
+
+
+
     }
 
 }

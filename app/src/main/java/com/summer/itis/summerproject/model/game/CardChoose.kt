@@ -1,9 +1,19 @@
 package com.summer.itis.summerproject.model.game
 
-data class CardChoose(
-        var cardId: String,
-        var questionId: String
-) {
+class CardChoose {
+
+    lateinit var cardId: String
+    lateinit var questionId: String
+
+    constructor() {
+
+    }
+
+    constructor(cardId: String, questionId: String) {
+        this.cardId = cardId
+        this.questionId = questionId
+    }
+
     companion object {
         val PARAM_cardId = "cardId"
         val PARAM_questionId = "questionId"

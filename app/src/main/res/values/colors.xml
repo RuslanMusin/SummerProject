@@ -40,5 +40,9 @@
     <color name="custom_divider_color">#dfdfdf</color>
     <color name="highlight_text">#17a1d7</color>
 
+    <!--game-->
+    <color name="game_cards_list_background">#e0e0e0</color>
+    <color name="game_selected_card_background">#eeeeee</color>
+
 
 </resources>

@@ -36,6 +36,21 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
         btn_cancel.setOnClickListener {
             presenter.cancelSearching()
         }
+
+
+//        RepositoryProvider.cardRepository.findMyCards(UserRepository.currentId).subscribe { list ->
+//            list.forEach {
+//                Log.d("Alm","in list id "+it.id)
+//            }
+//        }
+//
+//        RepositoryProvider.cardRepository
+//                .readCard("-LHEW5YqlXQrV8quuLrd")
+//                .subscribe { card: Card? ->
+//
+//                }
+
+
     }
 
     override fun showNotSearching() {
