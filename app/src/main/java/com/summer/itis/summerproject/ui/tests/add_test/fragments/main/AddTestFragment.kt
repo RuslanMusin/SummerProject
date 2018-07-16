@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.tests.add_test.fragments.main
 
+import QuestionFragment.Companion.QUESTION_NUMBER
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -80,10 +81,11 @@ class AddTestFragment : Fragment(), View.OnClickListener {
                 test!!.desc = etTestDesc!!.text.toString()
 
                 addTestView!!.setTest(test!!)
-
+                val args: Bundle = Bundle()
+                args.putInt(QUESTION_NUMBER, 1)
                 activity!!.supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragment_container, AddQuestionFragment.newInstance())
+                        .replace(R.id.fragment_container, AddQuestionFragment.newInstance(args))
                         .addToBackStack("AddTestFragment")
                         .commit()
             }

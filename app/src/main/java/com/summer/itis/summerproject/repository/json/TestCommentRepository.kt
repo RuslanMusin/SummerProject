@@ -90,6 +90,7 @@ class TestCommentRepository() {
             val key = databaseReference.child(testId).push().key
             comment.id  = key
             databaseReference.child(testId).child(key!!).setValue(comment)
+            e.onSuccess(true)
         }
         return single.compose(RxUtils.asyncSingle())
     }

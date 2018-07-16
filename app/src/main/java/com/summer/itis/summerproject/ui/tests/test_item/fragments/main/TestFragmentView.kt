@@ -9,6 +9,8 @@ interface TestFragmentView : MvpView {
 
     fun addComment(comment: Comment)
 
+    fun setData()
+
 
 }
 

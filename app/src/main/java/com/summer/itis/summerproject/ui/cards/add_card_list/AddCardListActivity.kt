@@ -17,9 +17,11 @@ import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity
+import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.ITEM_JSON
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
+import com.summer.itis.summerproject.utils.ApplicationHelper
 
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -74,24 +76,68 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
 
         Log.d(TAG_LOG,"setResult = " + itemList.size)
 
-        for (item in itemList) {
+       /* for (item in itemList) {
             Log.d(TAG_LOG, "text " + item.text!!.content!!)
             Log.d(TAG_LOG, "desc " + item.description!!.content!!)
             Log.d(TAG_LOG, "url " + item.url!!.content!!)
-        }
+        }*/
         val sep = "-----------"
         Log.d(TAG_LOG, sep)
+
+        val names: List<String> = ApplicationHelper.readFileFromAssets("regular.txt",this)
+        for(name in names) {
+            Log.d(TAG_LOG,"name = " + name)
+        }
         itemList = Stream.of(itemList)
                 .filter { e ->
-                    val text = e.description!!.content
-                    val pattern = Pattern.compile(".*\\(.*[0-9]{1,4}.*(\\s*-\\s*[0-9]{1,4}.*)?\\).*")
-                    pattern.matcher(text!!).matches()
+                    var flag: Boolean = false
+                    e.description?.let {
+                        flag = true
+                        val text = it.content
+                        Log.d(TAG_LOG, "text = " + text)
+//                    val pattern = Pattern.compile(".*\\(.*[0-9]{1,4}.*(\\s*-\\s*[0-9]{1,4}.*)?\\).*")
+                        val mainPattern = Pattern.compile(".*\\(.*(([0-9]{1,4})|(век|др\\.)).*\\).*")
+                        val secondPattern = Pattern.compile("\\(.*\\)\\s*—")
+                        val thirdPattern = Pattern.compile("\\s+|,|\\.")
+                        flag = mainPattern.matcher(text!!).matches()
+                        if (flag) {
+                            Log.d(TAG_LOG, "text true = " + text)
+                            val partsOne = text.split(secondPattern)
+                            val parts: MutableList<String> = ArrayList()
+                            for(part in partsOne) {
+                                Log.d(TAG_LOG,"big_part = $part")
+                                val partsMin: List<String> = part.split(thirdPattern)
+                                for(partMin in partsMin) {
+                                    Log.d(TAG_LOG,"partMin = $partMin")
+                                }
+                                parts.addAll(partsMin)
+                            }
+                           /* val partOne = parts[0]
+                            var partTwo = ""
+                            if (parts.size > 1) {
+                                partTwo = parts[1]
+                            }
+                            Log.d(TAG_LOG, "part = " + partOne)
+                            Log.d(TAG_LOG, "partTwo = " + partTwo)*/
+                            for (name in names) {
+                                for(part in parts) {
+                                    if (part.equals(name)) {
+                                        flag = false
+                                        Log.d(TAG_LOG, "flag = $flag and name = $name")
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    flag
                 }
                 .toList()
         for (item in itemList) {
-            Log.d(TAG_LOG, "text " + item.text!!.content!!)
+          /*  Log.d(TAG_LOG, "text " + item.text!!.content!!)
             Log.d(TAG_LOG, "desc " + item.description!!.content!!)
-            Log.d(TAG_LOG, "url " + item.url!!.content!!)
+            Log.d(TAG_LOG, "url " + item.url!!.content!!)*/
         }
 
         adapter!!.changeDataSet(itemList)

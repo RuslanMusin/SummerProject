@@ -25,6 +25,7 @@ import java.util.Locale
 
 import com.summer.itis.summerproject.utils.Const.IMAGE_START_PATH
 import com.summer.itis.summerproject.utils.Const.SEP
+import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 
 class RegistrationPresenter(private val regView: RegistrationActivity) {
@@ -76,14 +77,14 @@ class RegistrationPresenter(private val regView: RegistrationActivity) {
             path = (IMAGE_START_PATH + user.id + SEP
                     + uri.lastPathSegment)
         } else {
-            path = "path"
+            path = STUB_PATH
         }
 
         user.photoUrl = path
 
         regView.user = user
 
-        if (path != "path") {
+        if (!path.equals(STUB_PATH)) {
             val childRef = ApplicationHelper.storageReference.child(user.photoUrl!!)
 
             //uploading the image

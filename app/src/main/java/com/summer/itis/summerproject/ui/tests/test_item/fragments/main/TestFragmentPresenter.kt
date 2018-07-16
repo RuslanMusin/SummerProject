@@ -5,6 +5,8 @@ import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.summer.itis.summerproject.model.Comment
+import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.cardRepository
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testCommentRepository
 import com.summer.itis.summerproject.utils.Const
 
@@ -27,7 +29,16 @@ class TestFragmentPresenter : MvpPresenter<TestFragmentView>() {
 
     fun createComment(crossingId: String, comment: Comment) {
         testCommentRepository.createComment(crossingId,comment)
-                .subscribe{e -> viewState.addComment(comment)}
+                .subscribe()
+    }
+
+    fun readCardForTest(test: Test) {
+        test.cardId?.let {
+            cardRepository.readCardForTest(it).subscribe{ card ->
+                test.card = card
+                viewState.setData()
+            }
+        }
     }
 
 }

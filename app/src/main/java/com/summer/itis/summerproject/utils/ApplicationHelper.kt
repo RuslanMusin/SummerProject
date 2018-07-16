@@ -16,6 +16,7 @@
 
 package com.summer.itis.summerproject.utils
 
+import android.content.Context
 import android.util.Log
 import android.widget.ImageView
 
@@ -35,6 +36,12 @@ import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.ui.start.login.LoginActivity
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import android.util.TypedValue
+import com.summer.itis.summerproject.utils.Const.STUB_PATH
+
 
 //ОСНОВНОЙ КЛАСС HELPER приложения. ОТСЮДА БЕРЕМ ТЕКУЩЕГО ЮЗЕРА ИЗ БД, ГРУЗИМ ФОТКУ ЮЗЕРА В ПРОФИЛЬ,
 //ПОЛУЧАЕМ ССЫЛКУ НА ПУТЬ ФАЙЛОГО ХРАНИЛИЩА И СОЗДАЕМ СЕССИЮ. ПОКА ТАК ПУСТЬ БУДЕТ
@@ -48,11 +55,13 @@ class ApplicationHelper {
             get() = FirebaseStorage.getInstance().reference
 
         fun loadUserPhoto(photoView: ImageView) {
-            val storageReference = currentUser!!.photoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
+            if(!currentUser?.photoUrl.equals(STUB_PATH)) {
+                val storageReference = currentUser!!.photoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
 
-            Glide.with(photoView.context)
-                    .load(storageReference)
-                    .into(photoView)
+                Glide.with(photoView.context)
+                        .load(storageReference)
+                        .into(photoView)
+            }
         }
 
 
@@ -82,5 +91,41 @@ class ApplicationHelper {
             }
         }
 
+        fun readFileFromAssets(fileName: String, context: Context): List<String> {
+            var reader: BufferedReader? = null
+            var names: MutableList<String> = ArrayList()
+            try {
+                reader = BufferedReader(
+                        InputStreamReader(context.assets.open(fileName), "UTF-8"))
+                var mLine: String? = reader.readLine()
+                while (mLine != null && !"".equals(mLine)) {
+                    names.add(mLine)
+                    mLine = reader.readLine()
+                }
+                return names
+            } catch (e: IOException) {
+                //log the exception
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close()
+                    } catch (e: IOException) {
+                        //log the exception
+                    }
+
+                }
+            }
+            return names
+        }
+
+        fun convertDpToPx(dp: Float, context: Context): Int {
+            val r = context.getResources()
+            val px = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    dp,
+                    r.getDisplayMetrics()
+            ).toInt()
+            return px
+        }
     }
 }

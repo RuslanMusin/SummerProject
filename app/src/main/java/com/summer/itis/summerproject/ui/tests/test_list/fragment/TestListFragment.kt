@@ -22,6 +22,7 @@ import com.summer.itis.summerproject.ui.tests.test_list.TestAdapter
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListView
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
 import com.summer.itis.summerproject.utils.Const.MY_LIST
+import com.summer.itis.summerproject.utils.Const.OFFICIAL_LIST
 import com.summer.itis.summerproject.utils.Const.READER_LIST
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.USER_LIST
@@ -60,7 +61,7 @@ class TestListFragment : Fragment() {
         initViews(view)
         initRecycler()
 
-        if (!isLoaded && type == READER_LIST) {
+        if (!isLoaded && type == OFFICIAL_LIST) {
             parentView!!.changeAdapter(0)
         }
 

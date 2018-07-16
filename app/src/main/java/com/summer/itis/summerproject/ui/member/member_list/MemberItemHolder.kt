@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.ImageLoadHelper
 
 class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -29,8 +30,11 @@ class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         name.text = item.username
 
         if (item.photoUrl != null) {
-            if (item.photoUrl == R.drawable.ic_person_black_24dp.toString()) {
-                ImageLoadHelper.loadPictureByDrawableDefault(imageView, R.drawable.ic_person_black_24dp)
+            if (item.photoUrl.equals(STUB_PATH)) {
+//                ImageLoadHelper.loadPictureByDrawableDefault(imageView, R.drawable.ic_person_black_24dp)
+                Glide.with(imageView.context)
+                        .load(R.drawable.ic_account_circle_black_24dp)
+                        .into(imageView)
             } else {
                 //                ImageLoadHelper.loadPicture(imageView, items.getPhotoUrl());
                 val imageReference = ApplicationHelper.storageReference.child(item.photoUrl!!)

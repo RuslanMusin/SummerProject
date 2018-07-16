@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.model
 
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.gson.annotations.Expose
 
@@ -18,6 +19,6 @@ class AbstractCard {
 
     var wikiUrl: String? = null
 
-    @Expose
+    @Exclude
     var isOwner: Boolean = false
 }

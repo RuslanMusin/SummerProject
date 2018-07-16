@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="72dp"
+        android:paddingTop="16dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
@@ -21,18 +21,16 @@
             android:layout_marginTop="@dimen/margin.large"
             android:text="@string/question_text"
             android:textColor="@color/primary_text"
-            android:textSize="@dimen/text.16" />
+            android:textSize="@dimen/text.18" />
 
         <TextView
-            android:id="@+id/tv_author"
+            android:id="@+id/tv_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin.small"
             android:textColor="@color/secondary_text"
-            android:textSize="@dimen/text.14"
+            android:textSize="@dimen/text.16"
             tools:text="Question" />
-
-
 
         <LinearLayout
             android:id="@+id/li_answers"
@@ -41,8 +39,8 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:orientation="vertical">
-
         </LinearLayout>
+
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_next_question"
@@ -62,6 +60,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
+            android:visibility="gone"
             android:background="@color/primary"
             android:textColor="@color/white"
             android:text="@string/finish_questions"/>

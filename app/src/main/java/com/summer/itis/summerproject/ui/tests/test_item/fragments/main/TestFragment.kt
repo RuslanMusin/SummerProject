@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.TypedArrayUtils.getText
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -24,6 +25,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.*
+import com.summer.itis.summerproject.R.string.comments
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
@@ -59,7 +62,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     internal var myFormat = "dd.MM.yyyy" //In which you need put here
     internal var sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
-    private var adapter: CommentAdapter? = null
+    private lateinit var adapter: CommentAdapter
 
     private var comments: MutableList<Comment> = ArrayList()
 
@@ -72,9 +75,9 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.layout_test, container, false)
 
-
         val testStr: String? = arguments?.getString(TEST_JSON)
         test = gsonConverter.fromJson(testStr,Test::class.java)
+        presenter.readCardForTest(test)
         return view
     }
 
@@ -84,8 +87,13 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         initRecycler()
         setListeners()
 
+        test.id?.let { presenter.loadComments(it) }
 
-        if(test.testDone == false) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun setData() {
+        if (test.testDone == false) {
             tv_done.text = getText(R.string.test_wasnt_done)
         } else {
             tv_done.text = getText(R.string.test_was_done)
@@ -94,15 +102,11 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         tv_author.text = test.authorName
         (extv_desc as ExpandableTextView).text = test.desc
         nameEditText.text = test.title
-        test.imageUrl?.let {
+        test.card?.abstractCard?.photoUrl?.let {
             Glide.with(iv_crossing.context)
                     .load(it)
                     .into(iv_crossing)
         }
-
-        test.id?.let { presenter.loadComments(it) }
-
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun initViews(view: View) {
@@ -149,7 +153,6 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
                 val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 args.putInt(QUESTION_NUMBER,0)
-                args.putInt(RIGHT_ANSWERS,0)
 
                 activity!!.supportFragmentManager
                         .beginTransaction()
@@ -201,6 +204,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
                 comment.authorPhotoUrl = user.photoUrl
                 comment.createdDate = (Date().time)
                 test.id?.let { it1 -> presenter.createComment(it1, comment) }
+                addComment(comment)
             }
 
             commentEditText.setText(null)
@@ -214,6 +218,8 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     }
 
     override fun showComments(comments: List<Comment>) {
+        this.comments = comments.toMutableList()
+        adapter?.changeDataSet(comments)
     }
 
 

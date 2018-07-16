@@ -63,6 +63,7 @@ class TestListActivity : NavigationBaseActivity(), TestListView {
         viewPager!!.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
 
         setTabListener()
+
     }
 
     private fun setTabListener() {

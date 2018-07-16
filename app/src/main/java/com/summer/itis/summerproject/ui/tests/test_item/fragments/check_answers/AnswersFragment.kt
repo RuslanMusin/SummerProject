@@ -1,32 +1,53 @@
+package com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers
 
+import QuestionFragment.Companion.ANSWERS_TYPE
+import QuestionFragment.Companion.CARD_JSON
+import QuestionFragment.Companion.QUESTION_NUMBER
+import QuestionFragment.Companion.RIGHT_ANSWERS
+import QuestionFragment.Companion.WRONG_ANSWERS
+import android.app.Activity
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
+import android.support.v4.widget.CompoundButtonCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import com.summer.itis.summerproject.model.Answer
-import com.summer.itis.summerproject.model.Question
-
-import java.util.ArrayList
-
-import android.widget.*
+import android.widget.CheckBox
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.TextView
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.string.answer
+import com.summer.itis.summerproject.R.id.btn_finish_test
+import com.summer.itis.summerproject.R.id.tv_right_answers
+import com.summer.itis.summerproject.model.Answer
+import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.winned_card.TestCardFragment
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
+import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import kotlinx.android.synthetic.main.fragment_finish_test.*
 import kotlinx.android.synthetic.main.fragment_question.*
+import java.util.ArrayList
 
-class QuestionFragment : Fragment(), View.OnClickListener {
+class AnswersFragment : Fragment(), View.OnClickListener {
 
     private lateinit var question: Question
     private lateinit var test: Test
+    private lateinit var type: String
     private var number: Int = 0
+
+    private lateinit var colorStateList: ColorStateList
 
     private var textViews: MutableList<TextView>? = null
     private var checkBoxes: MutableList<CheckBox>? = null
@@ -34,14 +55,15 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
-
+        type = arguments?.getString(ANSWERS_TYPE)!!
         val testStr: String = arguments?.getString(TEST_JSON)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
         test = gsonConverter.fromJson(testStr, Test::class.java)
-        question = test.questions[number]
+        question = if(type.equals(RIGHT_ANSWERS)) test.rightQuestions[number] else test.wrongQuestions[number]
 
         return view
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
@@ -60,12 +82,20 @@ class QuestionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setStartAnswers() {
+        colorStateList = ColorStateList(
+                arrayOf(intArrayOf(-android.R.attr.state_checked), // unchecked
+                        intArrayOf(android.R.attr.state_checked))// checked
+                ,
+                intArrayOf(Color.parseColor("#FFFFFF"), Color.parseColor("#DC143C"))
+        )
+
+
 
         for (answer in question.answers) {
             addAnswer(answer)
         }
         for(tv in textViews!!) {
-            Log.d(TAG_LOG,"text = " + tv.text)
+            Log.d(Const.TAG_LOG,"text = " + tv.text)
         }
 
         if(number == (test.questions.size-1)) {
@@ -86,43 +116,26 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
             R.id.btn_finish_questions -> {
 
-                checkAnswers()
                 val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 activity!!.supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragment_container, FinishFragment.newInstance(args))
+                        .replace(R.id.fragment_container, TestFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
                         .commit()            }
 
             R.id.btn_next_question -> {
-                checkAnswers()
                 val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
+                args.putString(ANSWERS_TYPE, type)
                 activity!!.supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragment_container, QuestionFragment.newInstance(args))
+                        .replace(R.id.fragment_container, AnswersFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
                         .commit()
             }
 
-        }
-    }
-
-    private fun checkAnswers() {
-        Log.d(TAG_LOG,"questioin = ${question.question}")
-        question.userRight = true
-        for(i in question.answers.indices) {
-            val answer: Answer = question.answers[i]
-                if(checkBoxes?.get(i)?.isChecked!!) {
-                    answer.userClicked = true
-                    Log.d(TAG_LOG,"checked answer = ${answer.text}")
-                }
-            if(answer.isRight && answer.userClicked != answer.isRight) {
-                question.userRight = false
-                Log.d(TAG_LOG, "wrong i = $i and answer = " + question.answers[i])
-            }
         }
     }
 
@@ -131,11 +144,20 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         val tvAnswer: TextView = view.findViewWithTag("tv_answer")
         tvAnswer.text = answer.text
         textViews?.add(tvAnswer)
-        Log.d(TAG_LOG,"text tv = ${tvAnswer.text}")
+        Log.d(Const.TAG_LOG,"text tv = ${tvAnswer.text}")
         val checkBox: CheckBox = view.findViewWithTag("checkbox")
+        if(answer.isRight) {
+            checkBox.isChecked = true
+        }
         checkBoxes?.add(checkBox)
-        Log.d(TAG_LOG,"checkboxes size = ${checkBoxes?.size}")
+        Log.d(Const.TAG_LOG,"checkboxes size = ${checkBoxes?.size}")
         li_answers.addView(view)
+        if(type.equals(WRONG_ANSWERS) && !answer.isRight && answer.userClicked != answer.isRight) {
+            Log.d(TAG_LOG,"change checkbox color")
+            checkBox.isChecked = true
+            CompoundButtonCompat.setButtonTintList(checkBox, colorStateList)
+        }
+        checkBox.isEnabled = false
     }
 
     companion object {
@@ -151,7 +173,7 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
 
         fun newInstance(args: Bundle): Fragment {
-            val fragment = QuestionFragment()
+            val fragment = AnswersFragment()
             fragment.arguments = args
             return fragment
         }
