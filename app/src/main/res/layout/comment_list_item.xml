@@ -7,7 +7,7 @@
     android:paddingBottom="@dimen/large_intrinsic_padding"
     android:paddingTop="@dimen/large_intrinsic_padding">
 
-    <com.example.ruslan.curs2project.ui.widget.CircularImageView
+    <com.summer.itis.summerproject.ui.widget.CircularImageView
         android:id="@+id/avatarImageView"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -16,7 +16,7 @@
         app:border="true"
         app:border_width="0dp" />
 
-    <com.example.ruslan.curs2project.ui.widget.ExpandableTextView
+    <com.summer.itis.summerproject.ui.widget.ExpandableTextView
         android:id="@+id/commentText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
 
         </RelativeLayout>
 
-    </com.example.ruslan.curs2project.ui.widget.ExpandableTextView>
+    </com.summer.itis.summerproject.ui.widget.ExpandableTextView>
 
   <!--  <ImageView
         android:id="@+id/iv_reply2"

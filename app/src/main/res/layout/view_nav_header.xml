@@ -46,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:transitionName="@string/post_author_image_transition_name"
+            android:src="@drawable/pers"
             app:border="false"
             app:shadow="false"
             tools:targetApi="lollipop" />

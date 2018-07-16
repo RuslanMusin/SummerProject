@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.tests.add_test.fragments.main
 
+import GameQuestionFragment.Companion.QUESTION_NUMBER
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -11,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 
 import com.summer.itis.summerproject.R
@@ -80,10 +80,11 @@ class AddTestFragment : Fragment(), View.OnClickListener {
                 test!!.desc = etTestDesc!!.text.toString()
 
                 addTestView!!.setTest(test!!)
-
+                val args: Bundle = Bundle()
+                args.putInt(QUESTION_NUMBER, 1)
                 activity!!.supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragment_container, AddQuestionFragment.newInstance())
+                        .replace(R.id.fragment_container, AddQuestionFragment.newInstance(args))
                         .addToBackStack("AddTestFragment")
                         .commit()
             }

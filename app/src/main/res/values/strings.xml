@@ -232,6 +232,17 @@
     <string name="game_searching">Ищем игру</string>
     <string name="default_parametr_value">10</string>
     <string name="authorName">Автор теста</string>
+    <string name="test_done">Тест пройден</string>
+    <string name="test_wasnt_done">Нет</string>
+    <string name="test_was_done">Да</string>
+    <string name="do_test">Решить тест</string>
+    <string name="question_text">Вопрос</string>
+    <string name="right_asnwers">Правильных ответов</string>
+    <string name="answer">Ответ</string>
+    <string name="wrong_answers">Неправильных ответов</string>
+    <string name="winned_card">Выигранная карта</string>
+    <string name="test_failed">Тест не пройден</string>
+    <string name="set_answer">Ответить</string>
 
 
 </resources>

@@ -97,7 +97,7 @@ object Const {
 
     //image path
     const val IMAGE_START_PATH = "images/users/"
-    const val STUB_PATH = "stub"
+    const val STUB_PATH = "path"
 
     @JvmField
     val gsonConverter = Gson()

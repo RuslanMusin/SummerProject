@@ -1,0 +1,241 @@
+package com.summer.itis.summerproject.ui.tests.test_item.fragments.main
+
+import GameQuestionFragment.Companion.QUESTION_NUMBER
+import android.app.Activity
+import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
+import com.arellomobile.mvp.MvpAppCompatFragment
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.bumptech.glide.Glide
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+
+import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.model.Comment
+import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.model.User
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
+import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.comment.CommentAdapter
+import com.summer.itis.summerproject.ui.comment.OnCommentClickListener
+import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.widget.ExpandableTextView
+import com.summer.itis.summerproject.utils.ApplicationHelper
+
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.Const.gsonConverter
+import kotlinx.android.synthetic.main.fragment_recycler_list.*
+import kotlinx.android.synthetic.main.layout_add_comment.*
+import kotlinx.android.synthetic.main.layout_test.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
+class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView {
+
+    private lateinit var commentEditText: EditText
+
+    internal var myFormat = "dd.MM.yyyy" //In which you need put here
+    internal var sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+    private lateinit var adapter: CommentAdapter
+
+    private var comments: MutableList<Comment> = ArrayList()
+
+    lateinit var test: Test
+
+    @InjectPresenter
+    lateinit var presenter: TestFragmentPresenter
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.layout_test, container, false)
+
+        val testStr: String? = arguments?.getString(TEST_JSON)
+        test = gsonConverter.fromJson(testStr,Test::class.java)
+        presenter.readCardForTest(test)
+        return view
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initViews(view)
+        initRecycler()
+        setListeners()
+
+        test.id?.let { presenter.loadComments(it) }
+
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun setData() {
+        if (test.testDone == false) {
+            tv_done.text = getText(R.string.test_wasnt_done)
+        } else {
+            tv_done.text = getText(R.string.test_was_done)
+        }
+
+        tv_author.text = test.authorName
+        (extv_desc as ExpandableTextView).text = test.desc
+        nameEditText.text = test.title
+        test.card?.abstractCard?.photoUrl?.let {
+            Glide.with(iv_crossing.context)
+                    .load(it)
+                    .into(iv_crossing)
+        }
+    }
+
+    private fun initViews(view: View) {
+
+        commentEditText = view.findViewById<View>(R.id.commentEditText) as EditText
+
+        commentEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                Log.d(TAG_LOG, "char length = " + charSequence.length)
+                sendButton.isEnabled = charSequence.toString().trim { it <= ' ' }.length > 0
+                Log.d(TAG_LOG, "enabled = " + sendButton.isEnabled)
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                val charSequence = editable.toString()
+                Log.d(TAG_LOG, "after char length = " + charSequence.length)
+                sendButton.isEnabled = charSequence.trim { it <= ' ' }.length > 0
+                Log.d(TAG_LOG, "enabled = " + sendButton.isEnabled)
+            }
+        })
+
+        sendButton.setOnClickListener {
+            if ((activity as NavigationBaseActivity).hasInternetConnection()) {
+                sendComment()
+            } else {
+                (activity as NavigationBaseActivity).showSnackBar(R.string.internet_connection_failed)
+            }
+        }
+    }
+
+    private fun setListeners() {
+        btn_do_test.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View) {
+        when (v.id) {
+
+            R.id.btn_do_test -> {
+
+                val args: Bundle = Bundle()
+                args.putString(TEST_JSON, gsonConverter.toJson(test))
+                args.putInt(QUESTION_NUMBER,0)
+
+                activity!!.supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, QuestionFragment.newInstance(args))
+                        .addToBackStack("AddQuestionFragment")
+                        .commit()
+
+            }
+        }
+    }
+
+    override fun onReplyClick(position: Int) {
+        commentEditText.isEnabled = true
+        val comment = comments.get(position)
+        val commentString = comment.authorName + ", "
+        commentEditText.setText(commentString)
+    }
+
+    override fun onAuthorClick(authorId: String) {
+        val reference = userRepository.readUser(authorId)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val user = dataSnapshot.getValue(User::class.java)
+                user?.let { PersonalActivity.start(activity as Activity, it) }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        })
+    }
+
+    override fun setComments(comments: List<Comment>) {
+        this.comments = comments.toMutableList()
+        adapter?.changeDataSet(comments)
+    }
+
+
+    private fun sendComment() {
+        val commentText = commentEditText.getText().toString()
+        Log.d(TAG_LOG, "send comment = $commentText")
+        if (commentText.length > 0) {
+            val comment = Comment()
+            val user = ApplicationHelper.currentUser
+            user?.let {
+                comment.text = commentText
+                comment.authorId = user.id
+                comment.authorName = user.username
+                comment.authorPhotoUrl = user.photoUrl
+                comment.createdDate = (Date().time)
+                test.id?.let { it1 -> presenter.createComment(it1, comment) }
+                addComment(comment)
+            }
+
+            commentEditText.setText(null)
+            commentEditText.clearFocus()
+        }
+    }
+
+    override fun addComment(comment: Comment) {
+        comments.add(comment)
+        adapter?.changeDataSet(comments)
+    }
+
+    override fun showComments(comments: List<Comment>) {
+        this.comments = comments.toMutableList()
+        adapter?.changeDataSet(comments)
+    }
+
+
+    override fun onItemClick(item: Comment) {
+    }
+
+    private fun initRecycler() {
+        adapter = CommentAdapter(ArrayList(), this)
+        adapter?.let {
+            val manager = LinearLayoutManager(this.activity)
+            rv_comics_list.let {
+                rv_comics_list?.setLayoutManager(manager)
+                adapter?.attachToRecyclerView(it)
+            }
+            adapter?.setOnItemClickListener(this)
+            rv_comics_list?.setAdapter(adapter)
+        }
+
+
+    }
+
+    companion object {
+
+        private val RESULT_LOAD_IMG = 0
+        private val ADD_CARD = 1
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = TestFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+}

@@ -29,6 +29,10 @@
 
         </activity>
         <activity android:name=".ui.game.play.DebugPlayGameActivity"></activity>
+
+        <activity android:name=".ui.tests.test_list.test.TestListActivity"/>
+        <activity android:name=".ui.tests.test_item.TestActivity"/>
+
     </application>
 
 </manifest>

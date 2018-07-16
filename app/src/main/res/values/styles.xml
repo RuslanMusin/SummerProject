@@ -53,6 +53,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="QuestionTiLayout" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">20sp</item>
+    </style>
+
   <!--  <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <items name="colorPrimary">@color/primary</items>
         <items name="colorPrimaryDark">@color/primary_dark</items>
