@@ -51,7 +51,7 @@ class AddTestActivity : NavigationBaseActivity(), AddTestView {
 
     override fun setQuestion(question: Question) {
         test?.let{
-            val questionId: String = (it.questions.size - 1).toString()
+            val questionId: String = (it.questions.size).toString()
             question.id = questionId
             it.questions.add(question)
         }

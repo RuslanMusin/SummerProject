@@ -1,11 +1,5 @@
 package com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers
 
-import QuestionFragment.Companion.ANSWERS_TYPE
-import QuestionFragment.Companion.CARD_JSON
-import QuestionFragment.Companion.QUESTION_NUMBER
-import QuestionFragment.Companion.RIGHT_ANSWERS
-import QuestionFragment.Companion.WRONG_ANSWERS
-import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -20,23 +14,14 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.id.btn_finish_test
-import com.summer.itis.summerproject.R.id.tv_right_answers
 import com.summer.itis.summerproject.model.Answer
-import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
-import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
-import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
-import com.summer.itis.summerproject.ui.tests.test_item.fragments.winned_card.TestCardFragment
-import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
-import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
-import kotlinx.android.synthetic.main.fragment_finish_test.*
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.util.ArrayList
 
