@@ -1,8 +1,8 @@
 package com.summer.itis.summerproject.ui.tests.test_item.fragments.finish
 
-import GameQuestionFragment.Companion.ANSWERS_TYPE
-import GameQuestionFragment.Companion.RIGHT_ANSWERS
-import GameQuestionFragment.Companion.WRONG_ANSWERS
+import QuestionFragment.Companion.ANSWERS_TYPE
+import QuestionFragment.Companion.RIGHT_ANSWERS
+import QuestionFragment.Companion.WRONG_ANSWERS
 import android.app.Activity
 import android.os.Bundle
 import android.support.v4.app.Fragment
