@@ -20,7 +20,7 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*
 
-class QuestionFragment : Fragment(), View.OnClickListener {
+class GameQuestionFragment : Fragment(), View.OnClickListener {
 
     private lateinit var question: Question
     private lateinit var test: Test
@@ -28,7 +28,6 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
     private var textViews: MutableList<TextView>? = null
     private var checkBoxes: MutableList<CheckBox>? = null
-    private var radioButtons: MutableList<RadioButton>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
@@ -49,7 +48,6 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
     private fun initViews(view: View) {
         textViews = ArrayList()
-        radioButtons = ArrayList()
         checkBoxes = ArrayList()
 
         tv_question.text = question.question
@@ -62,36 +60,16 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         for (answer in question.answers) {
             addAnswer(answer)
         }
-        for(tv in textViews!!) {
-            Log.d(TAG_LOG,"text = " + tv.text)
-        }
-
-        if(number == (test.questions.size-1)) {
-            btn_next_question.visibility = View.GONE
-            btn_finish_questions.visibility = View.VISIBLE
-        }
     }
 
 
     private fun setListeners() {
-        btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
     }
     override fun onClick(v: View) {
 
 
         when (v.id) {
-
-            R.id.btn_finish_questions -> {
-
-                checkAnswers()
-                val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, FinishFragment.newInstance(args))
-                        .addToBackStack("AddQuestionFragment")
-                        .commit()            }
 
             R.id.btn_next_question -> {
                 checkAnswers()
@@ -109,17 +87,14 @@ class QuestionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkAnswers() {
-        Log.d(TAG_LOG,"questioin = ${question.question}")
         question.userRight = true
         for(i in question.answers.indices) {
             val answer: Answer = question.answers[i]
                 if(checkBoxes?.get(i)?.isChecked!!) {
                     answer.userClicked = true
-                    Log.d(TAG_LOG,"checked answer = ${answer.text}")
                 }
             if(answer.isRight && answer.userClicked != answer.isRight) {
                 question.userRight = false
-                Log.d(TAG_LOG, "wrong i = $i and answer = " + question.answers[i])
             }
         }
     }
@@ -129,24 +104,14 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         val tvAnswer: TextView = view.findViewWithTag("tv_answer")
         tvAnswer.text = answer.text
         textViews?.add(tvAnswer)
-        Log.d(TAG_LOG,"text tv = ${tvAnswer.text}")
         val checkBox: CheckBox = view.findViewWithTag("checkbox")
         checkBoxes?.add(checkBox)
-        Log.d(TAG_LOG,"checkboxes size = ${checkBoxes?.size}")
         li_answers.addView(view)
     }
 
     companion object {
 
-        private val RESULT_LOAD_IMG = 0
-
         const val QUESTION_NUMBER = "queston_number"
-
-        const val RIGHT_ANSWERS = "right_answers"
-        const val WRONG_ANSWERS = "wrong_answers"
-        const val ANSWERS_TYPE = "type_answers"
-        const val CARD_JSON = "card_json"
-
 
         fun newInstance(args: Bundle): Fragment {
             val fragment = GameQuestionFragment()

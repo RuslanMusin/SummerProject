@@ -1,10 +1,9 @@
 package com.summer.itis.summerproject.ui.tests.add_test.fragments.question
 
-import QuestionFragment.Companion.QUESTION_NUMBER
+import GameQuestionFragment.Companion.QUESTION_NUMBER
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -15,7 +14,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import android.widget.RadioGroup
 
 import com.jaredrummler.materialspinner.MaterialSpinner
 import com.summer.itis.summerproject.R
@@ -26,19 +24,9 @@ import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
 import java.util.ArrayList
 
 import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import com.summer.itis.summerproject.Application
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
-import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
-import com.summer.itis.summerproject.utils.ApplicationHelper
-import com.summer.itis.summerproject.utils.Const
-import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.TEST_MANY_TYPE
 import com.summer.itis.summerproject.utils.Const.TEST_ONE_TYPE
-import java.util.regex.Pattern
 
 class AddQuestionFragment : Fragment(), View.OnClickListener {
 

@@ -51,7 +51,7 @@
             android:padding="12dp"
             android:background="@color/primary"
             android:textColor="@color/white"
-            android:text="@string/next_question"/>
+            android:text="@string/set_answer"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_finish_questions"

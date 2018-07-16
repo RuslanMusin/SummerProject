@@ -1,14 +1,9 @@
 package com.summer.itis.summerproject.ui.tests.test_item.fragments.main
 
-import QuestionFragment.Companion.QUESTION_NUMBER
-import QuestionFragment.Companion.RIGHT_ANSWERS
+import GameQuestionFragment.Companion.QUESTION_NUMBER
 import android.app.Activity
-import android.media.Image
-import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
-import android.support.v4.content.res.TypedArrayUtils.getText
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
@@ -25,8 +20,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.id.*
-import com.summer.itis.summerproject.R.string.comments
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
@@ -35,20 +28,13 @@ import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.comment.CommentAdapter
 import com.summer.itis.summerproject.ui.comment.OnCommentClickListener
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
-import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
-import com.summer.itis.summerproject.ui.tests.add_test.fragments.question.AddQuestionFragment
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
-import com.summer.itis.summerproject.ui.widget.CircularImageView
-import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
-import com.summer.itis.summerproject.utils.ImageLoadHelper
-import kotlinx.android.synthetic.main.activity_play_game.view.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
-import kotlinx.android.synthetic.main.fragment_test.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_test.*
 import java.text.SimpleDateFormat
