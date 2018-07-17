@@ -177,6 +177,23 @@
                 tools:text="Yes" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.large"
+                android:text="@string/card_getted"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/text.16" />
+
+            <TextView
+                android:id="@+id/tv_card_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin.small"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/text.14"
+                tools:text="Yes" />
+
+            <TextView
                 android:id="@+id/tv_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

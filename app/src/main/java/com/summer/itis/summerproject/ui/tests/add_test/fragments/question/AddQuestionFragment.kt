@@ -1,6 +1,7 @@
 package com.summer.itis.summerproject.ui.tests.add_test.fragments.question
 
 import GameQuestionFragment.Companion.QUESTION_NUMBER
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -24,15 +25,33 @@ import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
 import java.util.ArrayList
 
 import android.app.Activity.RESULT_OK
+import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnFourActionListener
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
+import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_QUESTION_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_TEST_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.add_test.fragments.main.AddTestFragment
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.AnswersFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
+import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.TEST_MANY_TYPE
 import com.summer.itis.summerproject.utils.Const.TEST_ONE_TYPE
+import com.summer.itis.summerproject.utils.Const.gsonConverter
 
-class AddQuestionFragment : Fragment(), View.OnClickListener {
+class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
     private var imageUri: Uri? = null
 
-    private var question: Question? = null
+    lateinit var test: Test
+    private lateinit var question: Question
     private var addTestView: AddTestView? = null
     private var number: Int = 0
 
@@ -60,13 +79,58 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
 
     private lateinit var checkListener: View.OnClickListener
 
+    override fun onBackPressed() {
+
+        if(number != 0) {
+            beforeQuestion()
+        } else {
+            val args: Bundle = Bundle()
+           args.putString(TEST_JSON, gsonConverter.toJson(test))
+           val fragment = AddTestFragment.newInstance(args)
+           (activity as BaseBackActivity).changeFragment(fragment, ADD_TEST_FRAGMENT)
+        }
+    }
+
+    override fun onCancel() {
+        TestListActivity.start(activity as Activity)
+    }
+
+    override fun onForward() {
+        nextQuestion()
+    }
+
+    override fun onOk() {
+        finishQuestions()
+    }
+
+    private fun beforeQuestion() {
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putInt(QUESTION_NUMBER, --number)
+        val fragment = AnswersFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
 
-        question = Question()
+        test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
+        if(test.questions.size > number) {
+            question = test.questions[number]
+        } else {
+            question = Question()
+            test.questions.add(question)
+        }
         number = arguments?.getInt(QUESTION_NUMBER)!!
         addTestView = activity as AddTestView?
+
+        (activity as BaseBackActivity).currentTag = ADD_QUESTION_FRAGMENT + number
+        (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
+        if(number == 9) {
+            (activity as ChangeToolbarListener).showOk(true)
+        } else {
+            (activity as ChangeToolbarListener).showOk(false)
+        }
 
         return view
     }
@@ -97,28 +161,10 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setStartAnswers() {
-        /*val radioGroup = RadioGroup(activity)
-        val rgParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        radioGroup.layoutParams = rgParams*/
-
-        liParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        liParams.setMargins(0, 8, 0, 8)
-
-        tiParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        tiParams.weight = 20f
-
-        etParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-
-        rbParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        rbParams.weight = 1f
-        rbParams.topMargin = 16
-        rbParams.bottomMargin = 4
-
         checkListener = object: View.OnClickListener{
             override fun onClick(v: View?) {
                 if(testType.equals(TEST_ONE_TYPE)) {
-                    changeToOneType()
+                    changeToOneType(v as CheckBox)
 
                 }
             }
@@ -139,10 +185,9 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
         btnFinish!!.setOnClickListener(this)
         spinner?.setOnItemSelectedListener(object : MaterialSpinner.OnItemSelectedListener<Any> {
             override fun onItemSelected(view: MaterialSpinner?, position: Int, id: Long, item: Any?) {
-//                view?.let { Snackbar.make(it, "Clicked $item", Snackbar.LENGTH_LONG).show() }
                 when (position) {
                     0 -> {
-                        changeToOneType()
+                        changeToOneType(null)
                     }
 
                     1 -> {
@@ -159,15 +204,34 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
 
     }
 
-    private fun changeToOneType() {
+    private fun changeToOneType(check: CheckBox?) {
         var count = 0
         for(checkBox in checkBoxes) {
-            if(checkBox.isChecked) {
+            if(checkBox.isChecked && (check == null || check.id != checkBox.id)) {
                 count++
                 checkBox.isChecked = if(count > 1) false else true
             }
         }
 
+    }
+
+    private fun finishQuestions() {
+        prepareQuestion()
+//        addTestView!!.createTest()
+        ApplicationHelper.currentUser?.let { testRepository
+                .createTest(test, it)
+                .subscribe{e -> TestActivity.start(activity as Activity,test)} }
+    }
+
+    private fun nextQuestion() {
+        if(number <= 9) {
+            val args: Bundle = Bundle()
+            args.putString(TEST_JSON, gsonConverter.toJson(test))
+            args.putInt(QUESTION_NUMBER, ++number)
+            prepareQuestion()
+            val fragment = AddQuestionFragment.newInstance(args)
+            (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
+        }
     }
 
     override fun onClick(v: View) {
@@ -176,27 +240,16 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
         when (v.id) {
 
             R.id.btn_finish_questions -> {
+                finishQuestions()
 
-                prepareQuestion()
-                addTestView!!.createTest()
-                PersonalActivity.start(activity!!)
             }
 
             R.id.btn_next_question -> {
-                if(number <= 10) {
-                    val args: Bundle = Bundle()
-                    args.putInt(QUESTION_NUMBER, ++number)
-                    prepareQuestion()
-                    activity!!.supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, AddQuestionFragment.newInstance(args))
-                            .addToBackStack("AddQuestionFragment")
-                            .commit()
-                }
+                nextQuestion()
             }
 
             R.id.btn_add_answer -> {
-                if(answerSize <= 5) {
+                if(answerSize < 5) {
                     addAnswer()
 
                 }
@@ -206,6 +259,11 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
         }
     }
 
+   /* fun finishQuestion() {
+        prepareQuestion()
+        addTestView!!.createTest()
+    }
+*/
     private fun addAnswer() {
         answerSize++
         val view: View = layoutInflater.inflate(R.layout.layout_item_add_question,liAnswers,false)
@@ -274,7 +332,7 @@ class AddQuestionFragment : Fragment(), View.OnClickListener {
         question!!.question = etQuestion!!.text.toString()
         //        question.setPhotoUrl(imageUri.getPath());
         question!!.answers = answers as ArrayList<Answer>
-        addTestView!!.setQuestion(question!!)
+//        addTestView!!.setQuestion(question!!)
 
     }
 

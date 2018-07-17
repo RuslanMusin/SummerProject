@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,17 +16,30 @@ import android.widget.EditText
 import android.widget.TextView
 
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListActivity
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_QUESTION_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_TEST_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
 import com.summer.itis.summerproject.ui.tests.add_test.fragments.question.AddQuestionFragment
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.AnswersFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 
 import com.summer.itis.summerproject.utils.Const.COMA
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 
-class AddTestFragment : Fragment(), View.OnClickListener {
+class AddTestFragment : Fragment(), View.OnClickListener, OnBackPressedListener {
 
     private var imageUri: Uri? = null
 
@@ -41,12 +55,44 @@ class AddTestFragment : Fragment(), View.OnClickListener {
     private var addTestView: AddTestView? = null
     private var test: Test? = null
 
+    companion object {
+
+        const val ADD_CARD: Int = 1
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = AddTestFragment()
+            fragment.arguments = args
+            return fragment
+        }
+
+        fun newInstance(): Fragment {
+            val fragment = AddTestFragment()
+            return fragment
+        }
+    }
+
+    override fun onBackPressed() {
+        TestListActivity.start(activity as Activity)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_test, container, false)
-        addTestView = activity as AddTestView?
-        test = Test()
+        (activity as BaseBackActivity).currentTag = ADD_TEST_FRAGMENT
+        (activity as ChangeToolbarListener).changeToolbar(ADD_TEST_FRAGMENT,"Добавить личность")
+//        addTestView = activity as AddTestView?
+        if(arguments == null) {
+            test = Test()
+        } else {
+            test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
+            setTestData()
+        }
         return view
+    }
+
+    private fun setTestData() {
+        etTestName!!.setText(test?.title)
+        etTestDesc!!.setText(test?.desc as Editable)
+        tvAddedCards!!.text = tvAddedCards!!.text.toString()  + " " + test?.card?.abstractCard?.name
     }
 
 
@@ -79,14 +125,18 @@ class AddTestFragment : Fragment(), View.OnClickListener {
                 test!!.title = etTestName!!.text.toString()
                 test!!.desc = etTestDesc!!.text.toString()
 
-                addTestView!!.setTest(test!!)
+//                addTestView!!.setTest(test!!)
+//
                 val args: Bundle = Bundle()
-                args.putInt(QUESTION_NUMBER, 1)
-                activity!!.supportFragmentManager
+                args.putString(TEST_JSON,gsonConverter.toJson(test))
+                args.putInt(QUESTION_NUMBER, 0)
+                val fragment = AddQuestionFragment.newInstance(args)
+                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
+                /*activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, AddQuestionFragment.newInstance(args))
                         .addToBackStack("AddTestFragment")
-                        .commit()
+                        .commit()*/
             }
 
             R.id.btn_add_card -> {
@@ -99,25 +149,10 @@ class AddTestFragment : Fragment(), View.OnClickListener {
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
-        if (reqCode == RESULT_LOAD_IMG && resultCode == Activity.RESULT_OK) {
-            imageUri = data!!.data
-        }
-
         if (reqCode == ADD_CARD && resultCode == Activity.RESULT_OK) {
             val card = gsonConverter.fromJson(data!!.getStringExtra(CARD_EXTRA), Card::class.java)
-            tvAddedCards!!.text = tvAddedCards!!.text.toString() + COMA + card.abstractCard?.name
+            tvAddedCards!!.text = tvAddedCards!!.text.toString()  + " " + card.abstractCard?.name
             test!!.card = card
-        }
-    }
-
-    companion object {
-
-        private val RESULT_LOAD_IMG = 0
-        private val ADD_CARD = 1
-
-        fun newInstance(): Fragment {
-            val fragment = AddTestFragment()
-            return AddTestFragment()
         }
     }
 }

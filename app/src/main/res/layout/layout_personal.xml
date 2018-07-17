@@ -151,16 +151,16 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/padding_small"
                 android:paddingBottom="@dimen/padding_small"
-                android:src="@drawable/ic_group_black_24dp"/>
+                android:src="@drawable/ic_book_black_24dp"/>
 
         <TextView
             android:id="@+id/tv_crossings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/padding_medium"
+            android:paddingStart="@dimen/padding_small"
             android:paddingTop="@dimen/padding_small"
             android:paddingBottom="@dimen/padding_small"
-            android:text="@string/crossings"
+            android:text="@string/tests"
             android:textColor="@color/primary_text"
             android:textSize="@dimen/text.16" />
 
@@ -169,6 +169,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="4dp"
             android:background="@android:color/darker_gray"/>
 
         <TextView

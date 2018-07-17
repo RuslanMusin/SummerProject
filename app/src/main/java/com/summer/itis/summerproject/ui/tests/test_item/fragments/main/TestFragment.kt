@@ -21,16 +21,26 @@ import com.google.firebase.database.ValueEventListener
 
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Comment
+import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
 import com.summer.itis.summerproject.ui.comment.CommentAdapter
 import com.summer.itis.summerproject.ui.comment.OnCommentClickListener
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.AFTER_TEST
+import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
@@ -41,7 +51,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView {
+class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView, OnBackPressedListener {
 
     private lateinit var commentEditText: EditText
 
@@ -57,13 +67,36 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     @InjectPresenter
     lateinit var presenter: TestFragmentPresenter
 
+    companion object {
+
+        fun newInstance(args: Bundle): Fragment {
+            val fragment = TestFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onBackPressed() {
+       /* val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment)*/
+        TestListActivity.start(activity as Activity)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.layout_test, container, false)
 
         val testStr: String? = arguments?.getString(TEST_JSON)
         test = gsonConverter.fromJson(testStr,Test::class.java)
+
+
+        (activity as BaseBackActivity).currentTag = TEST_FRAGMENT
+        test.title?.let { (activity as ChangeToolbarListener).changeToolbar(TEST_FRAGMENT, it) }
         presenter.readCardForTest(test)
+
+
+
         return view
     }
 
@@ -84,7 +117,11 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         } else {
             tv_done.text = getText(R.string.test_was_done)
         }
-
+        if(test.testRelation?.relation.equals(AFTER_TEST)) {
+            tv_card_done.text = getText(R.string.test_wasnt_done)
+        } else if(test.testRelation?.relation.equals(LOSE_GAME)) {
+            tv_card_done.text = getText(R.string.test_was_done)
+        }
         tv_author.text = test.authorName
         (extv_desc as ExpandableTextView).text = test.desc
         nameEditText.text = test.title
@@ -139,12 +176,13 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
                 val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 args.putInt(QUESTION_NUMBER,0)
-
-                activity!!.supportFragmentManager
+                val fragment = QuestionFragment.newInstance(args)
+                (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + 0)
+                /*activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, QuestionFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
-                        .commit()
+                        .commit()*/
 
             }
         }
@@ -227,15 +265,5 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
 
     }
 
-    companion object {
 
-        private val RESULT_LOAD_IMG = 0
-        private val ADD_CARD = 1
-
-        fun newInstance(args: Bundle): Fragment {
-            val fragment = TestFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
 }

@@ -1,4 +1,6 @@
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -12,23 +14,75 @@ import com.summer.itis.summerproject.model.Question
 import java.util.ArrayList
 
 import android.widget.*
+import com.afollestad.materialdialogs.DialogAction
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*
+import com.afollestad.materialdialogs.MaterialDialog
+import com.summer.itis.summerproject.ui.base.OnCancelListener
+import com.summer.itis.summerproject.ui.base.OnFourActionListener
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 
-class QuestionFragment : Fragment(), View.OnClickListener {
+
+class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
     private lateinit var question: Question
     private lateinit var test: Test
     private var number: Int = 0
 
-    private var textViews: MutableList<TextView>? = null
-    private var checkBoxes: MutableList<CheckBox>? = null
-    private var radioButtons: MutableList<RadioButton>? = null
+    private var textViews: MutableList<TextView> = ArrayList()
+    private var checkBoxes: MutableList<CheckBox> = ArrayList()
+
+    override fun onBackPressed() {
+       /* val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment)*/
+        shouldCancel()
+    }
+
+    override fun onCancel() {
+        shouldCancel()
+    }
+
+    override fun onForward() {
+        nextQuestion()
+    }
+
+    override fun onOk() {
+        finishQuestions()
+    }
+
+    fun shouldCancel() {
+        MaterialDialog.Builder(activity as Context)
+                .title(R.string.question_dialog_title)
+                .content(R.string.question_dialog_content)
+                .positiveText(R.string.agree)
+                .negativeText(R.string.disagree)
+                .onPositive(object :MaterialDialog.SingleButtonCallback {
+                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                        for(question in test.questions) {
+                            question.userRight = false
+                            for(answer in question.answers) {
+                                answer.userClicked = false
+                            }
+                        }
+                        TestActivity.start(activity as Activity,test)
+                    }
+
+                })
+                .show()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
@@ -37,6 +91,9 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         number = arguments?.getInt(QUESTION_NUMBER)!!
         test = gsonConverter.fromJson(testStr, Test::class.java)
         question = test.questions[number]
+
+        (activity as BaseBackActivity).currentTag = TestActivity.QUESTION_FRAGMENT + number
+        (activity as ChangeToolbarListener).changeToolbar(QUESTION_FRAGMENT + number,"Вопрос ${number+1}/${test.questions.size}")
 
         return view
     }
@@ -48,9 +105,6 @@ class QuestionFragment : Fragment(), View.OnClickListener {
     }
 
     private fun initViews(view: View) {
-        textViews = ArrayList()
-        radioButtons = ArrayList()
-        checkBoxes = ArrayList()
 
         tv_question.text = question.question
 
@@ -69,6 +123,7 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         if(number == (test.questions.size-1)) {
             btn_next_question.visibility = View.GONE
             btn_finish_questions.visibility = View.VISIBLE
+            (activity as ChangeToolbarListener).showOk(true)
         }
     }
 
@@ -77,6 +132,23 @@ class QuestionFragment : Fragment(), View.OnClickListener {
         btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
     }
+
+    private fun finishQuestions() {
+        checkAnswers()
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
+    }
+
+    private fun nextQuestion() {
+        checkAnswers()
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putInt(QUESTION_NUMBER, ++number)
+        val fragment = QuestionFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + number)
+    }
     override fun onClick(v: View) {
 
 
@@ -84,25 +156,20 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
             R.id.btn_finish_questions -> {
 
-                checkAnswers()
-                val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                activity!!.supportFragmentManager
+               finishQuestions()
+               /* activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, FinishFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
-                        .commit()            }
+                        .commit()      */      }
 
             R.id.btn_next_question -> {
-                checkAnswers()
-                val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                args.putInt(QUESTION_NUMBER, ++number)
-                activity!!.supportFragmentManager
+                nextQuestion()
+               /* activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, QuestionFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
-                        .commit()
+                        .commit()*/
             }
 
         }
@@ -117,7 +184,7 @@ class QuestionFragment : Fragment(), View.OnClickListener {
                     answer.userClicked = true
                     Log.d(TAG_LOG,"checked answer = ${answer.text}")
                 }
-            if(answer.isRight && answer.userClicked != answer.isRight) {
+            if(answer.userClicked != answer.isRight) {
                 question.userRight = false
                 Log.d(TAG_LOG, "wrong i = $i and answer = " + question.answers[i])
             }
@@ -149,7 +216,7 @@ class QuestionFragment : Fragment(), View.OnClickListener {
 
 
         fun newInstance(args: Bundle): Fragment {
-            val fragment = GameQuestionFragment()
+            val fragment = QuestionFragment()
             fragment.arguments = args
             return fragment
         }
