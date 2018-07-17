@@ -80,9 +80,6 @@ class CardFragment : Fragment(), OnClickListener {
         tv_description = view.findViewById(R.id.tv_description)
         iv_photo = view.findViewById(R.id.iv_portrait)
         btn_state = view.findViewById(R.id.btn_state)
-        if ("All" == tagInput){
-            btn_state.visibility = View.GONE
-        }
         btn_test = view.findViewById(R.id.btn_test)
         btn_wiki = view.findViewById(R.id.btn_wiki)
     }
@@ -91,5 +88,8 @@ class CardFragment : Fragment(), OnClickListener {
         btn_state.setOnClickListener(this)
         btn_test.setOnClickListener(this)
         btn_wiki.setOnClickListener(this)
+        if ("All" == tagInput){
+            btn_state.visibility = View.GONE
+        }
     }
 }

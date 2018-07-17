@@ -17,7 +17,7 @@ import java.util.ArrayList
 class CardStatesActivity : BaseActivity() {
 
     private lateinit var mViewPager: ViewPager
-    private lateinit var mPagerAdapter: PagerAdapter
+    private lateinit var mPagerAdapter: CardsStatesPagerAdapter
     private lateinit var cards: ArrayList<Card>
     private lateinit var card: AbstractCard
 
@@ -33,14 +33,15 @@ class CardStatesActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_states)
         card = intent.getParcelableExtra("CARD")
-        getCardsStates()
+
         mViewPager = findViewById(R.id.pager)
-        mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList())
+        mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList(), card)
         mViewPager.adapter = mPagerAdapter
+        getCardsStates()
     }
 
     fun setCardsStates(cards: ArrayList<Card>){
-        this.cards = cards
+        mPagerAdapter.setNewCards(cards)
     }
 
     fun getCardsStates(){

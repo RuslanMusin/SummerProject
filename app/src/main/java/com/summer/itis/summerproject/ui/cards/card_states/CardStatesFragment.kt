@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.utils.ImageLoadHelper
 
 /**
  * Created by Home on 11.07.2018.
@@ -24,9 +26,10 @@ class CardStatesFragment : Fragment(){
     lateinit var tv_support: TextView
 
     companion object {
-        fun newInstance(card: Card): CardStatesFragment {
+        fun newInstance(card: Card, aCard: AbstractCard): CardStatesFragment {
             val args = Bundle()
             args.putParcelable("CARD", card)
+            args.putParcelable("ACARD", aCard)
             val fragment = CardStatesFragment()
             fragment.arguments = args
             return fragment
@@ -44,12 +47,16 @@ class CardStatesFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val arg = arguments
         val card = arg?.getParcelable<Card>("CARD")
-        tv_name.setText(card?.abstractCard?.name)
-        tv_strength.setText(card?.strength?: 0)
-        tv_intelligence.setText(card?.intelligence?: 0)
-        tv_prestige.setText(card?.prestige?: 0)
-        tv_hp.setText(card?.hp?: 0)
-        tv_support.setText(card?.support?: 0)
+        val aCard = arg?.getParcelable<AbstractCard>("ACARD")
+        tv_name.setText(aCard?.name)
+        tv_strength.setText("" + card?.strength?: "0")
+        tv_intelligence.setText("" + card?.intelligence?: "0")
+        tv_prestige.setText("" + card?.prestige?: "0")
+        tv_hp.setText("" + card?.hp?: "0")
+        tv_support.setText("" + card?.support?: "0")
+        if(aCard?.photoUrl != null){
+            ImageLoadHelper.loadPicture(iv_portrait, aCard?.photoUrl!!)
+        }
     }
 
     private fun initViews(view: View){
