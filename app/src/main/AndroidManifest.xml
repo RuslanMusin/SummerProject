@@ -29,7 +29,11 @@
         <activity android:name=".ui.cards.cards_info.CardsActivity" />
         <activity android:name=".ui.cards.cards_info.WebViewActivity" />
         <activity android:name=".ui.game.find.FindGameActivity" />
-        <activity android:name=".ui.game.play.PlayGameActivity" />
+        <activity android:name=".ui.game.play.PlayGameActivity">
+
+        </activity>
+        <activity android:name=".ui.game.play.DebugPlayGameActivity"></activity>
+
         <activity android:name=".ui.tests.test_list.test.TestListActivity"/>
         <activity android:name=".ui.tests.test_item.TestActivity"/>
 

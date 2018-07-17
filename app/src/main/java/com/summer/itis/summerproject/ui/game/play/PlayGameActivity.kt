@@ -1,17 +1,204 @@
 package com.summer.itis.summerproject.ui.game.play
 
+import GameQuestionFragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.animation.AlphaAnimation
+import android.widget.LinearLayout
+import com.afollestad.materialdialogs.MaterialDialog
+import com.arellomobile.mvp.MvpAppCompatActivity
+import com.arellomobile.mvp.presenter.InjectPresenter
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.model.Question
+import com.summer.itis.summerproject.model.User
+import com.summer.itis.summerproject.repository.json.GamesRepository
+import com.summer.itis.summerproject.ui.game.find.FindGameActivity
+import com.summer.itis.summerproject.ui.game.play.list.GameCardsListAdapter
+import kotlinx.android.synthetic.main.activity_play_game.*
+import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 
-class PlayGameActivity : AppCompatActivity() {
+
+class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
+
+    @InjectPresenter
+    lateinit var presenter: PlayGamePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play_game)
+
+        enemy_selected_card.visibility = View.INVISIBLE
+        my_selected_card.visibility = View.INVISIBLE
+
+        game_questions_container.visibility = View.GONE
+
     }
+
+    override fun setEnemyUserData(user: User) {
+        tv_game_enemy_name.text = user.username
+
+        //TODO image, но еще нет Url в БД
+    }
+
+    override fun setCardsList(cards: ArrayList<Card>) {
+        rv_game_my_cards.adapter = GameCardsListAdapter(
+                cards,
+                this,
+                {
+                    if (choosingEnabled) {
+                        presenter.chooseCard(it)
+                    }
+//                    showYouCardChoose(it)
+                }
+        )
+    }
+
+    var choosingEnabled = false
+
+    override fun setCardChooseEnabled(enabled: Boolean) {
+        choosingEnabled = enabled
+        if (enabled) {
+            rv_game_my_cards.alpha = 1f
+        } else {
+            rv_game_my_cards.alpha = 0.5f
+        }
+//        rv_game_my_cards.isClickable = enabled
+//        rv_game_my_cards.touc
+
+    }
+
+    fun onAnswer(correct: Boolean) {
+        presenter.answer(correct)
+    }
+
+    override fun showEnemyCardChoose(card: Card) {
+        setCard(enemy_selected_card, card)
+        enemy_selected_card.visibility = View.VISIBLE
+
+        val a_anim = AlphaAnimation(0f, 1f)
+        a_anim.duration = 700;
+        a_anim.fillAfter = true
+        enemy_selected_card.startAnimation(a_anim)
+
+        //TODO?
+//        val m_anim = object : Animation() {
+//            override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
+////                super.applyTransformation(interpolatedTime, t)
+//                val params=enemy_selected_card.layoutParams as ConstraintLayout.LayoutParams
+//                params.
+//            }
+//        }
+    }
+
+    override fun showQuestionForYou(question: Question) {
+        game_questions_container.visibility = View.VISIBLE
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(
+                        R.id.game_questions_container,
+                        GameQuestionFragment.newInstance(question)
+                )
+                .commit()
+
+    }
+
+    override fun hideQuestionForYou() {
+        game_questions_container.visibility = View.GONE
+    }
+
+    override fun showYouCardChoose(choose: Card) {
+        setCard(my_selected_card, choose)
+        my_selected_card.visibility = View.VISIBLE
+
+        val a_anim = AlphaAnimation(0f, 1f)
+        a_anim.duration = 200;
+        a_anim.fillAfter = true
+        my_selected_card.startAnimation(a_anim)
+    }
+
+    override fun hideEnemyCardChoose() {
+        enemy_selected_card.clearAnimation()
+        enemy_selected_card.visibility = View.INVISIBLE
+    }
+
+    override fun hideYouCardChoose() {
+        my_selected_card.clearAnimation()
+        my_selected_card.visibility = View.INVISIBLE
+    }
+
+    override fun showEnemyAnswer(correct: Boolean) {
+        if (correct) {
+            tv_enemy_score.text = (tv_enemy_score.text.toString().toInt() + 1).toString()
+        }
+    }
+
+    override fun showYourAnswer(correct: Boolean) {
+        if (correct) {
+            tv_my_score.text = (tv_my_score.text.toString().toInt() + 1).toString()
+        }
+    }
+
+    fun setCard(view: View, card: Card) {
+        view.tv_card_person_name.text = card.abstractCard!!.name
+        view.tv_card_test_name.text = card.test.title
+
+        Glide.with(this)
+                .load(card.abstractCard!!.photoUrl)
+                .into(view.iv_card)
+
+        setWeight(view.ll_card_params.view_card_intelligence, card.intelligence!!.toFloat())
+        setWeight(view.ll_card_params.view_card_support, card.support!!.toFloat())
+        setWeight(view.ll_card_params.view_card_prestige, card.prestige!!.toFloat())
+        setWeight(view.ll_card_params.view_card_hp, card.hp!!.toFloat())
+        setWeight(view.ll_card_params.view_card_strength, card.strength!!.toFloat())
+    }
+
+    private fun setWeight(view: View, w: Float) {
+        val params = view.layoutParams as LinearLayout.LayoutParams
+        params.weight = w
+        view.layoutParams = params
+    }
+
+
+    override fun showGameEnd(type: GamesRepository.GameEndType, card: Card) {
+
+        MaterialDialog.Builder(this)
+                .title(when (type) {
+                    GamesRepository.GameEndType.YOU_WIN -> "You win"
+                    GamesRepository.GameEndType.YOU_LOSE -> "You lose"
+                    GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "YOU_DISCONNECTED_AND_LOSE"
+                    GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "ENEMY_DISCONNECTED_AND_YOU_WIN"
+                    GamesRepository.GameEndType.DRAW -> "DRAW"
+                })
+//                .content("Game")
+//                .positiveText(R.string.agree)
+//                .negativeText(R.string.disagree)
+                .neutralText("ok")
+                .onNeutral { dialog, which ->
+                    goToFindGameActivity()
+                }
+                .canceledOnTouchOutside(false)
+                .cancelable(false)
+                .show()
+
+//        when(type){
+//            GamesRepository.GameEndType.YOU_WIN->{
+//
+//            }
+//        }
+
+
+    }
+
+    private fun goToFindGameActivity() {
+        FindGameActivity.start(this)
+    }
+
 
     companion object {
         fun start(context: Context) {
