@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.util.Log
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import com.arellomobile.mvp.MvpAppCompatActivity
@@ -24,8 +25,11 @@ import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.reader.ReaderListActivity
 import com.summer.itis.summerproject.ui.start.login.LoginActivity
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
+import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import kotlinx.android.synthetic.main.layout_personal.*
+import kotlinx.android.synthetic.main.view_nav_header.*
 import java.util.*
 
 //АКТИВИТИ РОДИТЕЛЬ ДЛЯ ОСНОВНОЙ НАВИГАЦИИ(БОКОВОЙ). ЮЗАТЬ МЕТОДЫ supportActionBar И setBackArrow(ЕСЛИ НУЖНА СТРЕЛКА НАЗАД)
@@ -71,15 +75,13 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
         mNavigationView.setNavigationItemSelectedListener { menuItem ->
             val id = menuItem.itemId
             when (id) {
-                R.id.menu_tests -> AddTestActivity.start(this)
+                R.id.menu_tests -> TestListActivity.start(this)
 
                 R.id.menu_cards -> CardsListActivity.start(this)
 
                 R.id.menu_game -> FindGameActivity.start(this)
 
                 R.id.menu_friends -> ReaderListActivity.start(this)
-
-                R.id.menu_settings -> LoginActivity.start(this)
 
                 R.id.menu_logout -> {
                     FirebaseAuth.getInstance().signOut()

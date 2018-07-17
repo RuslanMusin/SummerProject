@@ -3,6 +3,7 @@ package com.summer.itis.summerproject.model
 import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.gson.annotations.Expose
+import com.summer.itis.summerproject.model.db_dop_models.Relation
 
 import java.util.ArrayList
 
@@ -33,6 +34,14 @@ class Test {
     @Exclude
     var card: Card? = null
 
-    @Expose
+    @Exclude
     var testDone: Boolean = false
+
+    @field:Exclude var testRelation: Relation? = null
+
+    @Exclude
+    lateinit var rightQuestions: List<Question>
+
+    @Exclude
+    lateinit var wrongQuestions: List<Question>
 }

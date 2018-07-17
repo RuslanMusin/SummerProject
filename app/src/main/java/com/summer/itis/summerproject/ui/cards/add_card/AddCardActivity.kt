@@ -13,6 +13,8 @@ import android.widget.TextView
 
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.*
+import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.model.pojo.query.Page
@@ -32,7 +34,11 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
     private var toolbar: Toolbar? = null
 
     private lateinit var seekBars: List<SeekBar>
-    private var balance: Int = 50
+    var seekChanged:SeekBar? = null
+    private lateinit var seeksChanges: MutableList<SeekBar>
+    private var numberSeek: Int = 0
+
+    private var balance: Int = 0
 
     @InjectPresenter
     lateinit var presenter: AddCardPresenter
@@ -46,12 +52,22 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
         presenter = AddCardPresenter(this)
         card = Card()
         seekBars = listOf<SeekBar>(seekBarSupport,seekBarIntelligence,seekBarPrestige,seekBarHp,seekBarStrength)
+        seeksChanges = ArrayList()
         item = gsonConverter.fromJson(intent.getStringExtra(ITEM_JSON), Item::class.java)
         card?.abstractCard?.wikiUrl = item!!.url!!.content
         card?.abstractCard?.description = item!!.description!!.content
         item!!.text!!.content?.let { presenter.query(it) }
+        setBalance()
         initViews()
         setListeners()
+    }
+
+    fun setBalance() {
+        balance = 0
+        for(seek in seekBars) {
+            balance += seek.progress
+        }
+        Log.d(TAG_LOG,"set balance = $balance")
     }
 
     private fun initViews() {
@@ -60,6 +76,12 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
         setSupportActionBar(toolbar)
         setBackArrow(toolbar!!)
 
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        setResult(Activity.RESULT_CANCELED, intent)
+        finish()
     }
 
     private fun setListeners() {
@@ -81,6 +103,11 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         changeTvSeekbar(seekBar)
+        if(fromUser) {
+            Log.d(TAG_LOG, "from user")
+            setBalance()
+            balanceWithOthers(seekBar)
+        }
     }
 
     private fun changeTvSeekbar(seekBar: SeekBar?) {
@@ -88,39 +115,64 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
         when (seekBar?.id) {
             R.id.seekBarHp -> {
                 tvHp!!.setText(strProgress)
-                balanceWithOthers(seekBar)
+                Log.d(TAG_LOG,"seek changed = hp" )
             }
 
             R.id.seekBarPrestige -> {
                 tvPrestige!!.setText(strProgress)
+                Log.d(TAG_LOG,"seek changed = prestige" )
             }
 
             R.id.seekBarIntelligence -> {
                 tvIntelligence!!.setText(strProgress)
+                Log.d(TAG_LOG,"seek changed = intel" )
             }
 
             R.id.seekBarSupport -> {
                 tvSupport!!.setText(strProgress)
+                Log.d(TAG_LOG,"seek changed = support" )
             }
 
             R.id.seekBarStrength -> {
                 tvStrength!!.setText(strProgress)
+                Log.d(TAG_LOG,"seek changed = strenght" )
             }
         }
     }
 
     private fun balanceWithOthers(seekBar: SeekBar?) {
+        if(seekChanged == null || seekBar?.id != seekChanged?.id) {
+            seeksChanges = ArrayList()
+            numberSeek = 0
+            for(seek in seekBars) {
+                if (!(seek.id == seekBar?.id)){
+                    seeksChanges.add(seek)
+                }
+            }
+            Log.d(TAG_LOG,"seekChanged  = " + seekChanged)
+        }
+        seekChanged = seekBar
         while(balance != 50) {
-            for (seek in seekBars) {
+            for (numb in seeksChanges.indices) {
+                val changeSeek = seeksChanges[numberSeek]
+                numberSeek = if(numberSeek != (seeksChanges.size-1)) (numberSeek+1) else 0
+                Log.d(TAG_LOG,"numberSeek = " + numberSeek)
                 if(balance == 50) {
                     return
                 }
-                if (!seek.equals(seekBar) && balance !=50) {
-                    seek.progress--
+                if(balance > 50 && changeSeek.progress > 0) {
+                    changeSeek.progress--
+                    balance--
+                } else if(changeSeek.progress < 50) {
+                    changeSeek.progress++
+                    balance++
                 }
+                Log.d(TAG_LOG,"balance = " + balance)
             }
+
         }
     }
+
 
     override fun setQueryResults(list: List<Page>) {
         val page = list[0]

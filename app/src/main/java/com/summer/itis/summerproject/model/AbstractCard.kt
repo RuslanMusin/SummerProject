@@ -3,8 +3,8 @@ package com.summer.itis.summerproject.model
 import android.os.Parcel
 import android.os.Parcelable
 import android.os.Parcelable.Creator
+import com.google.firebase.database.Exclude
 import com.google.firebase.database.IgnoreExtraProperties
-import com.google.gson.annotations.Expose
 
 @IgnoreExtraProperties
 class AbstractCard() : Parcelable{
@@ -53,6 +53,6 @@ class AbstractCard() : Parcelable{
         }
     }
 
-    @Expose
+    @Exclude
     var isOwner: Boolean = false
 }

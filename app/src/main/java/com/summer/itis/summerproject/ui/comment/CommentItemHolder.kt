@@ -17,6 +17,7 @@ import com.google.firebase.storage.StorageReference
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
+import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.FormatterUtil
 
 class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -61,11 +62,17 @@ class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         commentTextView.text = contentString
 
-        val imageReference = comment.authorPhotoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
+        if(!comment.authorPhotoUrl.equals(STUB_PATH)) {
+            val imageReference = comment.authorPhotoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
 
-        Glide.with(commentTextView.getContext())
-                .load(imageReference)
-                .into(avatarImageView)
+            Glide.with(commentTextView.getContext())
+                    .load(imageReference)
+                    .into(avatarImageView)
+        } else {
+            Glide.with(commentTextView.getContext())
+                    .load(R.drawable.ic_account_circle_black_24dp)
+                    .into(avatarImageView)
+        }
     }
 
     private fun cutLongDescription(description: String): String {

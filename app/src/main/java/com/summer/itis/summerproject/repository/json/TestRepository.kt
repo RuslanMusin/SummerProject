@@ -1,6 +1,7 @@
 package com.summer.itis.summerproject.repository.json
 
 import android.util.Log
+import com.google.android.gms.common.util.ArrayUtils.contains
 import com.google.firebase.database.*
 import com.summer.itis.summerproject.model.*
 import com.summer.itis.summerproject.model.db_dop_models.ElementId
@@ -14,6 +15,7 @@ import com.summer.itis.summerproject.utils.Const.AFTER_TEST
 import com.summer.itis.summerproject.utils.Const.BEFORE_TEST
 import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 import com.summer.itis.summerproject.utils.Const.OFFICIAL_TYPE
+import com.summer.itis.summerproject.utils.Const.QUERY_END
 
 import java.util.ArrayList
 import java.util.HashMap
@@ -26,8 +28,9 @@ import com.summer.itis.summerproject.utils.Const.USER_TYPE
 import com.summer.itis.summerproject.utils.Const.WIN_GAME
 import com.summer.itis.summerproject.utils.RxUtils
 import io.reactivex.Observable
+import java.util.regex.Pattern
 
-class TestRepository : Listener {
+class TestRepository {
 
 
     private val databaseReference: DatabaseReference
@@ -86,6 +89,7 @@ class TestRepository : Listener {
     }
 
     fun changeStatus(testId: String, userId: String, relation: String): Single<Relation> {
+        Log.d(TAG_LOG,"change test status")
         val query: Query = databaseReference.root.child(USERS_TESTS).child(userId).child(testId)
         val single: Single<Relation> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -96,6 +100,7 @@ class TestRepository : Listener {
                 override fun onDataChange(shapshot: DataSnapshot) {
                     var testRelation: Relation? = shapshot.getValue(Relation::class.java)
                     if(testRelation != null) {
+                        Log.d(TAG_LOG,"rel not null")
                         when  {
                             WIN_GAME.equals(testRelation.relation) -> {
                                 testRelation.relBefore = WIN_GAME
@@ -135,6 +140,7 @@ class TestRepository : Listener {
                             }
                         }
                     } else {
+                        Log.d(TAG_LOG,"rel == null")
                         testRelation = Relation()
                         testRelation.relBefore = BEFORE_TEST
                     }
@@ -147,58 +153,64 @@ class TestRepository : Listener {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    override fun createTest(test: Test, user: User,type: String) {
-        val card = test.card
-        val abstractCard = card?.abstractCard
-        /* if(type.equals("read")) {
+    fun createTest(test: Test, user: User): Single<Boolean> {
+
+        val single: Single<Boolean> = Single.create { e ->
+            val card = test.card
+            val abstractCard = card?.abstractCard
+            /* if(type.equals("read")) {
              Log.d(TAG_LOG,"read")
              abstractCardRepository.findAbstractCard(test, user,this)
          } else {*/
-        abstractCardRepository
-                .findAbstractCardId(abstractCard?.wikiUrl)
-                .subscribe { cardId ->
-                    val childUpdates = HashMap<String, Any>()
-                    Log.d(TAG_LOG, "create")
-                    val crossingKey = databaseReference.push().key
-                    test.id = crossingKey
-                    if (ADMIN_ROLE.equals(user.role)) {
-                        test.type = OFFICIAL_TYPE
-                        card?.type = OFFICIAL_TYPE
-                    } else {
-                        test.type = USER_TYPE
-                        card?.type = USER_TYPE
+            abstractCardRepository
+                    .findAbstractCardId(abstractCard?.wikiUrl)
+                    .subscribe { cardId ->
+                        val childUpdates = HashMap<String, Any>()
+                        Log.d(TAG_LOG, "create")
+                        val crossingKey = databaseReference.push().key
+                        test.id = crossingKey
+                        if (ADMIN_ROLE.equals(user.role)) {
+                            test.type = OFFICIAL_TYPE
+                            card?.type = OFFICIAL_TYPE
+                        } else {
+                            test.type = USER_TYPE
+                            card?.type = USER_TYPE
+                        }
+
+                        Log.d(TAG_LOG, "abstract")
+                        card?.testId = test.id
+                        if (cardId.equals("null")) {
+                            Log.d(TAG_LOG, "createAbs")
+                            val abstractCardValues = abstractCardRepository.toMap(abstractCard)
+                            childUpdates[ABSTRACT_CARDS + SEP + abstractCard?.id] = abstractCardValues
+
+                        } else {
+                            abstractCard?.id = cardId
+                            Log.d(TAG_LOG, "no create abs")
+                        }
+                        card?.cardId = abstractCard?.id
+
+                        Log.d(TAG_LOG, "after abstract")
+                        val cardRepository = CardRepository()
+                        val crossingIdValues = cardRepository.toMap(card)
+                        childUpdates[TEST_CARDS + SEP + card?.id] = crossingIdValues
+
+                        test.authorId = user.id
+                        test.authorName = user.username
+                        test.cardId = card?.id
+                        test.imageUrl = abstractCard?.photoUrl
+
+                        val crossingValues = toMap(test)
+
+                        childUpdates["$TABLE_NAME/$crossingKey"] = crossingValues
+
+                        databaseReference.root.updateChildren(childUpdates)
+
+                        e.onSuccess(true)
                     }
+        }
 
-                    Log.d(TAG_LOG, "abstract")
-                    card?.testId = test.id
-                    if (cardId.equals("null")) {
-                        Log.d(TAG_LOG, "createAbs")
-                        val abstractCardValues = abstractCardRepository.toMap(abstractCard)
-                        childUpdates[ABSTRACT_CARDS + SEP + abstractCard?.id] = abstractCardValues
-
-                    } else {
-                        abstractCard?.id = cardId
-                        Log.d(TAG_LOG, "no create abs")
-                    }
-                    card?.cardId = abstractCard?.id
-
-                    Log.d(TAG_LOG, "after abstract")
-                    val cardRepository = CardRepository()
-                    val crossingIdValues = cardRepository.toMap(card)
-                    childUpdates[TEST_CARDS + SEP + card?.id] = crossingIdValues
-
-                    test.authorId = user.id
-                    test.authorName = user.username
-                    test.cardId = card?.id
-                    test.imageUrl = abstractCard?.photoUrl
-
-                    val crossingValues = toMap(test)
-
-                    childUpdates["$TABLE_NAME/$crossingKey"] = crossingValues
-
-                    databaseReference.root.updateChildren(childUpdates)
-                }
-
+        return single.compose(RxUtils.asyncSingle())
 
     }
 
@@ -215,7 +227,9 @@ class TestRepository : Listener {
                                 user.id!!.let { userId ->
                                     cardRepository?.findMyAbstractCardStates(it, userId)
                                             ?.subscribe { winnerCards ->
+                                                Log.d(TAG_LOG,"add card after test")
                                                 if (winnerCards.size == 0) {
+                                                    Log.d(TAG_LOG,"add abstract card")
                                                     val addAbstractCardValues = abstractCardRepository.toMapId(it)
                                                     childUpdates[USERS_ABSTRACT_CARDS + Const.SEP + userId + SEP + it] = addAbstractCardValues
                                                 }
@@ -278,17 +292,25 @@ class TestRepository : Listener {
         return findTestsByType(userId, USER_TYPE)
     }
 
+    fun findOfficialTestsByQuery(query: String, userId: String): Single<List<Test>> {
+        return findTestsByTypeByQuery(query, userId, OFFICIAL_TYPE)
+    }
+
+    fun findUserTestsByQuery(query: String, userId: String): Single<List<Test>> {
+        return findTestsByTypeByQuery(query, userId, USER_TYPE)
+    }
+
     fun findTestsByType(userId: String, type: String): Single<List<Test>> {
         var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val elementIds: MutableList<String> = ArrayList()
+                    val relations = HashMap<String,Relation>()
                     for (snapshot in dataSnapshot.children) {
                         val elementId = snapshot.getValue(Relation::class.java)
                         elementId?.let {
                             if(LOSE_GAME.equals(it.relation) || AFTER_TEST.equals(it.relation)) {
-                                elementIds.add(it.id)
+                                relations[it.id] = it
                             }
                         }
                     }
@@ -299,8 +321,9 @@ class TestRepository : Listener {
                             for(snapshot in dataSnapshot.children) {
                                 val card = snapshot.getValue(Test::class.java)
                                 if(card?.type.equals(type) && !card?.authorId.equals(userId)) {
-                                    if (elementIds.contains(card?.id)) {
+                                    if (relations.keys.contains(card?.id)) {
                                         card?.testDone = true
+                                        card?.testRelation = relations[card?.id]
                                     }
                                     card?.let { cards.add(it) }
                                 }
@@ -343,6 +366,76 @@ class TestRepository : Listener {
             })
         }
     }
+
+    fun findTestsByTypeByQuery(queryPart: String, userId: String, type: String): Single<List<Test>> {
+        var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
+        val single: Single<List<Test>> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(Relation::class.java)
+                        elementId?.let {
+                            if(LOSE_GAME.equals(it.relation) || AFTER_TEST.equals(it.relation)) {
+                                elementIds.add(it.id)
+                            }
+                        }
+                    }
+                    query = databaseReference.orderByChild(FIELD_TITLE).startAt(queryPart).endAt(queryPart + QUERY_END)
+                    query.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            val cards: MutableList<Test> = ArrayList()
+                            for(snapshot in dataSnapshot.children) {
+                                val card = snapshot.getValue(Test::class.java)
+                                if(card?.type.equals(type) && !card?.authorId.equals(userId)) {
+                                    if (elementIds.contains(card?.id)) {
+                                        card?.testDone = true
+                                    }
+                                    card?.let { cards.add(it) }
+                                }
+
+                            }
+                            e.onSuccess(cards)
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {}
+                    })
+
+                }
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun findMyTestsByQuery(queryPart: String, userId: String): Single<List<Test>> {
+        return Single.create { e ->
+            val pattern: Pattern = Pattern.compile("${queryPart.toLowerCase()}.*")
+            val query: Query = databaseReference.orderByChild(FIELD_AUTHOR_ID).equalTo(userId)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val tests: MutableList<Test> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val test = snapshot.getValue(Test::class.java)
+                        test?.let {
+                            if(pattern.matcher(test.title?.toLowerCase()).matches()) {
+                                tests.add(test)
+                            }
+                        }
+                    }
+                    e.onSuccess(tests)
+
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                }
+            })
+        }
+    }
+
 
 
     fun deleteCrossing(pointId: String) {

@@ -89,7 +89,8 @@ class TestCommentRepository() {
         val single: Single<Boolean> = Single.create{ e ->
             val key = databaseReference.child(testId).push().key
             comment.id  = key
-            databaseReference.child(key!!).setValue(comment)
+            databaseReference.child(testId).child(key!!).setValue(comment)
+            e.onSuccess(true)
         }
         return single.compose(RxUtils.asyncSingle())
     }

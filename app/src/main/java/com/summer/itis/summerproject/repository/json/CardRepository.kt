@@ -19,6 +19,7 @@ import com.summer.itis.summerproject.utils.RxUtils
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -160,11 +161,33 @@ class CardRepository {
                             .subscribe { t ->
                                 card?.abstractCard = t
                                 TestRepository()
-                                    .readTest(card?.testId)
-                                    .subscribe{ test ->
-                                        card?.test = test
-                                        e.onSuccess(card!!)
-                                    }
+                                        .readTest(card?.testId)
+                                        .subscribe{ test ->
+                                            card?.test = test
+                                            e.onSuccess(card!!)
+                                        }
+                            }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {}
+            })
+
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun readCardForTest(cardId: String): Single<Card> {
+        var card: Card?
+        val query: Query = databaseReference.child(cardId)
+        val single : Single<Card> = Single.create { e ->
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    card = dataSnapshot.getValue(Card::class.java)
+                    AbstractCardRepository()
+                            .findAbstractCard(card?.cardId)
+                            .subscribe { t ->
+                                card?.abstractCard = t
+                                e.onSuccess(card!!)
                             }
                 }
 
@@ -227,6 +250,48 @@ class CardRepository {
             })
         }
     }
+/*
+
+    fun findOfficialMyCardsByQuery(query: String, userId: String): Single<List<Card>> {
+        val single:Single<List<Card>> =  Single.create { e ->
+            findMyCards(userId).subscribe { cards ->
+                val officials: MutableList<Card> = ArrayList()
+                for (card in cards) {
+                    if (card.type.equals(OFFICIAL_TYPE)) {
+                        officials.add(card)
+                    }
+                }
+                e.onSuccess(officials)
+            }
+        }
+        return single.compose(RxUtils.asyncSingle())
+    }
+
+    fun findMyCardsByQuery(queryPart: String, userId: String): Single<List<Card>> {
+        return Single.create { e ->
+            val query: Query = databaseReference.root.child(USERS_CARDS).child(userId)
+            query.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val elementIds: MutableList<String> = ArrayList()
+                    for (snapshot in dataSnapshot.children) {
+                        val elementId = snapshot.getValue(ElementId::class.java)
+                        elementId?.let { elementIds.add(it.id) }
+                    }
+                    findCards(elementIds).subscribe{ cards ->
+                        val pattern: Pattern = Pattern.compile(".*${queryPart.toLowerCase()}.*")
+                        val cardsQuery: List<Card> = cards.filter { e -> pattern.matcher(e.abstractCard?.name).matches()}.toList()
+                        e.onSuccess(cardsQuery)
+                    }
+
+                }
+
+                override fun onCancelled(p0: DatabaseError) {
+                }
+            })
+        }
+    }
+*/
 
     fun findDefaultAbstractCardStates(abstractCardId: String): Single<List<Card>> {
         val query: Query = databaseReference.orderByChild(FIELD_CARD_ID).equalTo(abstractCardId)
