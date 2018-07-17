@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
@@ -15,8 +16,22 @@ import java.util.ArrayList
  */
 class MyCardsTabFragment(): AbstractCardsTabFragment(){
 
+    val TAG = "My"
+
+    companion object {
+        fun newInstance(): MyCardsTabFragment {
+            val fragment = MyCardsTabFragment()
+            return fragment
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        cardsPresenter.getUserAbstractCardsList()
+    }
+
     override fun showDetails(card: AbstractCard) {
-        CardsActivity.start(context!!,card,cards,"My")
+        CardsActivity.start(context!!,card,cards,TAG)
     }
 
     override fun onItemClick(item: AbstractCard) {
@@ -29,24 +44,7 @@ class MyCardsTabFragment(): AbstractCardsTabFragment(){
     }
 
     override fun handleError(error: Throwable) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(context,error.message,Toast.LENGTH_SHORT).show()
     }
 
-    companion object {
-        fun newInstance(): MyCardsTabFragment {
-            val fragment = MyCardsTabFragment()
-            return fragment
-        }
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = super.onCreateView(inflater, container, savedInstanceState)
-
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        cardsPresenter.getUserAbstractCardsList()
-    }
 }

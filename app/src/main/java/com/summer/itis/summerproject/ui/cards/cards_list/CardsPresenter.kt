@@ -15,7 +15,6 @@ open class CardsPresenter: MvpPresenter<CardsView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
-        getAbstractCardsList()
     }
 
     fun getAbstractCardsList(){

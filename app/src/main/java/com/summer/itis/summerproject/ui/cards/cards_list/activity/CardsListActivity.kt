@@ -7,16 +7,16 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_list.adapter.CardsListPagerAdapter
 import kotlinx.android.synthetic.main.activity_cards_list.toolbar
 
-class CardsListActivity : NavigationBaseActivity() {
+class CardsListActivity : EasyNavigationBaseActivity() {
 
-    lateinit var mTabLayout: TabLayout
-    lateinit var mViewPager: ViewPager
-    lateinit var mPagerAdapter: PagerAdapter
-    val NUMOFTABS = 2
+    private lateinit var mTabLayout: TabLayout
+    private lateinit var mViewPager: ViewPager
+    private lateinit var mPagerAdapter: PagerAdapter
 
     companion object {
         fun start(context: Context) {
@@ -28,20 +28,19 @@ class CardsListActivity : NavigationBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cards_list)
-
-        mDrawer = findViewById(R.id.drawer_layout)
-        mNavigationView = findViewById(R.id.nav_view)
         init()
         supportActionBar(toolbar)
+    }
+
+    override fun getContentLayout(): Int {
+        return R.layout.activity_cards_list
     }
 
     private fun init(){
         mTabLayout = findViewById(R.id.tab_layout)
         mViewPager = findViewById(R.id.pager)
         mPagerAdapter = CardsListPagerAdapter(
-                supportFragmentManager,
-                NUMOFTABS)
+                supportFragmentManager)
         mViewPager.adapter = mPagerAdapter
         mTabLayout.setupWithViewPager(mViewPager)
     }

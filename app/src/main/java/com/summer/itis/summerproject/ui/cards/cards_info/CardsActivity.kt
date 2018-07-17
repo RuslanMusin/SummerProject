@@ -17,7 +17,6 @@ class CardsActivity : BaseActivity() {
 
     lateinit var mViewPager: ViewPager
     lateinit var mPagerAdapter: CardsPagerAdapter
-    var pos: Int = 0
     lateinit var cards: ArrayList<AbstractCard>
 
     companion object {
@@ -33,23 +32,23 @@ class CardsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cards)
-
-        val intent = intent
-        var card = intent.getParcelableExtra<AbstractCard>("CARD")
+        val card = intent.getParcelableExtra<AbstractCard>("CARD")
         cards = intent.getParcelableArrayListExtra("CARDS")
+        var pos = getPosOfCard(card)
+        mViewPager = findViewById(R.id.pager)
+        mPagerAdapter = CardsPagerAdapter(supportFragmentManager,cards,intent.getStringExtra("TAG"))
+        mViewPager.adapter = mPagerAdapter
+        mViewPager.setCurrentItem(pos)
+        mPagerAdapter.notifyDataSetChanged()
+    }
+
+    private fun getPosOfCard(card: AbstractCard): Int{
         var pos: Int = 0
         for(x in cards){
             if(x.id == card.id){
                 pos = cards.indexOf(x)
             }
         }
-
-        mViewPager = findViewById(R.id.pager)
-        mPagerAdapter = CardsPagerAdapter(supportFragmentManager,cards,intent.getStringExtra("TAG"))
-
-        mViewPager.adapter = mPagerAdapter
-
-        mViewPager.setCurrentItem(pos)
-        mPagerAdapter.notifyDataSetChanged()
+        return pos
     }
 }

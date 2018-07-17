@@ -27,6 +27,6 @@ class WebViewActivity : BaseActivity() {
         webView.getSettings().setJavaScriptEnabled(true)
         webView.getSettings().setPluginState(PluginState.ON)
         setContentView(webView)
-        webView.loadUrl(intent.getStringExtra("URL"));
+        webView.loadUrl(intent.getStringExtra("URL"))
     }
 }

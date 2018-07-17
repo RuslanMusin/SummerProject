@@ -21,24 +21,19 @@ import java.util.ArrayList
  */
 abstract class AbstractCardsTabFragment : MvpAppCompatFragment(), CardsView, BaseAdapter.OnItemClickListener<AbstractCard>{
 
-    lateinit var mRecyclerView: RecyclerView
-    lateinit var mRecyclerViewAdapter: CardsListAdapter
-    lateinit var cards: ArrayList<AbstractCard>
+    protected lateinit var mRecyclerView: RecyclerView
+    protected lateinit var mRecyclerViewAdapter: CardsListAdapter
+    protected lateinit var cards: ArrayList<AbstractCard>
     @InjectPresenter
     lateinit var cardsPresenter : CardsPresenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_tab, container, false)
         mRecyclerView = view.findViewById(R.id.recycler_view)
-
         mRecyclerViewAdapter = CardsListAdapter(ArrayList<AbstractCard>())
-
         mRecyclerView.adapter = mRecyclerViewAdapter
-
         mRecyclerView.layoutManager = LinearLayoutManager(activity)
-
         mRecyclerViewAdapter.setOnItemClickListener(this)
-
         return view
     }
 }

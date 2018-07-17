@@ -1,9 +1,7 @@
 package com.summer.itis.summerproject.ui.cards.card_states
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
@@ -18,10 +16,10 @@ import java.util.ArrayList
 
 class CardStatesActivity : BaseActivity() {
 
-    lateinit var mViewPager: ViewPager
-    lateinit var mPagerAdapter: PagerAdapter
-    lateinit var cards: ArrayList<Card>
-    lateinit var card: AbstractCard
+    private lateinit var mViewPager: ViewPager
+    private lateinit var mPagerAdapter: PagerAdapter
+    private lateinit var cards: ArrayList<Card>
+    private lateinit var card: AbstractCard
 
     companion object {
         fun start(context: Context,card : AbstractCard){
@@ -34,14 +32,8 @@ class CardStatesActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_card_states)
-
-        card = intent.getParcelableExtra<AbstractCard>("CARD")
-
-        RepositoryProvider
-                .cardRepository
-                .findMyAbstractCardStates(card?.id!!, ApplicationHelper.currentUser?.id!!)
-                .subscribe({it -> setCardsStates(it as ArrayList<Card>)})
-
+        card = intent.getParcelableExtra("CARD")
+        getCardsStates()
         mViewPager = findViewById(R.id.pager)
         mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList())
         mViewPager.adapter = mPagerAdapter
@@ -49,5 +41,12 @@ class CardStatesActivity : BaseActivity() {
 
     fun setCardsStates(cards: ArrayList<Card>){
         this.cards = cards
+    }
+
+    fun getCardsStates(){
+        RepositoryProvider
+                .cardRepository
+                .findMyAbstractCardStates(card?.id!!, ApplicationHelper.currentUser?.id!!)
+                .subscribe({it -> setCardsStates(it as ArrayList<Card>)})
     }
 }
