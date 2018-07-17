@@ -82,8 +82,6 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
 
                 R.id.menu_friends -> ReaderListActivity.start(this)
 
-                R.id.menu_settings -> LoginActivity.start(this)
-
                 R.id.menu_logout -> {
                     FirebaseAuth.getInstance().signOut()
                     LoginActivity.start(this)

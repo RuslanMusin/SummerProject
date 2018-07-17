@@ -1,5 +1,8 @@
 package com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers
 
+import QuestionFragment.Companion.ANSWERS_TYPE
+import QuestionFragment.Companion.RIGHT_ANSWERS
+import QuestionFragment.Companion.WRONG_ANSWERS
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -17,7 +20,16 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Answer
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
+import com.summer.itis.summerproject.ui.base.OnFourActionListener
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
@@ -25,7 +37,7 @@ import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.util.ArrayList
 
-class AnswersFragment : Fragment(), View.OnClickListener {
+class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
     private lateinit var question: Question
     private lateinit var test: Test
@@ -38,14 +50,41 @@ class AnswersFragment : Fragment(), View.OnClickListener {
     private var checkBoxes: MutableList<CheckBox>? = null
     private var radioButtons: MutableList<RadioButton>? = null
 
+    override fun onBackPressed() {
+        beforeQuestion()
+    }
+
+    override fun onCancel() {
+        finishQuestions()
+    }
+
+    override fun onForward() {
+        nextQuestion()
+    }
+
+    override fun onOk() {
+        finishQuestions()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_question, container, false)
+
         type = arguments?.getString(ANSWERS_TYPE)!!
         val testStr: String = arguments?.getString(TEST_JSON)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
         test = gsonConverter.fromJson(testStr, Test::class.java)
-        question = if(type.equals(RIGHT_ANSWERS)) test.rightQuestions[number] else test.wrongQuestions[number]
+        var listSize: Int = 0
+        if(type.equals(RIGHT_ANSWERS)) {
+           question =  test.rightQuestions[number]
+            listSize = test.rightQuestions.size
+        } else {
+           question = test.wrongQuestions[number]
+            listSize = test.wrongQuestions.size
 
+        }
+
+        (activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
+        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT + number,"Вопрос ${number+1}/${listSize}")
         return view
     }
 
@@ -86,6 +125,7 @@ class AnswersFragment : Fragment(), View.OnClickListener {
         if(number == (test.questions.size-1)) {
             btn_next_question.visibility = View.GONE
             btn_finish_questions.visibility = View.VISIBLE
+            (activity as ChangeToolbarListener).showOk(true)
         }
     }
 
@@ -94,23 +134,50 @@ class AnswersFragment : Fragment(), View.OnClickListener {
         btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
     }
+
+    private fun beforeQuestion() {
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putString(ANSWERS_TYPE,type)
+        args.putInt(QUESTION_NUMBER, --number)
+        val fragment = AnswersFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+    }
+
+    private fun finishQuestions() {
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)    }
+
+    private fun nextQuestion() {
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        args.putString(ANSWERS_TYPE,type)
+        args.putInt(QUESTION_NUMBER, ++number)
+        val fragment = AnswersFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+    }
+
     override fun onClick(v: View) {
 
 
         when (v.id) {
 
             R.id.btn_finish_questions -> {
-
-                val args: Bundle = Bundle()
+                finishQuestions()
+               /* val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 activity!!.supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragment_container, TestFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
-                        .commit()            }
+                        .commit()        */
+            }
 
             R.id.btn_next_question -> {
-                val args: Bundle = Bundle()
+                nextQuestion()
+              /*  val args: Bundle = Bundle()
                 args.putString(TEST_JSON, gsonConverter.toJson(test))
                 args.putInt(QUESTION_NUMBER, ++number)
                 args.putString(ANSWERS_TYPE, type)
@@ -118,7 +185,7 @@ class AnswersFragment : Fragment(), View.OnClickListener {
                         .beginTransaction()
                         .replace(R.id.fragment_container, AnswersFragment.newInstance(args))
                         .addToBackStack("AddQuestionFragment")
-                        .commit()
+                        .commit()*/
             }
 
         }

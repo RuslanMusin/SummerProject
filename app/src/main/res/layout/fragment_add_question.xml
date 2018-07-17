@@ -35,7 +35,9 @@
                 android:id="@+id/et_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="textMultiLine"
+                android:maxLength="200"
+                android:maxLines="5"
                 android:textSize="@dimen/text.18"
                 android:hint="@string/qustionId"/>
         </android.support.design.widget.TextInputLayout>

@@ -38,6 +38,12 @@
                 tools:text="Question" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/darker_gray"/>
+
         <LinearLayout
             android:id="@+id/li_wrong_answers"
             android:layout_width="match_parent"
@@ -61,6 +67,12 @@
                 android:textSize="@dimen/text.14"
                 tools:text="Question" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/darker_gray"/>
 
         <LinearLayout
             android:id="@+id/li_winned_card"
@@ -86,6 +98,11 @@
                 tools:text="Question" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/darker_gray"/>
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_finish_test"

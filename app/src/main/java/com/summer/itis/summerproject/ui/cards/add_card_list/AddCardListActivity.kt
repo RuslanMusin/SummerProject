@@ -145,6 +145,12 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
 
     }
 
+    override fun onBackPressed() {
+        val intent = Intent()
+        setResult(Activity.RESULT_CANCELED, intent)
+        finish()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
 
@@ -204,6 +210,8 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
             intent.putExtra(CARD_EXTRA, card)
             setResult(Activity.RESULT_OK, intent)
             finish()
+        } else {
+            onBackPressed()
         }
     }
 

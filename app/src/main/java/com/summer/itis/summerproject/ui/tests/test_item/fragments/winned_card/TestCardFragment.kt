@@ -9,13 +9,22 @@ import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.WINNED_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
+import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_test_card.*
 
 
-class TestCardFragment: Fragment() {
+class TestCardFragment: Fragment(), OnBackPressedListener {
+
 
     lateinit var test: Test
     lateinit var card: Card
@@ -29,12 +38,21 @@ class TestCardFragment: Fragment() {
         }
     }
 
+    override fun onBackPressed() {
+        val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, FINISH_FRAGMENT)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_test_card, container, false)
 
         val testStr: String? = arguments?.getString(TEST_JSON)
         test = gsonConverter.fromJson(testStr, Test::class.java)
         card = test.card!!
+        (activity as BaseBackActivity).currentTag = TestActivity.WINNED_FRAGMENT
+        (activity as ChangeToolbarListener).changeToolbar(WINNED_FRAGMENT,"Карта ${card.abstractCard?.name}")
         return view
     }
 

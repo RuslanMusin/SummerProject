@@ -14,8 +14,16 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
+import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.OnBackPressedListener
+import com.summer.itis.summerproject.ui.base.OnOkListener
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.FINISH_FRAGMENT
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.WINNED_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.AnswersFragment
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.winned_card.TestCardFragment
 import com.summer.itis.summerproject.utils.ApplicationHelper
@@ -23,16 +31,27 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_finish_test.*
 
-class FinishFragment : Fragment(), View.OnClickListener {
+class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, OnOkListener {
 
     lateinit var test: Test
     var rightQuestions: MutableList<Question> = ArrayList()
     var wrongQuestions: MutableList<Question> = ArrayList()
     var procent: Long = 0
 
+    override fun onBackPressed() {
+       /* val args: Bundle = Bundle()
+        args.putString(TEST_JSON, gsonConverter.toJson(test))
+        val fragment = FinishFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment)*/
+    }
 
+    override fun onOk() {
+        btn_finish_test.performClick()
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_finish_test, container, false)
+        (activity as BaseBackActivity).currentTag = TestActivity.FINISH_FRAGMENT
+        (activity as ChangeToolbarListener).changeToolbar(FINISH_FRAGMENT,"Результат")
 
         test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
         for(question in test.questions) {
@@ -98,13 +117,12 @@ class FinishFragment : Fragment(), View.OnClickListener {
             }
 
             R.id.li_winned_card -> {
-                val args: Bundle = Bundle()
-                args.putString(TEST_JSON, gsonConverter.toJson(test))
-                activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, TestCardFragment.newInstance(args))
-                        .addToBackStack("AddQuestionFragment")
-                        .commit()
+                if(procent >= 80) {
+                    val args: Bundle = Bundle()
+                    args.putString(TEST_JSON, gsonConverter.toJson(test))
+                    val fragment = TestCardFragment.newInstance(args)
+                    (activity as BaseBackActivity).changeFragment(fragment, WINNED_FRAGMENT)
+                }
 
             }
         }
@@ -114,12 +132,13 @@ class FinishFragment : Fragment(), View.OnClickListener {
         val args: Bundle = Bundle()
         args.putString(ANSWERS_TYPE, type)
         args.putString(TEST_JSON, gsonConverter.toJson(test))
-
-        activity!!.supportFragmentManager
+        val fragment = AnswersFragment.newInstance(args)
+        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + 0)
+      /*  activity!!.supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container, AnswersFragment.newInstance(args))
                 .addToBackStack("AddQuestionFragment")
-                .commit()
+                .commit()*/
     }
 
 

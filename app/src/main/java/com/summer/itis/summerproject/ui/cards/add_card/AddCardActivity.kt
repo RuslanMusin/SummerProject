@@ -78,6 +78,12 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
 
     }
 
+    override fun onBackPressed() {
+        val intent = Intent()
+        setResult(Activity.RESULT_CANCELED, intent)
+        finish()
+    }
+
     private fun setListeners() {
         seekBarStrength!!.setOnSeekBarChangeListener(this)
         seekBarHp!!.setOnSeekBarChangeListener(this)
