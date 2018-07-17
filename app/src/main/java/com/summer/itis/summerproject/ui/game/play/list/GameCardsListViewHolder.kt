@@ -6,7 +6,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import kotlinx.android.synthetic.main.item_game_card_small.view.*
 
-
 class GameCardsListViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
     val image: ImageView
     val nameView: TextView

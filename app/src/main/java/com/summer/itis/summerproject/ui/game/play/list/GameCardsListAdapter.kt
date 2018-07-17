@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Card
 
@@ -27,9 +28,14 @@ class GameCardsListAdapter(
 
     override fun onBindViewHolder(holder: GameCardsListViewHolder, position: Int) {
         holder.nameView.text = items[position].abstractCard!!.name
+        Glide.with(context)
+                .load(items[position].abstractCard!!.photoUrl)
+                .into(holder.image)
 
         holder.itemView.setOnClickListener {
             onClick(items[position])
+            //TODO delete selected
+            //in presenter?
         }
     }
 

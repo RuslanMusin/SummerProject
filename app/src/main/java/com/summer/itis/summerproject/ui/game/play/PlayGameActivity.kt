@@ -1,18 +1,26 @@
 package com.summer.itis.summerproject.ui.game.play
 
+import GameQuestionFragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
+import android.widget.LinearLayout
+import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Question
+import com.summer.itis.summerproject.model.User
+import com.summer.itis.summerproject.repository.json.GamesRepository
+import com.summer.itis.summerproject.ui.game.find.FindGameActivity
 import com.summer.itis.summerproject.ui.game.play.list.GameCardsListAdapter
 import kotlinx.android.synthetic.main.activity_play_game.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
+
 
 class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
 
@@ -23,32 +31,17 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play_game)
 
-//        var _card = Card()
-//        _card.abstractCard = AbstractCard()
-//        _card.abstractCard!!.name = "Person Name"
-//        _card.test = Test()
-//        _card.test.title = "Test title"
-//
-//        enemy_selected_card.setOnClickListener {
-//            showEnemyCardChoose(_card)
-//        }
-
-//        val layoutManager=LinearLayoutManager(this)
-//        layoutManager.orientation=LinearLayoutManager.HORIZONTAL
-//        rv_game_my_cards.layoutManager=layoutManager
-
-//        rv_game_my_cards.adapter = GameCardsListAdapter(
-//                getTestCards(),
-//                this,
-//                {
-//                    showYouCardChoose(it)
-//                }
-//        )
-
         enemy_selected_card.visibility = View.INVISIBLE
         my_selected_card.visibility = View.INVISIBLE
 
+        game_questions_container.visibility = View.GONE
 
+    }
+
+    override fun setEnemyUserData(user: User) {
+        tv_game_enemy_name.text = user.username
+
+        //TODO image, но еще нет Url в БД
     }
 
     override fun setCardsList(cards: ArrayList<Card>) {
@@ -68,20 +61,19 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
 
     override fun setCardChooseEnabled(enabled: Boolean) {
         choosingEnabled = enabled
+        if (enabled) {
+            rv_game_my_cards.alpha = 1f
+        } else {
+            rv_game_my_cards.alpha = 0.5f
+        }
 //        rv_game_my_cards.isClickable = enabled
 //        rv_game_my_cards.touc
 
     }
 
-//    fun getTestCards(): ArrayList<Card> {
-//        var _card = Card()
-//        _card.abstractCard = AbstractCard()
-//        _card.abstractCard!!.name = "Person Name"
-//        _card.test = Test()
-//        _card.test.title = "Test title"
-//
-//        return arrayListOf(_card, _card, _card)
-//    }
+    fun onAnswer(correct: Boolean) {
+        presenter.answer(correct)
+    }
 
     override fun showEnemyCardChoose(card: Card) {
         setCard(enemy_selected_card, card)
@@ -92,6 +84,7 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
         a_anim.fillAfter = true
         enemy_selected_card.startAnimation(a_anim)
 
+        //TODO?
 //        val m_anim = object : Animation() {
 //            override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
 ////                super.applyTransformation(interpolatedTime, t)
@@ -102,7 +95,20 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
     }
 
     override fun showQuestionForYou(question: Question) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        game_questions_container.visibility = View.VISIBLE
+
+        supportFragmentManager
+                .beginTransaction()
+                .replace(
+                        R.id.game_questions_container,
+                        GameQuestionFragment.newInstance(question)
+                )
+                .commit()
+
+    }
+
+    override fun hideQuestionForYou() {
+        game_questions_container.visibility = View.GONE
     }
 
     override fun showYouCardChoose(choose: Card) {
@@ -115,55 +121,83 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
         my_selected_card.startAnimation(a_anim)
     }
 
+    override fun hideEnemyCardChoose() {
+        enemy_selected_card.clearAnimation()
+        enemy_selected_card.visibility = View.INVISIBLE
+    }
+
+    override fun hideYouCardChoose() {
+        my_selected_card.clearAnimation()
+        my_selected_card.visibility = View.INVISIBLE
+    }
+
     override fun showEnemyAnswer(correct: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (correct) {
+            tv_enemy_score.text = (tv_enemy_score.text.toString().toInt() + 1).toString()
+        }
+    }
+
+    override fun showYourAnswer(correct: Boolean) {
+        if (correct) {
+            tv_my_score.text = (tv_my_score.text.toString().toInt() + 1).toString()
+        }
     }
 
     fun setCard(view: View, card: Card) {
         view.tv_card_person_name.text = card.abstractCard!!.name
         view.tv_card_test_name.text = card.test.title
 
+        Glide.with(this)
+                .load(card.abstractCard!!.photoUrl)
+                .into(view.iv_card)
+
+        setWeight(view.ll_card_params.view_card_intelligence, card.intelligence!!.toFloat())
+        setWeight(view.ll_card_params.view_card_support, card.support!!.toFloat())
+        setWeight(view.ll_card_params.view_card_prestige, card.prestige!!.toFloat())
+        setWeight(view.ll_card_params.view_card_hp, card.hp!!.toFloat())
+        setWeight(view.ll_card_params.view_card_strength, card.strength!!.toFloat())
     }
 
+    private fun setWeight(view: View, w: Float) {
+        val params = view.layoutParams as LinearLayout.LayoutParams
+        params.weight = w
+        view.layoutParams = params
+    }
+
+
+    override fun showGameEnd(type: GamesRepository.GameEndType, card: Card) {
+
+        MaterialDialog.Builder(this)
+                .title(when (type) {
+                    GamesRepository.GameEndType.YOU_WIN -> "You win"
+                    GamesRepository.GameEndType.YOU_LOSE -> "You lose"
+                    GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "YOU_DISCONNECTED_AND_LOSE"
+                    GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "ENEMY_DISCONNECTED_AND_YOU_WIN"
+                    GamesRepository.GameEndType.DRAW -> "DRAW"
+                })
+//                .content("Game")
+//                .positiveText(R.string.agree)
+//                .negativeText(R.string.disagree)
+                .neutralText("ok")
+                .onNeutral { dialog, which ->
+                    goToFindGameActivity()
+                }
+                .canceledOnTouchOutside(false)
+                .cancelable(false)
+                .show()
+
+//        when(type){
+//            GamesRepository.GameEndType.YOU_WIN->{
 //
-//    @InjectPresenter
-//    lateinit var presenter: PlayGamePresenter
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_play_game)
-//
-//        btn_choose_random_card.setOnClickListener {
-//            RepositoryProvider.cardRepository.findMyCards(UserRepository.currentId).subscribe { list ->
-//
-//                presenter.chooseCard(list.getRandom()!!)
 //            }
 //        }
-//
-//        btn_answer_true.setOnClickListener {
-//            presenter.answer(true)
-//        }
-//
-//        btn_answer_false.setOnClickListener {
-//            presenter.answer(false)
-//        }
-//    }
-//
-//    override fun showEnemyCardChoose(card: Card) {
-//        tv_enemy_chooses.text = tv_enemy_chooses.text.toString() + "\r\n" + card.id
-//    }
-//
-//    override fun showQuestionForYou(question: Question) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun showYouCardChoose(choose: Card) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//    }
-//
-//    override fun showEnemyAnswer(correct: Boolean) {
-//        tv_enenmy_answers.text = tv_enenmy_answers.text.toString() + "\r\n" + correct
-//    }
+
+
+    }
+
+    private fun goToFindGameActivity() {
+        FindGameActivity.start(this)
+    }
 
 
     companion object {

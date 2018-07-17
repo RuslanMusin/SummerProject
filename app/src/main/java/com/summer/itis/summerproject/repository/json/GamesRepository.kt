@@ -9,6 +9,7 @@ import com.summer.itis.summerproject.model.game.LobbyPlayerData
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.utils.getRandom
 
+
 class GamesRepository {
     val allDbRef: DatabaseReference = FirebaseDatabase.getInstance().getReference()
 
@@ -28,6 +29,50 @@ class GamesRepository {
     var currentPlayerLobbyDbRef: DatabaseReference? = null
     var enemyPlayerLobbyDbRef: DatabaseReference? = null
 
+    var callbacks: InGameCallbacks? = null
+
+    var lastEnemyChoose: CardChoose? = null
+    var lastMyChosenCardId: String? = null
+
+    var enemyId: String? = null
+
+    var enemy_answers = 0;
+    var enemy_score = 0;
+
+    var my_answers = 0;
+    var my_score = 0;
+
+    var onYouLoseCard: Card? = null
+    var onEnemyLoseCard: Card? = null
+
+    var listeners = HashMap<DatabaseReference, ValueEventListener>()
+
+    fun resetData() {
+        nowLobbyDbRef = null
+        nowSearchingDbRef = null
+        currentPlayerLobbyDbRef = null
+        enemyPlayerLobbyDbRef = null
+
+        callbacks = null
+        lastEnemyChoose = null
+        lastMyChosenCardId = null
+        enemyId = null
+        enemy_answers = 0;
+        enemy_score = 0;
+        my_answers = 0;
+        my_score = 0;
+
+        onYouLoseCard = null
+        onEnemyLoseCard = null
+
+        for (l in listeners) {
+            l.key.removeEventListener(l.value)
+        }
+        listeners.clear()
+
+    }
+
+
     fun startSearchGame(onFind: () -> (Unit)) {
         searchingDbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
@@ -42,8 +87,8 @@ class GamesRepository {
 
                     selected.ref.removeValue()
 
-                    goToLobby(lobbyId)
-                    onFind()
+                    goToLobby(lobbyId, onFind)
+
                 } else {
                     createLobby(onFind)
                 }
@@ -51,8 +96,6 @@ class GamesRepository {
             }
         })
     }
-
-    //onChildAdded
 
     private fun createLobby(onFind: () -> (Unit)) {
         val lobbyPlayerData = LobbyPlayerData(getPlayerId()!!, true, null, null, null)
@@ -76,6 +119,7 @@ class GamesRepository {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists() && dataSnapshot.value != "") {
+                    enemyId = dataSnapshot.value as String
                     onFind()
                 }
             }
@@ -86,7 +130,7 @@ class GamesRepository {
         //TODO remove lobby on disconnect?
     }
 
-    private fun goToLobby(lobbyId: String) {
+    private fun goToLobby(lobbyId: String, onFind: () -> (Unit)) {
         nowLobbyDbRef = lobbiesDbRef.child(lobbyId)
 
         enemyPlayerLobbyDbRef = nowLobbyDbRef!!.child(Lobby.PARAM_creator)
@@ -96,6 +140,18 @@ class GamesRepository {
         currentPlayerLobbyDbRef!!.setValue(lobbyPlayerData)
 
         currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online).onDisconnect().setValue(false)
+
+        enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_playerId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                enemyId = dataSnapshot.value as String
+
+                onFind()
+            }
+        })
     }
 
     fun cancelSearchGame(onCanceled: () -> (Unit)) {
@@ -110,28 +166,14 @@ class GamesRepository {
         return UserRepository.currentId
     }
 
-    var callbacks: InGameCallbacks? = null
 
-    interface InGameCallbacks {
-        fun onYouWin(cardId: String)
-        fun onEnemyWin(cardId: String)
-        fun onEnemyDisconnectedAndYouWin(cardId: String)
-        fun onYouDisconnectedAndLose(cardId: String)//лучше Card,
-        // т.к. без соединения не узнать название по Id ?
-        fun onEnemyCardChosen(choose: CardChoose)
+    //in game
 
-        fun onEnemyAnswered(correct: Boolean)
-    }
-
-    var lastEnemyChoose: CardChoose? = null
 
     fun startGame(callbacks: InGameCallbacks) {
-
         this.callbacks = callbacks
 
-        //TODO
-        //select onLoseCard
-
+        selectOnLoseCard()
 
         enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_choosedCards)
                 .addChildEventListener(object : ChildEventListener {
@@ -167,35 +209,94 @@ class GamesRepository {
 
                     override fun onChildAdded(dataSnapshot: DataSnapshot, prevChildKey: String?) {
                         Log.d("Alm", "onChildAdded to enemy answers")
-                        callbacks.onEnemyAnswered(dataSnapshot.value as Boolean)
+                        val correct = dataSnapshot.value as Boolean
+                        callbacks.onEnemyAnswered(correct)
+
+                        enemy_answers++
+                        if (correct) {
+                            enemy_score++
+                        }
+                        checkGameEnd()
                     }
 
                     override fun onChildRemoved(p0: DataSnapshot) {}
                 })
 
+        val connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected")
+        connectedRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val connected = snapshot.getValue(Boolean::class.java)!!
+                if (!connected) {
+                    onDisconnectAndLose()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+//                System.err.println("Listener was cancelled")
+            }
+        })
+
+
+        val enemyConnectionListener = object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists() && dataSnapshot.value == false) {
+                    onEnemyDisconnectAndYouWin()
+                }
+            }
+        }
+        enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online)
+                .addValueEventListener(enemyConnectionListener)
+        listeners.put(enemyPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_online), enemyConnectionListener)
+    }
+
+    private fun selectOnLoseCard() {
+        RepositoryProvider.cardRepository.findMyCards(enemyId!!).subscribe { enemyCards: List<Card>? ->
+            RepositoryProvider.cardRepository.findMyCards(getPlayerId()!!).subscribe { myCards: List<Card>? ->
+                onYouLoseCard = ArrayList(myCards).minus(enemyCards!!).getRandom()
+
+                //TODO если нет подходящей карты
+                // возможно стоит обрабатывать уже при входе в лобби
+
+                currentPlayerLobbyDbRef!!
+                        .child(LobbyPlayerData.PARAM_randomSendOnLoseCard)
+                        .setValue(onYouLoseCard!!.id)
+            }
+        }
+
+        enemyPlayerLobbyDbRef!!
+                .child(LobbyPlayerData.PARAM_randomSendOnLoseCard)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onCancelled(p0: DatabaseError) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    }
+
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            RepositoryProvider.cardRepository
+                                    .readCard(dataSnapshot.value as String)
+                                    .subscribe { t: Card? ->
+                                        onEnemyLoseCard = t!!
+                                    }
+                        }
+                    }
+                })
+
     }
 
     fun chooseNextCard(cardId: String) {
-//        Log.d("Alm","repo: chooseNextCard "+cardId)
+        lastMyChosenCardId = cardId;
         RepositoryProvider.cardRepository.readCard(cardId).subscribe { card: Card? ->
-            //            RepositoryProvider.testRepository.readTest(t.testId)
-//            Log.d("Alm","chooseNextCard 1")
 
             val questionId = card!!.test.questions.getRandom()!!.id
-//            RepositoryProvider.testRepository.readTest(card.testId)
 
-//            card!!.test.questions.forEach {
-//                Log.d("Alm","q id "+it.id)
-//                Log.d("Alm","q question "+it.question)
-//                Log.d("Alm","q answ size "+it.answers.size)
-//            }
 
             val choose = CardChoose(cardId, questionId!!)
-//            Log.d("Alm","chooseNextCard 3")
 
             currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_choosedCards).push().setValue(choose)
-//            Log.d("Alm","chooseNextCard 4")
-
         }
     }
 
@@ -206,19 +307,11 @@ class GamesRepository {
                 .orderByKey()
                 .limitToLast(1)
 
-//        query.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onCancelled(p0: DatabaseError) {
-//                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            }
-//
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                val key = dataSnapshot.key!!
-//
-//                currentPlayerLobbyDbRef!!.child(LobbyPlayerData.PARAM_answers)
-//                        .child(key)
-//                        .setValue(correct)
-//            }
-//        })
+        my_answers++
+        if (correct) {
+            my_score++
+        }
+        checkGameEnd()
 
         query.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {}
@@ -238,8 +331,103 @@ class GamesRepository {
             override fun onChildRemoved(p0: DataSnapshot) {}
         })
 
+    }
 
+    private fun checkGameEnd() {
+        if (enemy_answers == ROUNDS_COUNT && my_answers == ROUNDS_COUNT) {
+            Log.d("Alm", "repo: GAME END!!!")
+
+            Log.d("Alm", "repo: GAME END onEnemyLoseCard: " + onEnemyLoseCard!!.id)
+            Log.d("Alm", "repo: GAME END onYouLoseCard: " + onYouLoseCard!!.id)
+
+            //TODO
+
+            if (my_score > enemy_score) {
+                onWin()
+
+            } else if (enemy_score > my_score) {
+                onLose()
+
+            } else {
+                //TODO
+                compareLastCards()
+            }
+
+
+        }
+    }
+
+    private fun compareLastCards() {
+        RepositoryProvider.cardRepository
+                .readCard(lastMyChosenCardId!!).subscribe { myLastCard: Card? ->
+                    RepositoryProvider.cardRepository
+                            .readCard(lastEnemyChoose!!.cardId).subscribe { enemyLastCard: Card? ->
+                                var c = 0
+
+                                c += compareCardsParameter({ card -> card.intelligence!! }, myLastCard!!, enemyLastCard!!)
+                                c += compareCardsParameter({ card -> card.support!! }, myLastCard!!, enemyLastCard!!)
+                                c += compareCardsParameter({ card -> card.prestige!! }, myLastCard!!, enemyLastCard!!)
+                                c += compareCardsParameter({ card -> card.hp!! }, myLastCard!!, enemyLastCard!!)
+                                c += compareCardsParameter({ card -> card.strength!! }, myLastCard!!, enemyLastCard!!)
+
+                                if (c > 0) {
+                                    onWin()
+                                } else if (c < 0) {
+                                    onLose()
+                                } else {
+                                    onDraw()
+                                }
+
+                            }
+                }
+    }
+
+    private fun onDraw() {
+        callbacks!!.onGameEnd(GameEndType.DRAW, onYouLoseCard!!)
+    }
+
+    fun compareCardsParameter(f: ((card: Card) -> Int), card1: Card, card2: Card): Int {
+        return f(card1).compareTo(f(card2))
+    }
+
+    private fun onWin() {
+        //TODO move card
+        callbacks!!.onGameEnd(GameEndType.YOU_WIN, onEnemyLoseCard!!)
+    }
+
+    private fun onLose() {
+        callbacks!!.onGameEnd(GameEndType.YOU_LOSE, onYouLoseCard!!)
 
     }
 
+    private fun onDisconnectAndLose() {
+        callbacks!!.onGameEnd(GameEndType.YOU_DISCONNECTED_AND_LOSE, onYouLoseCard!!)
+
+    }
+
+    private fun onEnemyDisconnectAndYouWin() {
+        callbacks!!.onGameEnd(GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN, onEnemyLoseCard!!)
+
+    }
+
+    //
+
+
+    interface InGameCallbacks {
+        fun onGameEnd(type: GameEndType, card: Card)
+
+        fun onEnemyCardChosen(choose: CardChoose)
+        fun onEnemyAnswered(correct: Boolean)
+    }
+
+    enum class GameEndType {
+        YOU_WIN, YOU_LOSE, YOU_DISCONNECTED_AND_LOSE, ENEMY_DISCONNECTED_AND_YOU_WIN,
+        DRAW
+    }
+
+
+    companion object {
+        public val ROUNDS_COUNT = 2
+
+    }
 }

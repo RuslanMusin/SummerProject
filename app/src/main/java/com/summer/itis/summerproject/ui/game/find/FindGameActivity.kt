@@ -27,7 +27,7 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        showNotSearching();
+//        showNotSearching();
 
         btn_find_game.setOnClickListener {
             presenter.findGame()
@@ -37,25 +37,28 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
             presenter.cancelSearching()
         }
 
+    }
 
-//        RepositoryProvider.cardRepository.findMyCards(UserRepository.currentId).subscribe { list ->
-//            list.forEach {
-//                Log.d("Alm","in list id "+it.id)
-//            }
-//        }
-//
-//        RepositoryProvider.cardRepository
-//                .readCard("-LHEW5YqlXQrV8quuLrd")
-//                .subscribe { card: Card? ->
-//
-//                }
+    override fun showNothing() {
+        layout_searching.visibility = View.GONE
+        btn_find_game.visibility = View.GONE
+        tv_not_enough_cards.visibility = View.GONE
 
+        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+    }
 
+    override fun showNotEnoughCards() {
+        layout_searching.visibility = View.GONE
+        btn_find_game.visibility = View.GONE
+        tv_not_enough_cards.visibility = View.VISIBLE
+
+        mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 
     override fun showNotSearching() {
         layout_searching.visibility = View.GONE
         btn_find_game.visibility = View.VISIBLE
+        tv_not_enough_cards.visibility = View.GONE
 
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
@@ -63,6 +66,7 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
     override fun showSearching() {
         layout_searching.visibility = View.VISIBLE
         btn_find_game.visibility = View.GONE
+        tv_not_enough_cards.visibility = View.GONE
 
         mDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
     }

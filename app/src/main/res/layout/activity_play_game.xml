@@ -4,67 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".ui.game.play.PlayGameActivity">
 
-    <!--<TextView-->
-    <!--android:id="@+id/textView"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="16dp"-->
-    <!--android:text="PlayGameActivity"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/btn_choose_random_card"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:text="Choose random card"-->
-    <!--app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/btn_answer_false"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:text="answer false"-->
-    <!--app:layout_constraintBottom_toTopOf="@+id/btn_choose_random_card"-->
-    <!--app:layout_constraintEnd_toEndOf="parent" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/btn_answer_true"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:text="answer true"-->
-    <!--app:layout_constraintBottom_toTopOf="@+id/btn_answer_false"-->
-    <!--app:layout_constraintEnd_toEndOf="parent" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_enemy_chooses"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginStart="8dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="Enemy card chooses:"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toBottomOf="@+id/textView" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/tv_enenmy_answers"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginEnd="8dp"-->
-    <!--android:text="Enemy answers:"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="@+id/tv_enemy_chooses" />-->
     <include
         android:id="@+id/enemy_selected_card"
         layout="@layout/item_game_card_medium"
@@ -93,28 +34,28 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.37" />
+        app:layout_constraintVertical_bias="0.45" />
 
     <ImageView
-        android:id="@+id/imageView2"
+
+        android:id="@+id/iv_game_enemy_image"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_person_black_24dp" />
+        app:srcCompat="@drawable/pers" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_game_enemy_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="enemy name"
+        android:text="Enemy name"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView2" />
+        app:layout_constraintStart_toEndOf="@+id/iv_game_enemy_image"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_game_my_cards"
@@ -129,14 +70,52 @@
         tools:listitem="@layout/item_game_card_small" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/tv_my_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:text="4"
+        android:text="0"
         android:textSize="32sp"
         app:layout_constraintBottom_toTopOf="@+id/rv_game_my_cards"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_enemy_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="0"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_game_enemy_image" />
+
+    <FrameLayout
+        android:id="@+id/game_questions_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/game_selected_card_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/enemy"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/iv_game_enemy_image"
+        app:layout_constraintTop_toTopOf="@+id/iv_game_enemy_image" />
 
 </android.support.constraint.ConstraintLayout>

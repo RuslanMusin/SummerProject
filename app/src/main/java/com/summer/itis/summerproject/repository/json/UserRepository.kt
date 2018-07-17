@@ -26,6 +26,7 @@ import com.summer.itis.summerproject.utils.Const.QUERY_END
 import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
 import com.summer.itis.summerproject.utils.Const.REMOVE_REQUEST
 import com.summer.itis.summerproject.utils.Const.SEP
+import com.summer.itis.summerproject.utils.RxUtils
 
 class UserRepository {
     private val databaseReference: DatabaseReference
@@ -55,6 +56,23 @@ class UserRepository {
 
     fun readUser(userId: String): DatabaseReference {
         return databaseReference.child(userId)
+    }
+
+    fun readUserById(userId: String): Single<User?> {
+        val single:Single<User?> = Single.create{e ->
+            val query:Query = databaseReference.child(userId)
+            query.addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+                }
+
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val user: User? = dataSnapshot.getValue(User::class.java)
+                    user?.let { e.onSuccess(it) }
+                }
+
+            })
+        }
+        return single.compose(RxUtils.asyncSingle())
     }
 
     fun deleteUser(user: User) {
