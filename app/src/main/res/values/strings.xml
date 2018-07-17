@@ -230,6 +230,9 @@
     <!--Game-->
     <string name="find_game">Find Game</string>
     <string name="game_searching">Ищем игру</string>
+    <string name="not_enough_cards">У вас недостаточно карт</string>
+    <string name="enemy">enemy:</string>
+
     <string name="default_parametr_value">10</string>
     <string name="authorName">Автор теста</string>
     <string name="test_done">Тест пройден</string>
