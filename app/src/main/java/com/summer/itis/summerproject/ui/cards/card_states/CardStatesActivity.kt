@@ -10,15 +10,17 @@ import android.support.v4.view.ViewPager
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
+import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_states.CardsStatesPagerAdapter
+import com.summer.itis.summerproject.utils.ApplicationHelper
 import java.util.ArrayList
 
 class CardStatesActivity : BaseActivity() {
 
     lateinit var mViewPager: ViewPager
     lateinit var mPagerAdapter: PagerAdapter
-    lateinit var mCards: ArrayList<Card>
+    lateinit var cards: ArrayList<Card>
     lateinit var card: AbstractCard
 
     companion object {
@@ -35,8 +37,17 @@ class CardStatesActivity : BaseActivity() {
 
         card = intent.getParcelableExtra<AbstractCard>("CARD")
 
+        RepositoryProvider
+                .cardRepository
+                .findMyAbstractCardStates(card?.id!!, ApplicationHelper.currentUser?.id!!)
+                .subscribe({it -> setCardsStates(it as ArrayList<Card>)})
+
         mViewPager = findViewById(R.id.pager)
         mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList())
         mViewPager.adapter = mPagerAdapter
+    }
+
+    fun setCardsStates(cards: ArrayList<Card>){
+        this.cards = cards
     }
 }
