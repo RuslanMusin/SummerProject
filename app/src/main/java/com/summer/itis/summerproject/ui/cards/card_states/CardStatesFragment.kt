@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
@@ -55,7 +56,9 @@ class CardStatesFragment : Fragment(){
         tv_hp.setText("" + card?.hp?: "0")
         tv_support.setText("" + card?.support?: "0")
         if(aCard?.photoUrl != null){
-            ImageLoadHelper.loadPicture(iv_portrait, aCard?.photoUrl!!)
+            Glide.with(context!!)
+                    .load(aCard?.photoUrl)
+                    .into(iv_portrait)
         }
     }
 

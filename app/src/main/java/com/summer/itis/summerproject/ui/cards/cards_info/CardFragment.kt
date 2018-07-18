@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.cards.card_states.CardStatesActivity
@@ -51,10 +52,15 @@ class CardFragment : Fragment(), OnClickListener {
         card = arg?.getParcelable("CARD")
         tagInput = arg?.getString("TAG") ?: "All"
         initOnClickListeners()
+        if (tagInput == "All"){
+            btn_state.visibility = View.GONE
+        }
         tv_name.text = card?.name
         tv_description.text = card?.description
         if(card?.photoUrl != null) {
-            ImageLoadHelper.loadPicture(iv_photo, card?.photoUrl!!)
+            Glide.with(context!!)
+                    .load(card?.photoUrl)
+                    .into(iv_photo)
         }
     }
 
@@ -88,8 +94,5 @@ class CardFragment : Fragment(), OnClickListener {
         btn_state.setOnClickListener(this)
         btn_test.setOnClickListener(this)
         btn_wiki.setOnClickListener(this)
-        if ("All" == tagInput){
-            btn_state.visibility = View.GONE
-        }
     }
 }

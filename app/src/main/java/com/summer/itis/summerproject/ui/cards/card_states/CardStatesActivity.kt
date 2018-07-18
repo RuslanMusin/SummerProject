@@ -10,11 +10,12 @@ import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.ui.base.BaseActivity
+import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_states.CardsStatesPagerAdapter
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import java.util.ArrayList
 
-class CardStatesActivity : BaseActivity() {
+class CardStatesActivity : EasyNavigationBaseActivity() {
 
     private lateinit var mViewPager: ViewPager
     private lateinit var mPagerAdapter: CardsStatesPagerAdapter
@@ -31,13 +32,17 @@ class CardStatesActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_card_states)
         card = intent.getParcelableExtra("CARD")
-
         mViewPager = findViewById(R.id.pager)
         mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList(), card)
         mViewPager.adapter = mPagerAdapter
         getCardsStates()
+        supportActionBar(toolbar)
+        setBackArrow(toolbar)
+    }
+
+    override fun getContentLayout(): Int {
+        return R.layout.activity_card_states
     }
 
     fun setCardsStates(cards: ArrayList<Card>){

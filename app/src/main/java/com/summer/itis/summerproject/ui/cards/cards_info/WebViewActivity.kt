@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.webkit.WebSettings.PluginState
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.summer.itis.summerproject.ui.base.BaseActivity
 
 /**
@@ -24,9 +25,15 @@ class WebViewActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var webView: WebView = WebView(this)
+        webView.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                view?.loadUrl(request?.url.toString())
+                return true
+            }
+        }
         webView.getSettings().setJavaScriptEnabled(true)
         webView.getSettings().setPluginState(PluginState.ON)
-        setContentView(webView)
         webView.loadUrl(intent.getStringExtra("URL"))
+        setContentView(webView)
     }
 }

@@ -7,6 +7,7 @@ import android.widget.TextView
 import com.summer.itis.summerproject.R
 import android.content.Context
 import android.support.annotation.NonNull
+import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.utils.ImageLoadHelper
 
@@ -38,7 +39,9 @@ class CardViewHolder(itemView: View) : ViewHolder(itemView) {
         tv_name.setText(item?.name)
         tv_desc.setText(item?.description)
         if(item?.photoUrl != null) {
-            ImageLoadHelper.loadPicture(iv_photo, item.photoUrl!!)
+            Glide.with(itemView.context)
+                    .load(item?.photoUrl)
+                    .into(iv_photo)
         }
     }
 }

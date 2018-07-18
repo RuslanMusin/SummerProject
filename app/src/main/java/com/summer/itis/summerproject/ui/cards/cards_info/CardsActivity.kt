@@ -10,10 +10,11 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.ui.base.BaseActivity
+import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import java.text.FieldPosition
 import java.util.ArrayList
 
-class CardsActivity : BaseActivity() {
+class CardsActivity : EasyNavigationBaseActivity() {
 
     lateinit var mViewPager: ViewPager
     lateinit var mPagerAdapter: CardsPagerAdapter
@@ -40,6 +41,12 @@ class CardsActivity : BaseActivity() {
         mViewPager.adapter = mPagerAdapter
         mViewPager.setCurrentItem(pos)
         mPagerAdapter.notifyDataSetChanged()
+        supportActionBar(toolbar)
+        setBackArrow(toolbar)
+    }
+
+    override fun getContentLayout(): Int {
+        return R.layout.activity_cards
     }
 
     private fun getPosOfCard(card: AbstractCard): Int{
