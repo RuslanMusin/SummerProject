@@ -89,9 +89,10 @@ class TestActivity : BaseBackActivity(), TestView, ChangeToolbarListener {
             }
 
             WINNED_FRAGMENT.equals(tag) -> {
-                btn_ok.visibility = View.VISIBLE
+                btn_back.visibility = View.VISIBLE
                 btn_cancel.visibility = View.GONE
                 btn_forward.visibility = View.GONE
+                btn_ok.visibility = View.GONE
             }
         }
     }

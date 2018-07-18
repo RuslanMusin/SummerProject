@@ -40,6 +40,7 @@ import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
 import android.util.TypedValue
+import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.utils.Const.STUB_PATH
 
 
@@ -80,7 +81,9 @@ class ApplicationHelper {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val user = dataSnapshot.getValue(User::class.java)
                             currentUser = user
+                            Log.d(TAG_LOG,"user in session = ${currentUser?.username}")
                             LoginActivity.start(application.applicationContext)
+                            PersonalActivity.start(application.applicationContext, currentUser)
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {

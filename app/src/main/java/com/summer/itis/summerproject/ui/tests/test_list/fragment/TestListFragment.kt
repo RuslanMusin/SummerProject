@@ -61,7 +61,7 @@ class TestListFragment : Fragment() {
         initViews(view)
         initRecycler()
 
-        if (!isLoaded && type == OFFICIAL_LIST) {
+        if (!isLoaded && type.equals(OFFICIAL_LIST)) {
             parentView!!.changeAdapter(0)
         }
 
@@ -72,8 +72,6 @@ class TestListFragment : Fragment() {
         progressBar = view.findViewById(R.id.pg_comics_list)
         recyclerView = view.findViewById(R.id.rv_comics_list)
         tvEmpty = view.findViewById(R.id.tv_empty)
-
-        parentView?.setProgressBar(progressBar)
     }
 
     private fun initRecycler() {
@@ -121,6 +119,7 @@ class TestListFragment : Fragment() {
     fun changeDataInAdapter() {
         type?.let { parentView!!.setCurrentType(it) }
         adapter?.let { parentView!!.setAdapter(it) }
+        parentView?.let { it.setProgressBar(progressBar) }
         loadPeople()
     }
 

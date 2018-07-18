@@ -9,5 +9,5 @@ class Answer {
 
     var isRight: Boolean = false
 
-    @field:Exclude var userClicked: Boolean = false
+    var userClicked: Boolean = false
 }

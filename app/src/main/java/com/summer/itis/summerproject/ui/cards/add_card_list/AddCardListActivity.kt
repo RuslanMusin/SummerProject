@@ -4,9 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 
 import com.annimon.stream.Stream
@@ -20,6 +23,7 @@ import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.ITEM_JSON
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
+import com.summer.itis.summerproject.ui.tests.add_test.fragments.main.AddTestFragment.Companion.ADD_CARD
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
@@ -28,6 +32,7 @@ import java.util.regex.Pattern
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import io.reactivex.disposables.Disposable
 
 class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapter.OnItemClickListener<Item> {
 
@@ -40,6 +45,8 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
 
     private var recyclerView: EmptyStateRecyclerView? = null
     private var tvEmpty: TextView? = null
+    private lateinit var progressBar: ProgressBar
+
 
     private var adapter: AddCardListAdapter? = null
 
@@ -58,6 +65,7 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
         //        supportActionBar(toolbar);
         setSupportActionBar(toolbar)
         setBackArrow(toolbar!!)
+        setToolbarTitle("Поиск личности")
 
     }
 
@@ -65,10 +73,19 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
 
     }
 
+    override fun showLoading(disposable: Disposable) {
+        progressBar!!.visibility = View.VISIBLE
+    }
+
+    override fun hideLoading() {
+        progressBar!!.visibility = View.GONE
+    }
+
     private fun findViews() {
         toolbar = findViewById(R.id.tb_books_list)
         recyclerView = findViewById(R.id.rv_comics_list)
         tvEmpty = findViewById(R.id.tv_empty)
+        progressBar = findViewById(R.id.pg_comics_list)
     }
 
     override fun setOpenSearchList(list: List<Item>) {
@@ -140,7 +157,11 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
             Log.d(TAG_LOG, "url " + item.url!!.content!!)*/
         }
 
-        adapter!!.changeDataSet(itemList)
+        if(itemList.size == 0) {
+            showSnackBar("Ничего не найдено")
+        } else {
+            adapter!!.changeDataSet(itemList)
+        }
 
 
     }
@@ -166,11 +187,15 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
 
                 override fun onQueryTextSubmit(query: String): Boolean {
                     Log.d(TAG_LOG,"opensearch")
-                    listPresenter.opensearch(query)
-                    if (!finalSearchView.isIconified) {
-                        finalSearchView.isIconified = true
+                    if(checkSearch(query)) {
+                        listPresenter.opensearch(query)
+                        if (!finalSearchView.isIconified) {
+                            finalSearchView.isIconified = true
+                        }
+                        searchItem!!.collapseActionView()
+                    } else {
+                        showSnackBar("Поиск возможен только на русском с использованием цифр и тире")
                     }
-                    searchItem!!.collapseActionView()
                     return false
                 }
 
@@ -180,6 +205,11 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
             })
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun checkSearch(query: String): Boolean {
+        val pattern:Pattern = Pattern.compile("[А-я0-9_\\-,.]+")
+        return (pattern.matcher(query).matches())
     }
 
     private fun initRecycler() {

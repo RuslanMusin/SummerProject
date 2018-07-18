@@ -1,6 +1,7 @@
 package com.summer.itis.summerproject.ui.member.member_item
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.AppCompatButton
@@ -18,6 +19,7 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.tests.one_test_list.OneTestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
 import com.summer.itis.summerproject.utils.Const.ADD_FRIEND
@@ -27,15 +29,16 @@ import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
 import com.summer.itis.summerproject.utils.Const.REMOVE_REQUEST
 import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
+import com.summer.itis.summerproject.utils.Const.USER_ID
 import com.summer.itis.summerproject.utils.Const.USER_KEY
+import com.summer.itis.summerproject.utils.Const.USER_TESTS
 import kotlinx.android.synthetic.main.layout_personal.*
 
 
 class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
-    private var toolbar: Toolbar? = null
-    private var tvTests: TextView? = null
-    private val tvCards: TextView? = null
+    private lateinit var toolbar: Toolbar
     private var tvName: TextView? = null
     private var btnAddFriend: AppCompatButton? = null
     private var ivPhoto: ImageView? = null
@@ -65,15 +68,20 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     internal fun initViews() {
         Log.d(TAG_LOG, "type = " + type!!)
         findViews()
-        supportActionBar(toolbar!!)
+        if(type.equals(OWNER_TYPE)) {
+            supportActionBar(toolbar)
+        } else {
+            setSupportActionBar(toolbar)
+            setBackArrow(toolbar)
+        }
 
         btnAddFriend!!.setOnClickListener(this)
-        tvTests!!.setOnClickListener(this)
+        li_tests!!.setOnClickListener(this)
+
     }
 
     private fun findViews() {
         toolbar = findViewById(R.id.toolbar)
-        tvTests = findViewById(R.id.tv_crossings)
         ivPhoto = findViewById(R.id.iv_crossing)
 
         btnAddFriend = findViewById(R.id.btn_add_friend)
@@ -122,18 +130,15 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
             R.id.btn_add_friend -> actWithUser()
 
-            R.id.tv_crossings -> showCrossings()
+            R.id.li_tests -> showTests()
         }
     }
 
-    private fun showCrossings() {
-        val myUser = User()
-        /* if(type.equals(OWNER_TYPE)) {
-            myUser.setId(UserRepository.getCurrentId());
-            CrossingListActivity.start(this,myUser);
-        } else {
-            CrossingListActivity.start(this,user);
-        }*/
+    private fun showTests() {
+        val intent: Intent = Intent(this,OneTestListActivity::class.java)
+        intent.putExtra(TEST_LIST_TYPE, USER_TESTS)
+        intent.putExtra(USER_ID,user?.id)
+        OneTestListActivity.start(this,intent)
     }
 
     private fun actWithUser() {
@@ -182,6 +187,12 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
             val intent = Intent(activity, PersonalActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             activity.startActivity(intent)
+        }
+
+        fun start(activity: Context?, comics: User?) {
+            val intent = Intent(activity, PersonalActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            activity?.startActivity(intent)
         }
     }
 }

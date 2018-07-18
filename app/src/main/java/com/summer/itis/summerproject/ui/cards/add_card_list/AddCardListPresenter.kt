@@ -9,6 +9,8 @@ import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.repository.RepositoryProvider
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Action
 import io.reactivex.functions.Consumer
 
 @InjectViewState
@@ -24,6 +26,8 @@ class AddCardListPresenter : MvpPresenter<AddCardListView>() {
         Log.d(TAG_LOG,"pres opensearch")
         RepositoryProvider.wikiApiRepository
                 .opensearch(opensearch)
+                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
+                .doAfterTerminate(Action { viewState.hideLoading() })
                 .subscribe({ viewState.setOpenSearchList(it) }, { viewState.handleError(it) })
     }
 }

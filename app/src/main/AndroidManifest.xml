@@ -24,14 +24,16 @@
         <activity android:name=".ui.tests.add_test.AddTestActivity" />
         <activity android:name=".ui.cards.add_card_list.AddCardListActivity" />
         <activity android:name=".ui.cards.add_card.AddCardActivity" />
+        <activity android:name=".ui.cards.cards_list.activity.CardsListActivity"/>
+        <activity android:name=".ui.cards.card_states.CardStatesActivity" />
+        <activity android:name=".ui.cards.cards_info.CardsActivity" />
+        <activity android:name=".ui.cards.cards_info.WebViewActivity" />
         <activity android:name=".ui.game.find.FindGameActivity" />
-        <activity android:name=".ui.game.play.PlayGameActivity">
-
-        </activity>
-        <activity android:name=".ui.game.play.DebugPlayGameActivity"></activity>
-
+        <activity android:name=".ui.game.play.PlayGameActivity"/>
         <activity android:name=".ui.tests.test_list.test.TestListActivity"/>
         <activity android:name=".ui.tests.test_item.TestActivity"/>
+        <activity android:name=".ui.tests.one_test_list.OneTestListActivity"/>
+
 
     </application>
 
