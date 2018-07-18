@@ -19,6 +19,5 @@ class AbstractCard {
 
     var wikiUrl: String? = null
 
-    @Exclude
-    var isOwner: Boolean = false
+    @field:Exclude var isOwner: Boolean = false
 }

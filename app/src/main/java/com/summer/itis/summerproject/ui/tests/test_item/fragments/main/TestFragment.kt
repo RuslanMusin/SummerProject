@@ -43,6 +43,7 @@ import com.summer.itis.summerproject.utils.Const.AFTER_TEST
 import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.Const.WIN_GAME
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
@@ -117,10 +118,12 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         } else {
             tv_done.text = getText(R.string.test_was_done)
         }
-        if(test.testRelation?.relation.equals(AFTER_TEST)) {
-            tv_card_done.text = getText(R.string.test_wasnt_done)
-        } else if(test.testRelation?.relation.equals(LOSE_GAME)) {
+        val relation: String? = test.testRelation?.relation
+        Log.d(TAG_LOG,"has card = $relation and has test = ${test.testDone}")
+        if(relation.equals(AFTER_TEST) || relation.equals(WIN_GAME)) {
             tv_card_done.text = getText(R.string.test_was_done)
+        } else {
+            tv_card_done.text = getText(R.string.test_wasnt_done)
         }
         tv_author.text = test.authorName
         (extv_desc as ExpandableTextView).text = test.desc

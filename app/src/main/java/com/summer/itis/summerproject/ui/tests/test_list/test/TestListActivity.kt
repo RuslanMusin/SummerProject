@@ -198,6 +198,7 @@ class TestListActivity : NavigationBaseActivity(), TestListView {
 
     override fun setProgressBar(progressBar: ProgressBar?) {
         this.progressBar = progressBar
+        Log.d(TAG_LOG,"set proggress  and type = $currentType}")
     }
 
     override fun setNotLoading() {
@@ -205,10 +206,12 @@ class TestListActivity : NavigationBaseActivity(), TestListView {
     }
 
     override fun showLoading(disposable: Disposable) {
+        Log.d(TAG_LOG,"show loading  and type = $currentType}")
         progressBar!!.visibility = View.VISIBLE
     }
 
     override fun hideLoading() {
+        Log.d(TAG_LOG,"hide loading and type = $currentType}")
         progressBar!!.visibility = View.GONE
     }
 

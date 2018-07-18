@@ -39,7 +39,7 @@
 
     <EditText
         android:id="@+id/et_answer"
-        android:layout_width="380dp"
+        android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:textSize="@dimen/text.18"

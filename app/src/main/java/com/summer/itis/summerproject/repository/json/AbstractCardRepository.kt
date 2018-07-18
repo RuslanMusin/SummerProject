@@ -65,52 +65,23 @@ class AbstractCardRepository {
         return databaseReference!!.child(crossingId).push().key
     }
 
-    fun findAbstractCard(test: Test, user: User, listener: Listener) {
-        val card = test.card
-        val abstractCard = card?.abstractCard
-        val wikiUrl = abstractCard?.wikiUrl;
-        var id: String? = null
-
-        Log.d(TAG_LOG,"find abstr = " + wikiUrl)
-
-        val query: Query? = databaseReference.orderByChild(FIELD_WIKI_URL).equalTo(wikiUrl)
-
-        query?.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val comments = ArrayList<AbstractCard?>()
-                for (postSnapshot in dataSnapshot.getChildren()) {
-                    val point = postSnapshot.getValue(AbstractCard::class.java)
-                    comments.add(point)
-                    if (point?.wikiUrl.equals(wikiUrl)) {
-                        id = point?.id
-                    }
-
-
-                }
-                abstractCard?.id = id
-                test.card?.abstractCard = abstractCard
-                Log.d(TAG_LOG, "set flag")
-                listener.createTest(test,user,"create")
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-
-        })
-
-    }
-
     fun findAbstractCardId(wikiUrl: String?): Single<String> {
         val single: Single<String> = Single.create{e ->
+            Log.d(TAG_LOG,"wikiUrl = $wikiUrl")
             val query: Query? = databaseReference.orderByChild(FIELD_WIKI_URL).equalTo(wikiUrl)
 
             query?.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     var cardId: String = "null"
                     if(dataSnapshot.exists()){
-                        val card: AbstractCard? = dataSnapshot.getValue(AbstractCard::class.java)
-                        card?.id?.let { cardId = it }
+                        Log.d(TAG_LOG,"data exists")
+                        for(snap in dataSnapshot.children) {
+                            val card: AbstractCard? = snap.getValue(AbstractCard::class.java)
+                            card?.id?.let {
+                                cardId = it
+                                Log.d(TAG_LOG, "abs card exists")
+                            }
+                        }
                     }
                     e.onSuccess(cardId)
                 }
