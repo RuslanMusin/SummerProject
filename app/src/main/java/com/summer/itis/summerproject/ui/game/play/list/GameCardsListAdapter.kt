@@ -33,9 +33,14 @@ class GameCardsListAdapter(
                 .into(holder.image)
 
         holder.itemView.setOnClickListener {
-            onClick(items[position])
-            //TODO delete selected
-            //in presenter?
+            val pos = holder.adapterPosition
+
+            onClick(items[pos])
+
+            //TODO delete selected in presenter?
+
+            notifyItemRemoved(pos)
+            items.removeAt(pos)
         }
     }
 
