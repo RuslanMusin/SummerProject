@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.cards.cards_info
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,14 @@ import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.cards.card_states.CardStatesActivity
+import com.summer.itis.summerproject.ui.tests.one_test_list.OneTestListActivity
+import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.ABSTRACT_CARD_ID
+import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
+import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
+import com.summer.itis.summerproject.utils.Const.USER_ABSTRACT_TESTS
+import com.summer.itis.summerproject.utils.Const.USER_ID
 
 /**
  * Created by Home on 11.07.2018.
@@ -67,9 +76,22 @@ class CardFragment : Fragment(), OnClickListener {
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.btn_state -> CardStatesActivity.start(activity!!,card!!)
-            R.id.btn_test -> println()// TODO redirect
+            R.id.btn_test -> OneTestListActivity.start(activity!!, getRedirectIntent())
             R.id.btn_wiki -> getWikiUrl()
         }
+    }
+
+    private fun getRedirectIntent(): Intent {
+        val intent = Intent(activity!!,OneTestListActivity::class.java)
+        if(tagInput == "All") {
+            intent.putExtra(TEST_LIST_TYPE, DEFAULT_ABSTRACT_TESTS)
+            intent.putExtra(ABSTRACT_CARD_ID, "" + card?.id)
+        }else{
+            intent.putExtra(TEST_LIST_TYPE, USER_ABSTRACT_TESTS)
+            intent.putExtra(ABSTRACT_CARD_ID, "" + card?.id)
+            intent.putExtra(USER_ID, ApplicationHelper.currentUser?.id)
+        }
+        return intent
     }
 
     private fun getWikiUrl() {
