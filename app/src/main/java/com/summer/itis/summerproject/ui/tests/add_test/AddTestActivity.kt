@@ -3,8 +3,10 @@ package com.summer.itis.summerproject.ui.tests.add_test
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.v4.app.Fragment
 import android.support.v7.widget.Toolbar
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -30,6 +32,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragm
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import kotlinx.android.synthetic.main.activity_with_frame_and_toolbar.*
 import kotlinx.android.synthetic.main.back_forward.*
 
 class AddTestActivity : BaseBackActivity(), AddTestView, ChangeToolbarListener {
@@ -66,6 +69,7 @@ class AddTestActivity : BaseBackActivity(), AddTestView, ChangeToolbarListener {
             }
 
             ADD_QUESTION_FRAGMENT.equals(tag) -> {
+                btn_ok.visibility = View.VISIBLE
                 btn_back.visibility = View.VISIBLE
                 btn_cancel.visibility = View.VISIBLE
                 btn_forward.visibility = View.VISIBLE
@@ -109,7 +113,10 @@ class AddTestActivity : BaseBackActivity(), AddTestView, ChangeToolbarListener {
 
 
     private fun initViews() {
-        setSupportActionBar(test_toolbar)
+        app_bar.removeView(test_toolbar)
+        toolbar = layoutInflater.inflate(R.layout.toolbar_add_test,app_bar,false) as Toolbar
+        app_bar.addView(toolbar)
+        setSupportActionBar(toolbar)
         btn_back.setOnClickListener(this)
         btn_forward.setOnClickListener(this)
         btn_cancel.setOnClickListener(this)

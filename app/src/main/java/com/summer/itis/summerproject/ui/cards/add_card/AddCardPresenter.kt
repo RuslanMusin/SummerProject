@@ -13,7 +13,7 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import io.reactivex.functions.Consumer
 
 @InjectViewState
-class AddCardPresenter(private val addCardView: AddCardView) : MvpPresenter<AddCardView>() {
+class AddCardPresenter : MvpPresenter<AddCardView>() {
 
     override fun onFirstViewAttach() {
         super.onFirstViewAttach()
@@ -24,7 +24,7 @@ class AddCardPresenter(private val addCardView: AddCardView) : MvpPresenter<AddC
     fun query(query: String) {
         RepositoryProvider.wikiApiRepository!!
                 .query(query)
-                .subscribe({ addCardView.setQueryResults(it) }, { viewState.handleError(it) })
+                .subscribe({ viewState.setQueryResults(it) }, { viewState.handleError(it) })
 
     }
 }

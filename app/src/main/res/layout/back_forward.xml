@@ -32,6 +32,8 @@
         android:layout_height="wrap_content"
         android:textColor="@color/white"
         android:textSize="@dimen/text.18"
+        android:layout_toRightOf="@id/btn_back"
+        android:layout_marginStart="16dp"
         android:text="Toolbar Title"
         android:layout_centerInParent="true"
         />

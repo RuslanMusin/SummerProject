@@ -322,8 +322,13 @@ class TestRepository {
                                 val card = snapshot.getValue(Test::class.java)
                                 if(card?.type.equals(type) && !card?.authorId.equals(userId)) {
                                     if (relations.keys.contains(card?.id)) {
-                                        card?.testDone = true
+                                        if(LOSE_GAME.equals(relations[card?.id]?.relation) || AFTER_TEST.equals(relations[card?.id]?.relation)) {
+                                            card?.testDone = true
+
+                                        }
                                         card?.testRelation = relations[card?.id]
+                                    } else {
+                                        card?.testRelation = Relation()
                                     }
                                     card?.let { cards.add(it) }
                                 }

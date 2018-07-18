@@ -93,7 +93,7 @@ class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener 
         question = test.questions[number]
 
         (activity as BaseBackActivity).currentTag = TestActivity.QUESTION_FRAGMENT + number
-        (activity as ChangeToolbarListener).changeToolbar(QUESTION_FRAGMENT + number,"Вопрос ${number+1}/${test.questions.size}")
+        (activity as ChangeToolbarListener).changeToolbar(QUESTION_FRAGMENT,"Вопрос ${number+1}/${test.questions.size}")
 
         return view
     }
@@ -180,7 +180,7 @@ class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener 
         question.userRight = true
         for(i in question.answers.indices) {
             val answer: Answer = question.answers[i]
-                if(checkBoxes?.get(i)?.isChecked!!) {
+                if(checkBoxes.get(i).isChecked) {
                     answer.userClicked = true
                     Log.d(TAG_LOG,"checked answer = ${answer.text}")
                 }
@@ -188,6 +188,7 @@ class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener 
                 question.userRight = false
                 Log.d(TAG_LOG, "wrong i = $i and answer = " + question.answers[i])
             }
+            Log.d(TAG_LOG,"userclick = ${answer.userClicked} and q right = ${answer.isRight} and text = ${answer.text}")
         }
     }
 

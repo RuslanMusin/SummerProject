@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.answer
 import com.summer.itis.summerproject.model.Answer
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
@@ -42,9 +43,11 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
     private lateinit var question: Question
     private lateinit var test: Test
     private lateinit var type: String
+    private var listSize: Int = 0
     private var number: Int = 0
 
     private lateinit var colorStateList: ColorStateList
+    private lateinit var rightStateList: ColorStateList
 
     private var textViews: MutableList<TextView>? = null
     private var checkBoxes: MutableList<CheckBox>? = null
@@ -73,9 +76,8 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
         val testStr: String = arguments?.getString(TEST_JSON)!!
         number = arguments?.getInt(QUESTION_NUMBER)!!
         test = gsonConverter.fromJson(testStr, Test::class.java)
-        var listSize: Int = 0
         if(type.equals(RIGHT_ANSWERS)) {
-           question =  test.rightQuestions[number]
+            question =  test.rightQuestions[number]
             listSize = test.rightQuestions.size
         } else {
            question = test.wrongQuestions[number]
@@ -83,8 +85,10 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
         }
 
+
+
         (activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
-        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT + number,"Вопрос ${number+1}/${listSize}")
+        (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT,"Вопрос ${number+1}/${listSize}")
         return view
     }
 
@@ -100,6 +104,12 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
         radioButtons = ArrayList()
         checkBoxes = ArrayList()
 
+        if(number == (listSize-1)) {
+            btn_next_question.visibility = View.GONE
+            btn_finish_questions.visibility = View.VISIBLE
+            (activity as ChangeToolbarListener).showOk(true)
+        }
+
         tv_question.text = question.question
 
         setStartAnswers()
@@ -113,7 +123,12 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
                 intArrayOf(Color.parseColor("#FFFFFF"), Color.parseColor("#DC143C"))
         )
 
-
+        rightStateList = ColorStateList(
+                arrayOf(intArrayOf(-android.R.attr.state_checked), // unchecked
+                        intArrayOf(android.R.attr.state_checked))// checked
+                ,
+                intArrayOf(Color.parseColor("#FFFFFF"), Color.parseColor("#00cc00"))
+        )
 
         for (answer in question.answers) {
             addAnswer(answer)
@@ -122,26 +137,28 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
             Log.d(Const.TAG_LOG,"text = " + tv.text)
         }
 
-        if(number == (test.questions.size-1)) {
-            btn_next_question.visibility = View.GONE
-            btn_finish_questions.visibility = View.VISIBLE
-            (activity as ChangeToolbarListener).showOk(true)
-        }
+
     }
 
 
     private fun setListeners() {
         btn_finish_questions!!.setOnClickListener(this)
         btn_next_question!!.setOnClickListener(this)
+
+        btn_next_question.text = getString(R.string.next_question)
     }
 
     private fun beforeQuestion() {
-        val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
-        args.putString(ANSWERS_TYPE,type)
-        args.putInt(QUESTION_NUMBER, --number)
-        val fragment = AnswersFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+        if(number > 0) {
+            val args: Bundle = Bundle()
+            args.putString(TEST_JSON, gsonConverter.toJson(test))
+            args.putString(ANSWERS_TYPE, type)
+            args.putInt(QUESTION_NUMBER, --number)
+            val fragment = AnswersFragment.newInstance(args)
+            (activity as BaseBackActivity).changeFragment(fragment, ANSWERS_FRAGMENT + number)
+        } else {
+            finishQuestions()
+        }
     }
 
     private fun finishQuestions() {
@@ -196,18 +213,19 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
         val tvAnswer: TextView = view.findViewWithTag("tv_answer")
         tvAnswer.text = answer.text
         textViews?.add(tvAnswer)
-        Log.d(Const.TAG_LOG,"text tv = ${tvAnswer.text}")
         val checkBox: CheckBox = view.findViewWithTag("checkbox")
         if(answer.isRight) {
+            CompoundButtonCompat.setButtonTintList(checkBox, rightStateList)
             checkBox.isChecked = true
         }
         checkBoxes?.add(checkBox)
-        Log.d(Const.TAG_LOG,"checkboxes size = ${checkBoxes?.size}")
         li_answers.addView(view)
         if(type.equals(WRONG_ANSWERS) && !answer.isRight && answer.userClicked != answer.isRight) {
             Log.d(TAG_LOG,"change checkbox color")
-            checkBox.isChecked = true
+            Log.d(Const.TAG_LOG,"text tv = ${tvAnswer.text}")
+            Log.d(TAG_LOG,"answer.isRight = ${answer.isRight} and userClick = ${answer.userClicked}")
             CompoundButtonCompat.setButtonTintList(checkBox, colorStateList)
+            checkBox.isChecked = true
         }
         checkBox.isEnabled = false
     }

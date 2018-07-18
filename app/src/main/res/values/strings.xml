@@ -210,7 +210,7 @@
     <string name="map">Карта</string>
     <string name="test_name">Название теста</string>
     <string name="add_card">Добавить карточку</string>
-    <string name="added_cards">Добавленная карта :</string>
+    <string name="added_cards">Добавленная карта</string>
     <string name="create_questions">Создать вопросы</string>
     <string name="qustionId">Вопрос</string>
     <string name="add_answer">Добавить ответ</string>
@@ -251,6 +251,7 @@
     <string name="question_dialog_content">При выходе результат будет потерян. Выйти ?</string>
     <string name="question_dialog_title">Вы точно хотите выйти?</string>
     <string name="card_getted">Карта получена</string>
+    <string name="add_test">Новый тест</string>
 
 
 </resources>

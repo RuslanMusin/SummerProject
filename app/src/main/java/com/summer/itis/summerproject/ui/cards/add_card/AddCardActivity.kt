@@ -19,6 +19,7 @@ import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.model.pojo.query.Page
 import com.summer.itis.summerproject.ui.base.BaseActivity
+import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
 import com.summer.itis.summerproject.utils.Const
@@ -27,7 +28,7 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.layout_add_card.*
 
-class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeListener {
+class AddCardActivity : NavigationBaseActivity(), AddCardView, SeekBar.OnSeekBarChangeListener {
 
     private var card: Card? = null
 
@@ -49,7 +50,6 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_card)
 
-        presenter = AddCardPresenter(this)
         card = Card()
         seekBars = listOf<SeekBar>(seekBarSupport,seekBarIntelligence,seekBarPrestige,seekBarHp,seekBarStrength)
         seeksChanges = ArrayList()
@@ -75,6 +75,7 @@ class AddCardActivity : BaseActivity(), AddCardView, SeekBar.OnSeekBarChangeList
         //        supportActionBar(toolbar);
         setSupportActionBar(toolbar)
         setBackArrow(toolbar!!)
+        setToolbarTitle("Статистика карты")
 
     }
 

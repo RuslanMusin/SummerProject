@@ -1,12 +1,15 @@
 package com.summer.itis.summerproject.ui.base
 
 import android.app.AlertDialog
+import android.app.PendingIntent.getActivity
 import android.app.ProgressDialog
 import android.content.Context
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBar
@@ -16,6 +19,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.summer.itis.summerproject.R
@@ -59,6 +63,10 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
         Objects.requireNonNull<ActionBar>(supportActionBar).setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         initNavigationDrawer(toolbar)
+    }
+
+    protected open fun setToolbarTitle(title: String) {
+        supportActionBar?.title = title
     }
 
     protected fun setBackArrow(toolbar: Toolbar) {
@@ -132,8 +140,11 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
     }
 
     fun showSnackBar(message: String) {
-        val snackbar = Snackbar.make(findViewById(android.R.id.content),
+        val snackbar: Snackbar = Snackbar.make(findViewById(android.R.id.content),
                 message, Snackbar.LENGTH_LONG)
+        snackbar.getView().setBackgroundColor(Color.BLACK)
+        val textView = snackbar.view.findViewById(android.support.design.R.id.snackbar_text) as TextView;
+        textView.setTextColor(Color.WHITE);
         snackbar.show()
     }
 

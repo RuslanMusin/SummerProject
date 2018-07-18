@@ -101,6 +101,12 @@ class FinishFragment : Fragment(), View.OnClickListener, OnBackPressedListener, 
         when (v?.id) {
 
             R.id.btn_finish_test -> {
+                for(question in test.questions) {
+                    question.userRight = false
+                    for(answer in question.answers) {
+                        answer.userClicked = false
+                    }
+                }
                 TestActivity.start(activity as Activity,test)
             }
 
