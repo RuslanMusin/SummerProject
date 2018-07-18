@@ -114,6 +114,8 @@ dependencies {
     implementation "com.jakewharton.picasso:picasso2-okhttp3-downloader:${okhttp3downloader}"
     implementation "commons-codec:commons-codec:${commons_codec}"
 
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
     implementation 'fastily:jwiki:1.6.0'
 
 }

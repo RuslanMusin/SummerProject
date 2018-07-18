@@ -23,6 +23,7 @@ import android.widget.TextView
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.ui.cards.cards_list.activity.CardsListActivity
 import com.summer.itis.summerproject.ui.game.find.FindGameActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.reader.ReaderListActivity
@@ -84,7 +85,7 @@ open class NavigationBaseActivity : MvpAppCompatActivity() {
             when (id) {
                 R.id.menu_tests -> TestListActivity.start(this)
 
-                R.id.menu_cards -> LoginActivity.start(this)
+                R.id.menu_cards -> CardsListActivity.start(this)
 
                 R.id.menu_game -> FindGameActivity.start(this)
 
