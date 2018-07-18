@@ -5,7 +5,6 @@ import com.arellomobile.mvp.MvpPresenter
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.utils.ApplicationHelper
-import java.text.FieldPosition
 
 /**
  * Created by Home on 13.07.2018.

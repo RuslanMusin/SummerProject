@@ -3,16 +3,15 @@ package com.summer.itis.summerproject.ui.cards.card_states
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.repository.RepositoryProvider
-import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_states.CardsStatesPagerAdapter
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import kotlinx.android.synthetic.main.activity_card_states.toolbar
 import java.util.ArrayList
 
 class CardStatesActivity : EasyNavigationBaseActivity() {

@@ -3,9 +3,7 @@ package com.summer.itis.summerproject.ui.cards.cards_list.adapter
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.app.FragmentStatePagerAdapter
 import android.util.Log
-import com.google.android.gms.dynamic.SupportFragmentWrapper
 import com.summer.itis.summerproject.ui.cards.cards_list.tabs.AllCardsTabFragment
 import com.summer.itis.summerproject.ui.cards.cards_list.tabs.MyCardsTabFragment
 

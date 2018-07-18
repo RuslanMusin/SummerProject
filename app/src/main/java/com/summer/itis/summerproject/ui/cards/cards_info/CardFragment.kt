@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.cards.card_states.CardStatesActivity
-import com.summer.itis.summerproject.utils.ImageLoadHelper
 
 /**
  * Created by Home on 11.07.2018.

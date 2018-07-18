@@ -8,7 +8,6 @@ import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
-import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_list.adapter.CardsListPagerAdapter
 import kotlinx.android.synthetic.main.activity_cards_list.toolbar
 

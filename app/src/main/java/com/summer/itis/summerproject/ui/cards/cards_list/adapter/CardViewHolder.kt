@@ -9,7 +9,6 @@ import android.content.Context
 import android.support.annotation.NonNull
 import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.model.AbstractCard
-import com.summer.itis.summerproject.utils.ImageLoadHelper
 
 /**
  * Created by Home on 10.07.2018.

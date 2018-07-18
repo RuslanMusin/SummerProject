@@ -6,7 +6,6 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import com.summer.itis.summerproject.model.AbstractCard
 import io.reactivex.annotations.NonNull
-import java.text.FieldPosition
 
 /**
  * Created by Home on 13.07.2018.

@@ -3,7 +3,7 @@ package com.summer.itis.summerproject.ui.cards.cards_info
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.webkit.WebResourceRequest
 import android.webkit.WebSettings.PluginState
 import android.webkit.WebView
 import android.webkit.WebViewClient
