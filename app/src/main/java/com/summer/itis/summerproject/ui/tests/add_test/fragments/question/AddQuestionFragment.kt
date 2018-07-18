@@ -25,9 +25,16 @@ import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
 import java.util.ArrayList
 
 import android.app.Activity.RESULT_OK
+import android.content.Context
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.util.Log
+import com.afollestad.materialdialogs.DialogAction
+import com.afollestad.materialdialogs.MaterialDialog
+import com.summer.itis.summerproject.R.string.answer
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.base.OnFourActionListener
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
@@ -42,9 +49,11 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.TEST_MANY_TYPE
 import com.summer.itis.summerproject.utils.Const.TEST_ONE_TYPE
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import java.util.Arrays.copyOf
 
 class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
@@ -63,7 +72,7 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
     private var etQuestion: EditText? = null
     private var spinner: MaterialSpinner? = null
 
-    private var answers: MutableList<Answer>? = null
+    private var answers: MutableList<Answer> = ArrayList()
     private var answerSize: Int = 0
 
     private var editTexts: MutableList<EditText> = ArrayList()
@@ -92,7 +101,18 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
     }
 
     override fun onCancel() {
-        TestListActivity.start(activity as Activity)
+        MaterialDialog.Builder(activity as Context)
+                .title(R.string.question_dialog_title)
+                .content(R.string.question_dialog_content)
+                .positiveText(R.string.agree)
+                .negativeText(R.string.disagree)
+                .onPositive(object :MaterialDialog.SingleButtonCallback {
+                    override fun onClick(dialog: MaterialDialog, which: DialogAction) {
+                        TestListActivity.start(activity as Activity)
+                    }
+
+                })
+                .show()
     }
 
     override fun onForward() {
@@ -107,7 +127,7 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
         val args: Bundle = Bundle()
         args.putString(TEST_JSON, gsonConverter.toJson(test))
         args.putInt(QUESTION_NUMBER, --number)
-        val fragment = AnswersFragment.newInstance(args)
+        val fragment = AddQuestionFragment.newInstance(args)
         (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
     }
 
@@ -115,18 +135,13 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
         val view = inflater.inflate(R.layout.fragment_add_question, container, false)
 
         test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
-        if(test.questions.size > number) {
-            question = test.questions[number]
-        } else {
-            question = Question()
-            test.questions.add(question)
-        }
+
         number = arguments?.getInt(QUESTION_NUMBER)!!
         addTestView = activity as AddTestView?
 
         (activity as BaseBackActivity).currentTag = ADD_QUESTION_FRAGMENT + number
         (activity as ChangeToolbarListener).changeToolbar(AddTestActivity.ADD_QUESTION_FRAGMENT,"Вопрос ${number+1}")
-        if(number == 9) {
+        if(number >= 2) {
             (activity as ChangeToolbarListener).showOk(true)
         } else {
             (activity as ChangeToolbarListener).showOk(false)
@@ -139,7 +154,26 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
+        if(test.questions.size > number) {
+            question = test.questions[number]
+            setQuestionData()
+        } else {
+            question = Question()
+            test.questions.add(question)
+        }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun setQuestionData() {
+        Log.d(TAG_LOG,"set question data")
+        etQuestion?.setText(question.question)
+        for(i in question.answers.indices) {
+            if(i >= checkBoxes.size) {
+                addAnswer()
+            }
+            checkBoxes[i].isChecked = question.answers?.get(i)?.isRight ?: false
+            editTexts[i].setText(question.answers?.get(i)?.text)
+        }
     }
 
     private fun initViews(view: View) {
@@ -164,6 +198,7 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
         checkListener = object: View.OnClickListener{
             override fun onClick(v: View?) {
                 if(testType.equals(TEST_ONE_TYPE)) {
+                    Log.d(TAG_LOG,"change on one type")
                     changeToOneType(v as CheckBox)
 
                 }
@@ -205,11 +240,21 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
     }
 
     private fun changeToOneType(check: CheckBox?) {
-        var count = 0
-        for(checkBox in checkBoxes) {
-            if(checkBox.isChecked && (check == null || check.id != checkBox.id)) {
+        Log.d(TAG_LOG,"change to one type")
+        testType = TEST_ONE_TYPE
+        var count = if (check == null) 0 else 1
+        val boxes: MutableList<CheckBox> = ArrayList()
+        for (checkBox in checkBoxes) {
+            if (checkBox.isChecked && check != checkBox) {
+                Log.d(TAG_LOG,"add to box")
+                boxes.add(checkBox)
+            }
+        }
+        for (checkBox in boxes) {
+            if (checkBox.isChecked) {
                 count++
-                checkBox.isChecked = if(count > 1) false else true
+                checkBox.isChecked = if (count > 1 ) false else true
+                Log.d(TAG_LOG,"checkbox is checked = ${checkBox.isChecked}")
             }
         }
 
@@ -218,20 +263,56 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
     private fun finishQuestions() {
         prepareQuestion()
 //        addTestView!!.createTest()
-        ApplicationHelper.currentUser?.let { testRepository
-                .createTest(test, it)
-                .subscribe{e -> TestActivity.start(activity as Activity,test)} }
+        if(checkQuestion()) {
+            ApplicationHelper.currentUser?.let {
+                testRepository
+                        .createTest(test, it)
+                        .subscribe { e -> TestActivity.start(activity as Activity, test) }
+            }
+        }
     }
 
     private fun nextQuestion() {
         if(number <= 9) {
-            val args: Bundle = Bundle()
-            args.putString(TEST_JSON, gsonConverter.toJson(test))
-            args.putInt(QUESTION_NUMBER, ++number)
             prepareQuestion()
-            val fragment = AddQuestionFragment.newInstance(args)
-            (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
+            if(checkQuestion()) {
+                val args: Bundle = Bundle()
+                args.putString(TEST_JSON, gsonConverter.toJson(test))
+                args.putInt(QUESTION_NUMBER, ++number)
+                val fragment = AddQuestionFragment.newInstance(args)
+                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + number)
+            }
         }
+    }
+
+    private fun checkQuestion(): Boolean {
+        var flag: Boolean = true
+        if(question.question == null || question.question?.trim().equals("")) {
+            tiQuestion?.error = "Введите вопрос!"
+            flag = false
+        } else {
+            tiQuestion?.error = null
+        }
+        var count: Int = 0
+        for(i in question.answers.indices) {
+            if(question.answers[i].isRight) {
+                count++
+            }
+            if(question.answers[i].text == null || question.answers[i].text?.trim().equals("")) {
+                editTexts[i].error = "Напишите вариант ответа"
+                flag = false
+            }else {
+                editTexts[i].error = null
+            }
+        }
+        if(count == 0) {
+            flag = false
+            (activity as NavigationBaseActivity).showSnackBar("Выберите хотя бы один ответ!")
+        }
+
+        answers.clear()
+
+        return flag
     }
 
     override fun onClick(v: View) {
@@ -270,45 +351,10 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
         val editText: EditText = view.findViewById(R.id.et_answer)
         val checkBox: CheckBox = view.findViewById(R.id.checkbox)
 
+       checkBox.setOnClickListener(checkListener)
+
         editTexts?.add(editText)
         checkBoxes?.add(checkBox)
-        checkBox.setOnClickListener(checkListener)
-      /*  editText.setOnFocusChangeListener(object: View.OnFocusChangeListener{
-            override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                Log.d(TAG_LOG,"has focus = $hasFocus and text = ${editText.text} and mode = ${editText.isInEditMode}")
-                if(hasFocus || !(editText.text == null) || !(editText.text.toString().trim().equals("")) ) {
-                    Log.d(TAG_LOG,"margin  = 0")
-                    (checkBox.layoutParams as LinearLayout.LayoutParams).topMargin = 0
-                } else {
-                    Log.d(TAG_LOG,"margin  = 28")
-                    (checkBox.layoutParams as LinearLayout.LayoutParams).topMargin = ApplicationHelper.convertDpToPx(28f,activity as Context)
-                }
-            }
-
-        })*/
-        /*editText.addTextChangedListener(object : TextWatcher{
-            override fun afterTextChanged(s: Editable?) {
-                Log.d(TAG_LOG,"after = $s")
-                if(s == null || "".equals(s.trim())) {
-                    Log.d(TAG_LOG,"margin 28")
-                    (checkBox.layoutParams as LinearLayout.LayoutParams).topMargin = ApplicationHelper.convertDpToPx(28f,activity as Context)
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                Log.d(TAG_LOG,"before = $s")
-                if(s == null || "".equals(s.trim())) {
-                    Log.d(TAG_LOG,"margin 0")
-                    (checkBox.layoutParams as LinearLayout.LayoutParams).topMargin = 0
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Log.d(TAG_LOG,"changed = $s")
-
-            }
-
-        })*/
 
         liAnswers?.addView(view)
     }
@@ -316,7 +362,6 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
 
     private fun prepareQuestion() {
 
-        answers = ArrayList()
         for (i in checkBoxes!!.indices) {
             val answer = Answer()
             answer.text = editTexts!![i].text.toString()
@@ -326,13 +371,8 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
             answers!!.add(answer)
         }
 
-        checkBoxes!!.clear()
-        editTexts!!.clear()
-
         question!!.question = etQuestion!!.text.toString()
-        //        question.setPhotoUrl(imageUri.getPath());
-        question!!.answers = answers as ArrayList<Answer>
-//        addTestView!!.setQuestion(question!!)
+        question!!.answers = answers.toMutableList()
 
     }
 

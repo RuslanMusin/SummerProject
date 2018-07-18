@@ -21,6 +21,8 @@ class AbstractCard() : Parcelable{
 
     var wikiUrl: String? = null
 
+    @field:Exclude var isOwner: Boolean = false
+
     constructor(parcel: Parcel) : this() {
         id = parcel.readString()
         name = parcel.readString()
@@ -53,6 +55,5 @@ class AbstractCard() : Parcelable{
         }
     }
 
-    @Exclude
-    var isOwner: Boolean = false
+
 }

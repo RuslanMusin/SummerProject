@@ -2,7 +2,9 @@ package com.summer.itis.summerproject.ui.tests.test_list
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -61,8 +63,9 @@ class TestItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val MAX_LENGTH = 80
         private val MORE_TEXT = "..."
 
-        fun create(context: Context): TestItemHolder {
-            val view = View.inflate(context, R.layout.item_books, null)
+        fun create(parent: ViewGroup): TestItemHolder {
+            val view =  LayoutInflater.from(parent.context).inflate(R.layout.item_books, parent, false);
+//            val view = View.inflate(context, R.layout.item_books, null )
             val holder = TestItemHolder(view)
             return holder
         }

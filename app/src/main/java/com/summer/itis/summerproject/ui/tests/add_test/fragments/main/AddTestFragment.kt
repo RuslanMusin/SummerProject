@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
+import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.base.OnBackPressedListener
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListActivity
@@ -27,6 +29,7 @@ import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_QUESTION_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity.Companion.ADD_TEST_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestView
+import com.summer.itis.summerproject.ui.tests.add_test.fragments.main.AddTestFragment.Companion.ADD_CARD
 import com.summer.itis.summerproject.ui.tests.add_test.fragments.question.AddQuestionFragment
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.ANSWERS_FRAGMENT
@@ -37,7 +40,10 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragm
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 
 import com.summer.itis.summerproject.utils.Const.COMA
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import kotlinx.android.synthetic.main.fragment_add_test.*
+import kotlinx.android.synthetic.main.item_game_card_medium.*
 
 class AddTestFragment : Fragment(), View.OnClickListener, OnBackPressedListener {
 
@@ -78,27 +84,29 @@ class AddTestFragment : Fragment(), View.OnClickListener, OnBackPressedListener 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_test, container, false)
         (activity as BaseBackActivity).currentTag = ADD_TEST_FRAGMENT
-        (activity as ChangeToolbarListener).changeToolbar(ADD_TEST_FRAGMENT,"Добавить личность")
+        (activity as ChangeToolbarListener).changeToolbar(ADD_TEST_FRAGMENT,"Добавить тест")
 //        addTestView = activity as AddTestView?
-        if(arguments == null) {
-            test = Test()
-        } else {
-            test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
-            setTestData()
-        }
+
         return view
     }
 
     private fun setTestData() {
         etTestName!!.setText(test?.title)
-        etTestDesc!!.setText(test?.desc as Editable)
-        tvAddedCards!!.text = tvAddedCards!!.text.toString()  + " " + test?.card?.abstractCard?.name
+        etTestDesc!!.setText(test?.desc)
+        tvAddedCards!!.text =test?.card?.abstractCard?.name
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initViews(view)
         setListeners()
+
+        if(arguments == null) {
+            test = Test()
+        } else {
+            test = gsonConverter.fromJson(arguments?.getString(TEST_JSON),Test::class.java)
+            setTestData()
+        }
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -126,33 +134,62 @@ class AddTestFragment : Fragment(), View.OnClickListener, OnBackPressedListener 
                 test!!.desc = etTestDesc!!.text.toString()
 
 //                addTestView!!.setTest(test!!)
-//
-                val args: Bundle = Bundle()
-                args.putString(TEST_JSON,gsonConverter.toJson(test))
-                args.putInt(QUESTION_NUMBER, 0)
-                val fragment = AddQuestionFragment.newInstance(args)
-                (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
-                /*activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, AddQuestionFragment.newInstance(args))
-                        .addToBackStack("AddTestFragment")
-                        .commit()*/
+
+                if(checkTest()) {//
+                    val args: Bundle = Bundle()
+                    args.putString(TEST_JSON, gsonConverter.toJson(test))
+                    args.putInt(QUESTION_NUMBER, 0)
+                    val fragment = AddQuestionFragment.newInstance(args)
+                    (activity as BaseBackActivity).changeFragment(fragment, ADD_QUESTION_FRAGMENT + 0)
+                } else {
+
+                }
             }
 
             R.id.btn_add_card -> {
                 val intent = Intent(activity, AddCardListActivity::class.java)
                 startActivityForResult(intent, ADD_CARD)
+
             }
         }
     }
 
+    private fun checkTest(): Boolean {
+        var flag: Boolean = if(test == null) false else true
+        test?.let {
+            if(it.title == null  || it.title?.trim().equals("")) {
+                tiTestName?.error = "Введите название теста!"
+                flag = false
+            } else {
+                tiTestName?.error = null
+            }
+            if(it.desc == null  || it.desc?.trim().equals("")) {
+                tiTestDesc?.error = "Введите описание теста!"
+
+                flag = false
+
+            } else {
+                tiTestDesc?.error = null
+            }
+            if(it.card == null) {
+                tv_test_card_name.requestFocus();
+                tv_test_card_name.setError("Добавьте карту!");
+                flag = false
+            } else {
+                tv_test_card_name.setError(null);
+            }
+        }
+        Log.d(TAG_LOG, "flag = $flag")
+        return flag
+    }
     override fun onActivityResult(reqCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resultCode, data)
 
         if (reqCode == ADD_CARD && resultCode == Activity.RESULT_OK) {
             val card = gsonConverter.fromJson(data!!.getStringExtra(CARD_EXTRA), Card::class.java)
-            tvAddedCards!!.text = tvAddedCards!!.text.toString()  + " " + card.abstractCard?.name
+            tvAddedCards!!.text = card.abstractCard?.name
             test!!.card = card
+            tv_test_card_name.setError(null);
         }
     }
 }

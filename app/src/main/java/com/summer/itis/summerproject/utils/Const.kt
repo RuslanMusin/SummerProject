@@ -69,6 +69,15 @@ object Const {
     const val TEST_ONE_TYPE = "test_one_type"
     const val TEST_MANY_TYPE = "test_many_type"
 
+    //TestListType
+    const val TEST_LIST_TYPE = "test_list"
+    const val DEFAULT_ABSTRACT_TESTS ="def_abs_tests"
+    const val USER_ABSTRACT_TESTS ="user_abs_tests"
+    const val USER_TESTS ="user_tests"
+
+    const val ABSTRACT_CARD_ID = "abs_card_id"
+    const val USER_ID = "user_id"
+
     //TestRelation
     const val WIN_GAME = "win_game"
     const val WIN_AFTER_WIN = "after_win_test"
