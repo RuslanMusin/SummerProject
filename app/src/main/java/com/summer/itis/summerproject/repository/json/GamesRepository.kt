@@ -65,11 +65,16 @@ class GamesRepository {
         onYouLoseCard = null
         onEnemyLoseCard = null
 
+        removeListeners()
+
+
+    }
+
+    fun removeListeners() {
         for (l in listeners) {
             l.key.removeEventListener(l.value)
         }
         listeners.clear()
-
     }
 
 
@@ -222,8 +227,9 @@ class GamesRepository {
                     override fun onChildRemoved(p0: DataSnapshot) {}
                 })
 
+
         val connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected")
-        connectedRef.addValueEventListener(object : ValueEventListener {
+        val myConnectingLisener = connectedRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val connected = snapshot.getValue(Boolean::class.java)!!
                 if (!connected) {
@@ -235,6 +241,7 @@ class GamesRepository {
 //                System.err.println("Listener was cancelled")
             }
         })
+        listeners.put(connectedRef, myConnectingLisener)
 
 
         val enemyConnectionListener = object : ValueEventListener {
@@ -392,23 +399,45 @@ class GamesRepository {
 
     private fun onWin() {
         //TODO move card
+        moveCardAfterWin()
+
         callbacks!!.onGameEnd(GameEndType.YOU_WIN, onEnemyLoseCard!!)
+
+        removeListeners()
+
     }
 
     private fun onLose() {
         callbacks!!.onGameEnd(GameEndType.YOU_LOSE, onYouLoseCard!!)
+
+        removeListeners()
 
     }
 
     private fun onDisconnectAndLose() {
         callbacks!!.onGameEnd(GameEndType.YOU_DISCONNECTED_AND_LOSE, onYouLoseCard!!)
 
+        removeListeners()
+
     }
 
     private fun onEnemyDisconnectAndYouWin() {
+        moveCardAfterWin()
+
         callbacks!!.onGameEnd(GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN, onEnemyLoseCard!!)
 
+        removeListeners()
+
     }
+
+    private fun moveCardAfterWin() {
+
+        RepositoryProvider.cardRepository.addCardAfterGame(onEnemyLoseCard!!.id!!, getPlayerId()!!, enemyId!!)
+                .subscribe { t: Boolean? ->
+
+                }
+    }
+
 
     //
 

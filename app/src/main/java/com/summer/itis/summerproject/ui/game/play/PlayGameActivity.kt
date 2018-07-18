@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.LinearLayout
+import com.afollestad.materialdialogs.GravityEnum
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -19,6 +20,7 @@ import com.summer.itis.summerproject.repository.json.GamesRepository
 import com.summer.itis.summerproject.ui.game.find.FindGameActivity
 import com.summer.itis.summerproject.ui.game.play.list.GameCardsListAdapter
 import kotlinx.android.synthetic.main.activity_play_game.*
+import kotlinx.android.synthetic.main.dialog_end_game.view.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 
 
@@ -167,31 +169,65 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
 
     override fun showGameEnd(type: GamesRepository.GameEndType, card: Card) {
 
-        MaterialDialog.Builder(this)
-                .title(when (type) {
-                    GamesRepository.GameEndType.YOU_WIN -> "You win"
-                    GamesRepository.GameEndType.YOU_LOSE -> "You lose"
-                    GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "YOU_DISCONNECTED_AND_LOSE"
-                    GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "ENEMY_DISCONNECTED_AND_YOU_WIN"
-                    GamesRepository.GameEndType.DRAW -> "DRAW"
-                })
-//                .content("Game")
-//                .positiveText(R.string.agree)
-//                .negativeText(R.string.disagree)
-                .neutralText("ok")
-                .onNeutral { dialog, which ->
-                    goToFindGameActivity()
-                }
-                .canceledOnTouchOutside(false)
-                .cancelable(false)
-                .show()
+        if (type == GamesRepository.GameEndType.DRAW) {
+            MaterialDialog.Builder(this)
+                    .title("Draw")
+                    .titleGravity(GravityEnum.CENTER)
+//                    .content("draw")
+                    .neutralText("ok")
+                    .buttonsGravity(GravityEnum.END)
+                    .onNeutral { dialog, which ->
+                        goToFindGameActivity()
+                    }
+                    .canceledOnTouchOutside(false)
+                    .cancelable(false)
+                    .show()
+        } else {
+            val dialog = MaterialDialog.Builder(this)
+                    .title(when (type) {
+                        GamesRepository.GameEndType.YOU_WIN,
+                        GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "You win"
 
-//        when(type){
-//            GamesRepository.GameEndType.YOU_WIN->{
-//
-//            }
-//        }
+                        GamesRepository.GameEndType.YOU_LOSE,
+                        GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "You lose"
 
+                        GamesRepository.GameEndType.DRAW -> "Draw"//never
+                    })
+                    .titleGravity(GravityEnum.CENTER)
+                    .customView(R.layout.dialog_end_game, false)
+
+                    .neutralText("ok")
+                    .buttonsGravity(GravityEnum.END)
+                    .onNeutral { dialog, which ->
+                        goToFindGameActivity()
+                    }
+                    .canceledOnTouchOutside(false)
+                    .cancelable(false)
+                    .show()
+
+            setCard(dialog.view.card_in_end_dialog, card)
+
+            dialog.view.tv_get_lose_card.text = when (type) {
+                GamesRepository.GameEndType.YOU_WIN,
+                GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN -> "You get card:"
+
+                GamesRepository.GameEndType.YOU_LOSE,
+                GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE -> "You lose card:"
+
+                GamesRepository.GameEndType.DRAW -> "Draw"//never
+            }
+
+            if (type == GamesRepository.GameEndType.ENEMY_DISCONNECTED_AND_YOU_WIN) {
+                dialog.view.tv_game_end_reason.text = "Enemy disconnected"
+                dialog.view.tv_game_end_reason.visibility = View.VISIBLE
+            }
+
+            if (type == GamesRepository.GameEndType.YOU_DISCONNECTED_AND_LOSE) {
+                dialog.view.tv_game_end_reason.text = "You disconnected"
+                dialog.view.tv_game_end_reason.visibility = View.VISIBLE
+            }
+
+        }
 
     }
 
