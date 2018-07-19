@@ -29,7 +29,6 @@ class CardsListActivity : EasyNavigationBaseActivity() {
         super.onCreate(savedInstanceState)
         init()
         supportActionBar(toolbar)
-        setBackArrow(toolbar)
     }
 
     override fun getContentLayout(): Int {

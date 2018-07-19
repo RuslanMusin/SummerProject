@@ -9,6 +9,9 @@ import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.cardRepository
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testCommentRepository
 import com.summer.itis.summerproject.utils.Const
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Action
+import io.reactivex.functions.Consumer
 
 @InjectViewState
 class TestFragmentPresenter : MvpPresenter<TestFragmentView>() {
@@ -22,6 +25,8 @@ class TestFragmentPresenter : MvpPresenter<TestFragmentView>() {
     @SuppressLint("CheckResult")
     fun loadComments(crossingId: String) {
         testCommentRepository.getComments(crossingId)
+                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
+                .doAfterTerminate(Action { viewState.hideLoading() })
                 .subscribe{ comments ->
                     viewState?.showComments(comments)
                 }

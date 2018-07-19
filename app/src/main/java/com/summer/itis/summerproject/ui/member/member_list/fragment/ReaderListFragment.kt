@@ -67,8 +67,6 @@ class ReaderListFragment : Fragment() {
         progressBar = view.findViewById(R.id.pg_comics_list)
         recyclerView = view.findViewById(R.id.rv_comics_list)
         tvEmpty = view.findViewById(R.id.tv_empty)
-
-        parentView?.setProgressBar(progressBar)
     }
 
     private fun initRecycler() {
@@ -96,6 +94,7 @@ class ReaderListFragment : Fragment() {
     fun changeDataInAdapter() {
         type?.let { parentView!!.setCurrentType(it) }
         adapter?.let { parentView!!.setAdapter(it) }
+        parentView?.let { it.setProgressBar(progressBar) }
         loadPeople()
     }
 

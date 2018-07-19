@@ -4,13 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.widget.FrameLayout
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
+import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import kotlinx.android.synthetic.main.activity_cards.toolbar
 import java.util.ArrayList
 
-class CardsActivity : EasyNavigationBaseActivity() {
+class CardsActivity : NavigationBaseActivity() {
 
     lateinit var mViewPager: ViewPager
     lateinit var mPagerAdapter: CardsPagerAdapter
@@ -28,6 +30,9 @@ class CardsActivity : EasyNavigationBaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
+        layoutInflater.inflate(getContentLayout(), contentFrameLayout)
+
         val card = intent.getParcelableExtra<AbstractCard>("CARD")
         cards = intent.getParcelableArrayListExtra("CARDS")
         var pos = getPosOfCard(card)
@@ -36,11 +41,11 @@ class CardsActivity : EasyNavigationBaseActivity() {
         mViewPager.adapter = mPagerAdapter
         mViewPager.setCurrentItem(pos)
         mPagerAdapter.notifyDataSetChanged()
-        supportActionBar(toolbar)
+        setSupportActionBar(toolbar)
         setBackArrow(toolbar)
     }
 
-    override fun getContentLayout(): Int {
+    fun getContentLayout(): Int {
         return R.layout.activity_cards
     }
 

@@ -10,6 +10,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import com.arellomobile.mvp.MvpAppCompatFragment
@@ -45,6 +47,7 @@ import com.summer.itis.summerproject.utils.Const.LOSE_GAME
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.WIN_GAME
 import com.summer.itis.summerproject.utils.Const.gsonConverter
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_test.*
@@ -53,6 +56,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClickListener, TestFragmentView, OnBackPressedListener {
+
 
     private lateinit var commentEditText: EditText
 
@@ -247,6 +251,14 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     override fun showComments(comments: List<Comment>) {
         this.comments = comments.toMutableList()
         adapter?.changeDataSet(comments)
+    }
+
+    override fun showLoading(disposable: Disposable) {
+        pg_comics_list.visibility = VISIBLE
+    }
+
+    override fun hideLoading() {
+        pg_comics_list.visibility = GONE
     }
 
 
