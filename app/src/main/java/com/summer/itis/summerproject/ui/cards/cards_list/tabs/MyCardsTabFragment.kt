@@ -8,15 +8,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.base.BaseAdapter
+import com.summer.itis.summerproject.ui.cards.card_item.CardActivity
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
+import com.summer.itis.summerproject.utils.Const.USER_ABSTRACT_TESTS
 import java.util.ArrayList
 
 /**
  * Created by Home on 10.07.2018.
  */
 class MyCardsTabFragment(): AbstractCardsTabFragment(){
-
-    val TAG = "My"
 
     companion object {
         fun newInstance(): MyCardsTabFragment {
@@ -31,7 +31,7 @@ class MyCardsTabFragment(): AbstractCardsTabFragment(){
     }
 
     override fun showDetails(card: AbstractCard) {
-        CardsActivity.start(context!!,card,cards,TAG)
+        CardActivity.start(context!!,card,USER_ABSTRACT_TESTS)
     }
 
     override fun onItemClick(item: AbstractCard) {

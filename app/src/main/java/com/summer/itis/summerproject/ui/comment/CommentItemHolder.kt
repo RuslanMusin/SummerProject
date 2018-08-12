@@ -15,63 +15,67 @@ import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.*
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
 import com.summer.itis.summerproject.utils.Const.STUB_PATH
 import com.summer.itis.summerproject.utils.FormatterUtil
+import kotlinx.android.synthetic.main.item_comment.view.*
 
 class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val avatarImageView: ImageView
+   /* private val avatarImageView: ImageView
     private val commentTextView: ExpandableTextView
     private val dateTextView: TextView
     private val replyView: ImageView
-
+*/
     private var commentClickListener: OnCommentClickListener? = null
 
-    init {
+   /* init {
 
         avatarImageView = itemView.findViewById<View>(R.id.avatarImageView) as ImageView
         commentTextView = itemView.findViewById<View>(R.id.commentText) as ExpandableTextView
         dateTextView = itemView.findViewById<View>(R.id.dateTextView) as TextView
         replyView = itemView.findViewById(R.id.iv_reply)
-    }
+    }*/
 
     fun bind(comment: Comment) {
         val authorId = comment.authorId
-        commentTextView.text = comment.text
 
-        val date = FormatterUtil.getRelativeTimeSpanString(avatarImageView.context, comment.createdDate)
-        dateTextView.setText(date)
+        itemView.tv_name.text = comment.authorName
+        itemView.expand_text_view.text = comment.text
 
-        replyView.setOnClickListener { commentClickListener!!.onReplyClick(adapterPosition) }
+        val date = FormatterUtil.getRelativeTimeSpanString(itemView.context, comment.createdDate)
+        itemView.tv_date.setText(date)
 
-        avatarImageView.setOnClickListener { authorId?.let { it1 -> commentClickListener!!.onAuthorClick(it1) } }
+        itemView.iv_reply.setOnClickListener { commentClickListener!!.onReplyClick(adapterPosition) }
 
-        fillComment(comment, commentTextView)
+        itemView.iv_cover.setOnClickListener { authorId?.let { it1 -> commentClickListener!!.onAuthorClick(it1) } }
+
+        fillComment(comment)
 
     }
 
-    private fun fillComment(comment: Comment, commentTextView: ExpandableTextView) {
-        val contentString = SpannableStringBuilder(comment.authorName
+    private fun fillComment(comment: Comment) {
+      /*  val contentString = SpannableStringBuilder(comment.authorName
                 + "   " + comment.text)
         comment.authorName?.length?.let {
             contentString.setSpan(ForegroundColorSpan(ContextCompat.getColor(commentTextView.getContext(), R.color.highlight_text)),
                 0, it, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
+        }*/
 
-        commentTextView.text = contentString
+//        commentTextView.text = contentString
 
         if(!comment.authorPhotoUrl.equals(STUB_PATH)) {
             val imageReference = comment.authorPhotoUrl?.let { FirebaseStorage.getInstance().reference.child(it) }
 
-            Glide.with(commentTextView.getContext())
+            Glide.with(itemView.getContext())
                     .load(imageReference)
-                    .into(avatarImageView)
+                    .into(itemView.iv_cover)
         } else {
-            Glide.with(commentTextView.getContext())
+            Glide.with(itemView.getContext())
                     .load(R.drawable.ic_account_circle_black_24dp)
-                    .into(avatarImageView)
+                    .into(itemView.iv_cover)
         }
     }
 
@@ -97,7 +101,7 @@ class CommentItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val MORE_TEXT = "..."
 
         fun create(context: Context, commentClickListener: OnCommentClickListener): CommentItemHolder {
-            val view = View.inflate(context, R.layout.comment_list_item, null)
+            val view = View.inflate(context, R.layout.item_comment, null)
             val holder = CommentItemHolder(view)
             holder.commentClickListener = commentClickListener
             return holder

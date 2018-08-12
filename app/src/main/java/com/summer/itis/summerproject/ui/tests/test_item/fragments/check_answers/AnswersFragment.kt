@@ -85,8 +85,6 @@ class AnswersFragment : Fragment(), View.OnClickListener, OnFourActionListener {
 
         }
 
-
-
         (activity as BaseBackActivity).currentTag = TestActivity.ANSWERS_FRAGMENT + number
         (activity as ChangeToolbarListener).changeToolbar(ANSWERS_FRAGMENT,"Вопрос ${number+1}/${listSize}")
         return view

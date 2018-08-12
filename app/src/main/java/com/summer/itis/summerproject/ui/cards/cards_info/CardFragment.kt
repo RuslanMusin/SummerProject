@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.cards.cards_info
 
+import QuestionFragment.Companion.CARD_JSON
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.*
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.cards.card_states.CardStatesActivity
 import com.summer.itis.summerproject.ui.tests.one_test_list.OneTestListActivity
@@ -23,6 +25,7 @@ import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
 import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
 import com.summer.itis.summerproject.utils.Const.USER_ABSTRACT_TESTS
 import com.summer.itis.summerproject.utils.Const.USER_ID
+import com.summer.itis.summerproject.utils.Const.gsonConverter
 
 /**
  * Created by Home on 11.07.2018.
@@ -35,13 +38,13 @@ class CardFragment : Fragment(), OnClickListener {
     private lateinit var btn_wiki: Button
     private lateinit var btn_test: Button
     private lateinit var tv_description: TextView
-    private var card: AbstractCard? = null
+    lateinit var card: AbstractCard
     private var tagInput: String = ""
 
     companion object {
         fun newInstance(card: AbstractCard,tag: String): CardFragment {
             val args = Bundle()
-            args.putParcelable("CARD", card)
+            args.putString(CARD_JSON, gsonConverter.toJson(card))
             args.putString("TAG", tag)
             val fragment = CardFragment()
             fragment.arguments = args
@@ -57,7 +60,7 @@ class CardFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val arg = arguments
-        card = arg?.getParcelable("CARD")
+        card = gsonConverter.fromJson(arg?.getString(CARD_JSON),AbstractCard::class.java)
         tagInput = arg?.getString("TAG") ?: "All"
         initOnClickListeners()
         if (tagInput == "All"){
@@ -95,11 +98,7 @@ class CardFragment : Fragment(), OnClickListener {
     }
 
     private fun getWikiUrl() {
-        if(card?.wikiUrl != null){
-            WebViewActivity.start(activity!!, card?.wikiUrl!!)
-        }else{
-            Toast.makeText(activity!!,"Wiki не существует",Toast.LENGTH_SHORT).show()
-        }
+        WebViewActivity.start(activity!!, card)
     }
 
     private fun initViews(view: View){

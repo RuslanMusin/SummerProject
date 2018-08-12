@@ -4,27 +4,36 @@ import GameQuestionFragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.LinearLayout
+import android.widget.LinearLayout.HORIZONTAL
 import com.afollestad.materialdialogs.GravityEnum
 import com.afollestad.materialdialogs.MaterialDialog
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.bumptech.glide.Glide
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.rv_game_my_cards
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.repository.json.GamesRepository
 import com.summer.itis.summerproject.ui.game.find.FindGameActivity
+import com.summer.itis.summerproject.ui.game.play.change_list.GameChangeListAdapter
 import com.summer.itis.summerproject.ui.game.play.list.GameCardsListAdapter
+import com.summer.itis.summerproject.ui.widget.CenterZoomLayoutManager
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import kotlinx.android.synthetic.main.activity_play_game.*
 import kotlinx.android.synthetic.main.dialog_end_game.view.*
 import kotlinx.android.synthetic.main.item_game_card_medium.view.*
 
 
 class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
+
+    var mode: String = MODE_PLAY_GAME
 
     @InjectPresenter
     lateinit var presenter: PlayGamePresenter
@@ -38,6 +47,25 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
 
         game_questions_container.visibility = View.GONE
 
+        rv_game_my_cards.layoutManager = CenterZoomLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        rv_game_start_cards.layoutManager = CenterZoomLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+
+    }
+
+    override fun onBackPressed() {
+        if(mode.equals(MODE_CHANGE_CARDS)) {
+            mode = MODE_PLAY_GAME
+            stopChange()
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    fun stopChange(): () -> Unit {
+        return {
+            presenter.setCardList((rv_game_start_cards.adapter as GameChangeListAdapter).getItems() as ArrayList<Card>)
+
+        }
     }
 
     override fun setEnemyUserData(user: User) {
@@ -46,7 +74,16 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
         //TODO image, но еще нет Url в БД
     }
 
+    override fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>) {
+        Log.d(TAG_LOG,"changeCards")
+        mode = MODE_CHANGE_CARDS
+        rv_game_my_cards.visibility = View.INVISIBLE
+        rv_game_start_cards.adapter = GameChangeListAdapter(cards,mutCards,mutCards.size,stopChange())
+    }
+
     override fun setCardsList(cards: ArrayList<Card>) {
+        rv_game_start_cards.visibility = View.GONE
+        rv_game_my_cards.visibility = View.VISIBLE
         rv_game_my_cards.adapter = GameCardsListAdapter(
                 cards,
                 this,
@@ -160,11 +197,7 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
         setWeight(view.ll_card_params.view_card_strength, card.strength!!.toFloat())
     }
 
-    private fun setWeight(view: View, w: Float) {
-        val params = view.layoutParams as LinearLayout.LayoutParams
-        params.weight = w
-        view.layoutParams = params
-    }
+
 
 
     override fun showGameEnd(type: GamesRepository.GameEndType, card: Card) {
@@ -237,10 +270,20 @@ class PlayGameActivity : MvpAppCompatActivity(), PlayGameView {
 
 
     companion object {
+
+        const val MODE_CHANGE_CARDS = "change_cards"
+        const val MODE_PLAY_GAME = "play_game"
+
         fun start(context: Context) {
             val intent = Intent(context, PlayGameActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             context.startActivity(intent)
+        }
+
+        fun setWeight(view: View, w: Float) {
+            val params = view.layoutParams as LinearLayout.LayoutParams
+            params.weight = w
+            view.layoutParams = params
         }
     }
 }

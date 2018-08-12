@@ -22,7 +22,6 @@ class TestFragmentPresenter : MvpPresenter<TestFragmentView>() {
     }
 
 
-    @SuppressLint("CheckResult")
     fun loadComments(crossingId: String) {
         testCommentRepository.getComments(crossingId)
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })

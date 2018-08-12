@@ -4,15 +4,15 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.summer.itis.summerproject.model.AbstractCard
+import com.summer.itis.summerproject.ui.cards.card_item.CardActivity
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
+import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
 import java.util.ArrayList
 
 /**
  * Created by Home on 10.07.2018.
  */
 class AllCardsTabFragment(): AbstractCardsTabFragment(){
-
-    val TAG = "All"
 
     companion object {
         fun newInstance(): AllCardsTabFragment {
@@ -27,7 +27,7 @@ class AllCardsTabFragment(): AbstractCardsTabFragment(){
     }
 
     override fun showDetails(card: AbstractCard) {
-        CardsActivity.start(context!!,card,cards,TAG)
+        CardActivity.start(context!!,card,DEFAULT_ABSTRACT_TESTS)
     }
 
     override fun onItemClick(item: AbstractCard) {

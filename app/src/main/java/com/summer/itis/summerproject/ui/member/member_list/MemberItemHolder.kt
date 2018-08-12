@@ -12,7 +12,6 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.STUB_PATH
-import com.summer.itis.summerproject.utils.ImageLoadHelper
 
 class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -61,7 +60,7 @@ class MemberItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val MORE_TEXT = "..."
 
         fun create(context: Context): MemberItemHolder {
-            val view = View.inflate(context, R.layout.item_books, null)
+            val view = View.inflate(context, R.layout.item_member, null)
             val holder = MemberItemHolder(view)
             return holder
         }

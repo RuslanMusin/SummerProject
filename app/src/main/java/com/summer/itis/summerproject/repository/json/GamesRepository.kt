@@ -456,7 +456,7 @@ class GamesRepository {
 
 
     companion object {
-        public val ROUNDS_COUNT = 2
+        public val ROUNDS_COUNT = 5
 
     }
 }

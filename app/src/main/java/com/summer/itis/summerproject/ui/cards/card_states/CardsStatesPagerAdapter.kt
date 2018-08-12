@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
-import com.summer.itis.summerproject.ui.cards.card_states.CardStatesFragment
+import com.summer.itis.summerproject.ui.cards.card_states.fragment.CardStatesFragment
 
 /**
  * Created by Home on 11.07.2018.

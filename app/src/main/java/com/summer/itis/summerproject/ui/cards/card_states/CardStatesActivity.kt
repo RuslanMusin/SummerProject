@@ -4,23 +4,25 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.util.Log
+import android.view.View
 import android.widget.FrameLayout
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.repository.RepositoryProvider
-import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
-import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.base.*
 import com.summer.itis.summerproject.ui.cards.cards_states.CardsStatesPagerAdapter
+import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.utils.ApplicationHelper
-import kotlinx.android.synthetic.main.activity_card_states.toolbar
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import kotlinx.android.synthetic.main.back_forward.*
 import java.util.ArrayList
 
-class CardStatesActivity : NavigationBaseActivity() {
+class CardStatesActivity : NavigationBaseActivity(), ChangeToolbarListener, ViewPagerView {
 
     private lateinit var mViewPager: ViewPager
     private lateinit var mPagerAdapter: CardsStatesPagerAdapter
-    private lateinit var cards: ArrayList<Card>
     private lateinit var card: AbstractCard
 
     companion object {
@@ -41,8 +43,11 @@ class CardStatesActivity : NavigationBaseActivity() {
         mPagerAdapter = CardsStatesPagerAdapter(supportFragmentManager, ArrayList(), card)
         mViewPager.adapter = mPagerAdapter
         getCardsStates()
-        setSupportActionBar(toolbar)
-        setBackArrow(toolbar)
+        card.name?.let { setToolbarTitle(it) }
+        setSupportActionBar(test_toolbar)
+        btn_back.setOnClickListener(this)
+        btn_forward.setOnClickListener(this)
+        btn_cancel.setOnClickListener(this)
     }
 
     fun getContentLayout(): Int {
@@ -56,7 +61,55 @@ class CardStatesActivity : NavigationBaseActivity() {
     fun getCardsStates(){
         RepositoryProvider
                 .cardRepository
-                .findMyAbstractCardStates(card?.id!!, ApplicationHelper.currentUser?.id!!)
+                .findMyAbstractCardStates(card.id!!, ApplicationHelper.currentUser?.id!!)
                 .subscribe({it -> setCardsStates(it as ArrayList<Card>)})
     }
+
+    override fun changeToolbar(tag: String, title: String) {
+    }
+
+    override fun showOk(boolean: Boolean) {
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+
+            R.id.btn_back -> {
+                Log.d(TAG_LOG,"back")
+                changePosition(true)
+            }
+
+            R.id.btn_forward -> {
+                Log.d(TAG_LOG,"forward")
+                changePosition(false)
+            }
+
+            R.id.btn_cancel -> {
+                Log.d(TAG_LOG,"cancel")
+                onBackPressed()
+            }
+        }
+    }
+
+    override fun setToolbarTitle(title: String) {
+        toolbar_title.text = title
+    }
+
+    override fun changePosition(isBack: Boolean) {
+        var position: Int = mViewPager.currentItem
+        Log.d(TAG_LOG,"position = $position")
+        if(isBack) {
+            if(position > 0) {
+                position--
+            } else {
+                onBackPressed()
+            }
+        } else {
+            if(position < mPagerAdapter.cards.size) {
+                position++
+            }
+        }
+        mViewPager.currentItem = position
+    }
+
 }

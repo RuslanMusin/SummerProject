@@ -44,10 +44,6 @@ class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener 
     private var checkBoxes: MutableList<CheckBox> = ArrayList()
 
     override fun onBackPressed() {
-       /* val args: Bundle = Bundle()
-        args.putString(TEST_JSON, gsonConverter.toJson(test))
-        val fragment = FinishFragment.newInstance(args)
-        (activity as BaseBackActivity).changeFragment(fragment)*/
         shouldCancel()
     }
 

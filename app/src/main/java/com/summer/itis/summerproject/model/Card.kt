@@ -29,7 +29,7 @@ open class Card() : Parcelable{
     var type: String? = null
 
     @Exclude
-    var abstractCard: AbstractCard? = AbstractCard()
+    var abstractCard: AbstractCard = AbstractCard()
 
     @Exclude
     var test: Test = Test()

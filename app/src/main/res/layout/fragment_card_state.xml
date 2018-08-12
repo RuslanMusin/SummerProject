@@ -34,7 +34,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tv_states"
+        android:id="@+id/tv_test"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -44,11 +44,37 @@
         android:layout_marginTop="16dp"
         android:background="@color/primary_dark"
         android:padding="6dp"
-        android:text="States"
+        android:text="@string/test_name"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
-        tools:text="States" />
+         />
+
+    <TextView
+        android:id="@+id/tv_test_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/tv_test"
+        android:text="@string/strength"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tv_states"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tv_test_name"
+        android:layout_marginTop="16dp"
+        android:background="@color/primary_dark"
+        android:padding="6dp"
+        android:text="@string/states"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+       />
 
     <TextView
         android:id="@+id/tv_strength_title"
@@ -56,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/tv_states"
-        android:text="Strength"
+        android:text="@string/strength"
         android:textSize="18sp"/>
 
     <TextView
@@ -78,7 +104,7 @@
         android:layout_marginTop="16dp"
         android:layout_below="@+id/tv_strength_title"
         android:textSize="18sp"
-        android:text="Intelligence"/>
+        android:text="@string/intelligence"/>
 
     <TextView
         android:id="@+id/tv_intelligence"
@@ -99,7 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/tv_intelligence_title"
-        android:text="Prestige"
+        android:text="@string/prestige"
         android:textSize="18sp"/>
 
     <TextView
@@ -121,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/tv_prestige_title"
-        android:text="Hp"
+        android:text="@string/hp"
         android:textSize="18sp"/>
 
     <TextView
@@ -143,7 +169,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_below="@+id/tv_hp_title"
-        android:text="Support"
+        android:text="@string/support"
         android:textSize="18sp"/>
 
     <TextView

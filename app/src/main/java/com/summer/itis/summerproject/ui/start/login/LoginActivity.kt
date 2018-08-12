@@ -11,9 +11,12 @@ import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.password
+import com.summer.itis.summerproject.R.string.username
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.start.registration.RegistrationActivity
+import kotlinx.android.synthetic.main.activity_login.*
 
 /**
  * Created by Ruslan on 18.02.2018.
@@ -62,6 +65,9 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         tiPassword = findViewById(R.id.ti_password)
 
         presenter = LoginPresenter(this)
+
+        iv_cover.setOnClickListener(this)
+        tv_name.setOnClickListener(this)
 //        enterBtn!!.performClick()
     }
 
@@ -72,12 +78,23 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             R.id.btn_enter -> {
                 val username = etUsername?.getText().toString();
                 val password = etPassword?.getText().toString();
-                /*val username = "rust@ma.ru"
+             /*   val username = "rust@ma.ru"
                 val password = "rustamka"*/
                 presenter!!.signIn(username, password)
             }
 
             R.id.link_signup -> goToRegistration()
+
+            R.id.tv_name -> {
+                etUsername?.setText("rast@ma.ru")
+                etPassword?.setText("rastamka")
+
+            }
+
+            R.id.iv_cover -> {
+                etUsername?.setText("rust@ma.ru")
+                etPassword?.setText("rustamka")
+            }
         }
     }
 

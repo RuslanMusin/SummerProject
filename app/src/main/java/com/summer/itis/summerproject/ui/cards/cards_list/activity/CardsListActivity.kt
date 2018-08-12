@@ -20,7 +20,6 @@ class CardsListActivity : EasyNavigationBaseActivity() {
     companion object {
         fun start(context: Context) {
             val intent = Intent(context, CardsListActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             context.startActivity(intent)
         }
     }

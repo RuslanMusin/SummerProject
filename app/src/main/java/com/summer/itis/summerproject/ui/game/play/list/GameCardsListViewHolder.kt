@@ -8,10 +8,10 @@ import kotlinx.android.synthetic.main.item_game_card_small.view.*
 
 class GameCardsListViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
     val image: ImageView
-    val nameView: TextView
+//    val nameView: TextView
 
     init {
         image = itemView!!.iv_game_s_card
-        nameView = itemView!!.tv_game_s_card_name
+//        nameView = itemView!!.tv_game_s_card_name
     }
 }

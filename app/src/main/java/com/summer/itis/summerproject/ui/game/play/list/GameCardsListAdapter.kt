@@ -27,7 +27,7 @@ class GameCardsListAdapter(
 
 
     override fun onBindViewHolder(holder: GameCardsListViewHolder, position: Int) {
-        holder.nameView.text = items[position].abstractCard!!.name
+//        holder.nameView.text = items[position].abstractCard!!.name
         Glide.with(context)
                 .load(items[position].abstractCard!!.photoUrl)
                 .into(holder.image)

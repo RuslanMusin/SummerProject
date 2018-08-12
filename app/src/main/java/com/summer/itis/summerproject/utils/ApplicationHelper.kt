@@ -42,6 +42,12 @@ import java.io.InputStreamReader
 import android.util.TypedValue
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.utils.Const.STUB_PATH
+import android.app.Activity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import com.summer.itis.summerproject.utils.Const.MAX_LENGTH
+import com.summer.itis.summerproject.utils.Const.MORE_TEXT
 
 
 //ОСНОВНОЙ КЛАСС HELPER приложения. ОТСЮДА БЕРЕМ ТЕКУЩЕГО ЮЗЕРА ИЗ БД, ГРУЗИМ ФОТКУ ЮЗЕРА В ПРОФИЛЬ,
@@ -129,6 +135,25 @@ class ApplicationHelper {
                     r.getDisplayMetrics()
             ).toInt()
             return px
+        }
+
+        fun hideKeyboardFrom(context: Context, view: View) {
+            Log.d(TAG_LOG,"hide keyboard")
+            val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
+        }
+
+        fun showKeyboard(context: Context, editText: EditText) {
+            val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+        }
+
+        fun cutLongDescription(description: String): String {
+            return if (description.length < MAX_LENGTH) {
+                description
+            } else {
+                description.substring(0, MAX_LENGTH - MORE_TEXT.length) + MORE_TEXT
+            }
         }
     }
 }

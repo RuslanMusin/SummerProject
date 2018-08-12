@@ -58,33 +58,6 @@ class TestCommentRepository() {
 
     }
 
-    /*private fun fillUserData(listener: OnCommentClickListener, comments: List<Comment>) {
-        val queries = RepositoryProvider.getUserRepository().loadByComments(comments)
-
-        val users = ArrayList<E>()
-        val valueEventListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val crossing = dataSnapshot.getValue(User::class.java)
-                users.add(crossing)
-                val comment = comments[users.size - 1]
-                comment.setAuthorName(crossing.getUsername())
-                comment.setAuthorPhotoUrl(crossing.getPhotoUrl())
-
-                if (users.size == queries.size) {
-                    listener.setComments(comments)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w(TAG_LOG, "loadPost:onCancelled", databaseError.toException())
-            }
-        }
-        for (query in queries) {
-            query.addListenerForSingleValueEvent(valueEventListener)
-        }
-
-    }*/
-
     fun createComment(testId: String, comment: Comment): Single<Boolean> {
         val single: Single<Boolean> = Single.create{ e ->
             val key = databaseReference.child(testId).push().key

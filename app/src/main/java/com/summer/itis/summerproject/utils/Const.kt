@@ -13,6 +13,9 @@ object Const {
 
     const val TAG_LOG = "TAG"
 
+    const val MAX_LENGTH = 80
+    const val MORE_TEXT = "..."
+
     // Http request
     const val MESSAGING_KEY = "Authorization"
     const val MESSAGING_TYPE = "Content-Type"

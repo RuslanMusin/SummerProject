@@ -2,6 +2,7 @@ package com.summer.itis.summerproject.ui.tests.test_item.fragments.main
 
 import GameQuestionFragment.Companion.QUESTION_NUMBER
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,9 +11,9 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -60,8 +61,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
 
     private lateinit var commentEditText: EditText
 
-    internal var myFormat = "dd.MM.yyyy" //In which you need put here
-    internal var sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+    var isFocusDown: Boolean = false
 
     private lateinit var adapter: CommentAdapter
 
@@ -92,6 +92,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.layout_test, container, false)
 
+
         val testStr: String? = arguments?.getString(TEST_JSON)
         test = gsonConverter.fromJson(testStr,Test::class.java)
 
@@ -107,6 +108,8 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ApplicationHelper.hideKeyboardFrom(activity as Context,view)
+
         initViews(view)
         initRecycler()
         setListeners()
@@ -142,6 +145,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
     private fun initViews(view: View) {
 
         commentEditText = view.findViewById<View>(R.id.commentEditText) as EditText
+
 
         commentEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
@@ -185,11 +189,6 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
                 args.putInt(QUESTION_NUMBER,0)
                 val fragment = QuestionFragment.newInstance(args)
                 (activity as BaseBackActivity).changeFragment(fragment, QUESTION_FRAGMENT + 0)
-                /*activity!!.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, QuestionFragment.newInstance(args))
-                        .addToBackStack("AddQuestionFragment")
-                        .commit()*/
 
             }
         }
@@ -223,6 +222,8 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
 
 
     private fun sendComment() {
+        scrollView.fullScroll(FOCUS_DOWN)
+        Log.d(TAG_LOG,"focus down")
         val commentText = commentEditText.getText().toString()
         Log.d(TAG_LOG, "send comment = $commentText")
         if (commentText.length > 0) {
@@ -239,6 +240,9 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
             }
 
             commentEditText.setText(null)
+            view?.getRootView()?.let { ApplicationHelper.hideKeyboardFrom(this.activity as Context, it)
+                Log.d(TAG_LOG,"hide keyboard")
+            }
             commentEditText.clearFocus()
         }
     }

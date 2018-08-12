@@ -18,9 +18,10 @@ package com.summer.itis.summerproject
  */
 
 
+import android.support.multidex.MultiDexApplication
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
-class Application : android.app.Application() {
+class Application : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()

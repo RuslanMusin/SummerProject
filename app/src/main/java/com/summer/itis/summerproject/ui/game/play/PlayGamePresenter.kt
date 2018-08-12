@@ -3,15 +3,15 @@ package com.summer.itis.summerproject.ui.game.play
 import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.model.game.CardChoose
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.repository.json.GamesRepository
+import com.summer.itis.summerproject.repository.json.GamesRepository.Companion.ROUNDS_COUNT
 import com.summer.itis.summerproject.repository.json.UserRepository
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.getRandom
 
 @InjectViewState
 class PlayGamePresenter() : MvpPresenter<PlayGameView>(), GamesRepository.InGameCallbacks {
@@ -28,10 +28,30 @@ class PlayGamePresenter() : MvpPresenter<PlayGameView>(), GamesRepository.InGame
 
         gamesRepository.startGame(this)
 
-        cardsRepository.findMyCards(UserRepository.currentId).subscribe { t: List<Card>? ->
-            viewState.setCardsList(ArrayList(t))
-            viewState.setCardChooseEnabled(true)
+        cardsRepository.findMyCards(UserRepository.currentId).subscribe { cards: List<Card>? ->
+            cards?.let {
+                val mutCards = cards.toMutableList()
+                val myCards: MutableList<Card> = ArrayList()
+
+                for (i in 1..5) {
+                    mutCards.getRandom()?.let {
+                        Log.d(TAG_LOG,"random card num = $i and name = ${it.abstractCard?.name}")
+                        myCards.add(it)
+                        mutCards.remove(it)
+                    }
+                }
+                if (cards.size > ROUNDS_COUNT) {
+                    viewState.changeCards(myCards,mutCards)
+                } else {
+                    setCardList(myCards)
+                }
+            }
         }
+    }
+
+    fun setCardList(myCards: List<Card>) {
+        viewState.setCardsList(ArrayList(myCards))
+        viewState.setCardChooseEnabled(true)
     }
 
     fun chooseCard(card: Card) {

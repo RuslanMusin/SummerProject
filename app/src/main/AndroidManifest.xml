@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.summer.itis.summerproject">
+    package="com.summer.itis.summerproject"
+    android:installLocation="preferExternal">
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".Application"
@@ -10,7 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.start.login.LoginActivity">
+        <activity
+            android:name=".ui.start.login.LoginActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,21 +25,74 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.base.NavigationBaseActivity" />
-        <activity android:name=".ui.start.registration.RegistrationActivity" />
-        <activity android:name=".ui.member.member_item.PersonalActivity" />
-        <activity android:name=".ui.member.member_list.reader.ReaderListActivity" />
-        <activity android:name=".ui.tests.add_test.AddTestActivity" />
-        <activity android:name=".ui.cards.add_card_list.AddCardListActivity" />
-        <activity android:name=".ui.cards.add_card.AddCardActivity" />
-        <activity android:name=".ui.cards.cards_list.activity.CardsListActivity"/>
-        <activity android:name=".ui.cards.card_states.CardStatesActivity" />
-        <activity android:name=".ui.cards.cards_info.CardsActivity" />
-        <activity android:name=".ui.cards.cards_info.WebViewActivity" />
-        <activity android:name=".ui.game.find.FindGameActivity" />
-        <activity android:name=".ui.game.play.PlayGameActivity"/>
-        <activity android:name=".ui.tests.test_list.test.TestListActivity"/>
-        <activity android:name=".ui.tests.test_item.TestActivity"/>
-        <activity android:name=".ui.tests.one_test_list.OneTestListActivity"/>
+        <activity
+            android:name=".ui.start.registration.RegistrationActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.member.member_item.PersonalActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.member.member_list.reader.ReaderListActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.tests.add_test.AddTestActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.cards.add_card_list.AddCardListActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.cards.add_card.AddCardActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.cards.cards_list.activity.CardsListActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.cards.card_states.CardStatesActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity
+            android:name=".ui.cards.card_item.CardActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.cards.cards_info.WebViewActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.game.find.FindGameActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.game.play.PlayGameActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.tests.test_list.test.TestListActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity
+            android:name=".ui.tests.test_item.TestActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
+        <activity android:name=".ui.tests.one_test_list.OneTestListActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
+        />
 
 
     </application>

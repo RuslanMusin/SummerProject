@@ -7,7 +7,7 @@
     <string name="name">Name</string>
     <string name="genre">Genre</string>
     <string name="release_date">Release Date</string>
-    <string name="desc">Description</string>
+    <string name="desc">Описание</string>
     <string name="add_book">Add roomBook to db</string>
     <string name="pick_release_date">Pick Release Date</string>
 
@@ -252,6 +252,8 @@
     <string name="question_dialog_title">Вы точно хотите выйти?</string>
     <string name="card_getted">Карта получена</string>
     <string name="add_test">Новый тест</string>
+    <string name="wiki">Википедия</string>
+    <string name="states">Состояния</string>
 
 
 </resources>

@@ -36,8 +36,15 @@
         android:layout_toRightOf="@id/iv_portrait"
         android:ellipsize="end"
         android:maxLines="3"
-        android:textAlignment="viewStart"
+        android:paddingStart="8dp"
+        android:textAlignment="textStart"
         android:gravity="start"
         tools:text="Ульянов Владимир Ильич - вождь народа amsndbfkak dsnfadfna dnfands.kjfnadfasdfadsfadfadsfasdfadfad sdsgsdfgsfdgsfdgsfgsfgdsgfsdfgsdfgsdfgsdfgds" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_below="@id/tv_desc"
+        android:background="@android:color/darker_gray"/>
 </RelativeLayout>

@@ -22,6 +22,10 @@ class RepositoryProvider {
             CardRepository()
         }
 
+        val cardCommentRepository: CardCommentRepository by lazy {
+            CardCommentRepository()
+        }
+
         val userRepository: UserRepository by lazy {
             UserRepository()
         }

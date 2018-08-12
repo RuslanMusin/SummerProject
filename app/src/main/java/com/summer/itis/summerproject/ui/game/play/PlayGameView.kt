@@ -11,6 +11,8 @@ interface PlayGameView : MvpView {
 
     fun setCardsList(cards: ArrayList<Card>)
 
+    fun changeCards(cards: MutableList<Card>, mutCards: MutableList<Card>)
+
     fun setCardChooseEnabled(enabled: Boolean)
 
     fun showEnemyCardChoose(card: Card)

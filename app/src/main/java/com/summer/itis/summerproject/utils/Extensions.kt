@@ -1,5 +1,8 @@
 package com.summer.itis.summerproject.utils
 
+import android.app.Activity
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import java.util.*
 
 fun <T> List<T>.getRandom(): T? {
@@ -9,3 +12,4 @@ fun <T> List<T>.getRandom(): T? {
         return this[Random().nextInt(size)]
     }
 }
+
