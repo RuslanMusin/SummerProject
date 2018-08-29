@@ -38,7 +38,7 @@
                     android:paddingTop="@dimen/intrinsic_padding"
                     >
 
-                    <RelativeLayout
+                   <!-- <RelativeLayout
                         android:id="@+id/imageContainer"
                         android:layout_width="@dimen/profile_screen_avatar_size"
                         android:layout_height="@dimen/profile_screen_avatar_size"
@@ -61,7 +61,18 @@
                             android:transitionName="@string/post_author_image_transition_name"
                             tools:targetApi="lollipop"/>
 
-                    </RelativeLayout>
+
+
+                    </RelativeLayout>-->
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_portrait"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:alpha="1"
+                        android:src="@mipmap/ic_launcher" />
 
                     <LinearLayout
                         android:id="@+id/linearLayout"
@@ -142,10 +153,12 @@
                  android:textSize="@dimen/text.14"
                  tools:text="Name" />-->
 
+            <include layout="@layout/layout_divider"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
+                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/authorName"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />
@@ -159,10 +172,12 @@
                 android:textSize="@dimen/text.14"
                 tools:text="Authors" />
 
+            <include layout="@layout/layout_divider"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
+                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/test_done"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />
@@ -176,10 +191,12 @@
                 android:textSize="@dimen/text.14"
                 tools:text="Yes" />
 
+            <include layout="@layout/layout_divider"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
+                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/card_getted"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />
@@ -193,55 +210,26 @@
                 android:textSize="@dimen/text.14"
                 tools:text="Yes" />
 
+            <include layout="@layout/layout_divider"/>
+
             <TextView
                 android:id="@+id/tv_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
+                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/desc"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />
 
-            <com.summer.itis.summerproject.ui.widget.ExpandableTextView
-                android:id="@+id/extv_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                expandableTextView:animDuration="200"
-                expandableTextView:collapseText="@string/collapse_text_label"
-                expandableTextView:expandText="@string/expand_text_label"
-                expandableTextView:maxCollapsedLines="3">
+           <include layout="@layout/layout_expandable_text_view"/>
 
-                <TextView
-                    android:id="@+id/expandable_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autoLink="web"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/TextAppearance.Second" />
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/small_intrinsic_padding">
-
-                    <TextView
-                        android:id="@+id/expand_collapse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:autoLink="web"
-                        android:textAppearance="@style/TextAppearance.Second.Light" />
-
-                </RelativeLayout>
-
-            </com.summer.itis.summerproject.ui.widget.ExpandableTextView>
+            <include layout="@layout/layout_divider"/>
 
             <TextView
                 android:id="@+id/tv_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
+                android:layout_marginTop="@dimen/margin.normal"
                 android:text="@string/comments"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/text.16" />

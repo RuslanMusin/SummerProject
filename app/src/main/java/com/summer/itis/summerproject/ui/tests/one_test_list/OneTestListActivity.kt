@@ -3,39 +3,26 @@ package com.summer.itis.summerproject.ui.tests.one_test_list
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
-import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.string.card
-import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
-import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity
-import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.ITEM_JSON
-import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListAdapter
-import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListPresenter
-import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListView
-import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
 import com.summer.itis.summerproject.ui.tests.test_list.TestAdapter
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
-import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.ABSTRACT_CARD_ID
 import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
-import com.summer.itis.summerproject.utils.Const.TAG_LOG
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
 import com.summer.itis.summerproject.utils.Const.USER_ABSTRACT_TESTS
 import com.summer.itis.summerproject.utils.Const.USER_ID
 import com.summer.itis.summerproject.utils.Const.USER_TESTS
-import com.summer.itis.summerproject.utils.Const.gsonConverter
 import io.reactivex.disposables.Disposable
 
 class OneTestListActivity : NavigationBaseActivity(), OneTestListView, BaseAdapter.OnItemClickListener<Test> {
@@ -54,8 +41,10 @@ class OneTestListActivity : NavigationBaseActivity(), OneTestListView, BaseAdapt
     private lateinit var type: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_books_list)
+        setContentView(R.layout.activity_add_list)
 
         type = intent.getStringExtra(TEST_LIST_TYPE)
 

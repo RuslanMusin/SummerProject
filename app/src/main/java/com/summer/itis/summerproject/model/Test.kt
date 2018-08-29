@@ -14,6 +14,8 @@ class Test {
 
     var title: String? = null
 
+    var lowerTitle: String? = null
+
     var desc: String? = null
 
     var authorId: String? = null

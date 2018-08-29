@@ -12,6 +12,7 @@ abstract class BaseBackActivity: NavigationBaseActivity() {
 
     override fun onBackPressed() {
         (getCurrentFragment() as OnBackPressedListener).onBackPressed()
+        super.onBackPressed()
     }
 
     fun changeFragment(fragment: Fragment,tag: String) {

@@ -6,6 +6,7 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import com.summer.itis.summerproject.model.AbstractCard
 import io.reactivex.annotations.NonNull
+import io.reactivex.disposables.Disposable
 
 /**
  * Created by Home on 13.07.2018.
@@ -19,4 +20,8 @@ interface CardsView: MvpView{
     fun handleError(error: Throwable)
 
     fun showDetails(card: AbstractCard)
+
+    fun showLoading(disposable: Disposable)
+
+    fun hideLoading()
 }

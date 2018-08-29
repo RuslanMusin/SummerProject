@@ -21,6 +21,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragm
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_test_card.*
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 
 
 class TestCardFragment: Fragment(), OnBackPressedListener {
@@ -58,19 +59,18 @@ class TestCardFragment: Fragment(), OnBackPressedListener {
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        (card_description as ExpandableTextView).text = card.abstractCard?.description
-        card_name.text = card.abstractCard?.name
-        tv_support.text = tv_support.text.toString() + " :  " + card.support.toString()
-        tv_hp.text = tv_hp.text.toString() + " :  " + card.hp.toString()
-        tv_strength.text = tv_strength.text.toString() + " :  " + card.strength.toString()
-        tv_prestige.text = tv_prestige.text.toString() + " :  " + card.prestige.toString()
-        tv_intelligence.text = tv_intelligence.text.toString() + " :  " + card.intelligence.toString()
+        expand_text_view.text = card.abstractCard?.description
+        tv_name.text = card.abstractCard?.name
+        tv_support.text = card.support.toString()
+        tv_hp.text = card.hp.toString()
+        tv_strength.text = card.strength.toString()
+        tv_prestige.text = card.prestige.toString()
+        tv_intelligence.text = card.intelligence.toString()
 
         card.abstractCard?.photoUrl?.let {
-            Glide.with(card_image.context)
+            Glide.with(iv_portrait.context)
                     .load(it)
-                    .into(card_image)
+                    .into(iv_portrait)
         }
 
         super.onViewCreated(view, savedInstanceState)

@@ -47,6 +47,7 @@ class TestRepository {
 
     private val FIELD_ID = "id"
     private val FIELD_TITLE = "title"
+    private val FIELD_LOWER_TITLE = "lowerTitle"
     private val FIELD_CARD_ID = "cardId"
     private val FIELD_AUTHOR_ID = "authorId"
     private val FIELD_AUTHOR_NAME = "authorName"
@@ -69,6 +70,7 @@ class TestRepository {
         result[FIELD_ID] = test.id
         result[FIELD_DESC] = test.desc
         result[FIELD_TITLE] = test.title
+        result[FIELD_LOWER_TITLE] = test.lowerTitle
         result[FIELD_AUTHOR_ID] = test.authorId
         result[FIELD_AUTHOR_NAME] = test.authorName
         result[FIELD_CARD_ID] = test.cardId
@@ -195,6 +197,7 @@ class TestRepository {
                         val crossingIdValues = cardRepository.toMap(card)
                         childUpdates[TEST_CARDS + SEP + card?.id] = crossingIdValues
 
+                        test.lowerTitle = test.title?.toLowerCase()
                         test.authorId = user.id
                         test.authorName = user.username
                         test.cardId = card?.id
@@ -372,7 +375,7 @@ class TestRepository {
         }
     }
 
-    fun findTestsByTypeByQuery(queryPart: String, userId: String, type: String): Single<List<Test>> {
+    fun findTestsByTypeByQuery(userQuery: String, userId: String, type: String): Single<List<Test>> {
         var query: Query = databaseReference.root.child(USERS_TESTS).child(userId)
         val single: Single<List<Test>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -386,7 +389,8 @@ class TestRepository {
                             }
                         }
                     }
-                    query = databaseReference.orderByChild(FIELD_TITLE).startAt(queryPart).endAt(queryPart + QUERY_END)
+                    val queryPart = userQuery.toLowerCase()
+                    query = databaseReference.orderByChild(FIELD_LOWER_TITLE).startAt(queryPart).endAt(queryPart + QUERY_END)
                     query.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val cards: MutableList<Test> = ArrayList()
@@ -426,7 +430,7 @@ class TestRepository {
                     for (snapshot in dataSnapshot.children) {
                         val test = snapshot.getValue(Test::class.java)
                         test?.let {
-                            if(pattern.matcher(test.title?.toLowerCase()).matches()) {
+                            if(pattern.matcher(test.lowerTitle).matches()) {
                                 tests.add(test)
                             }
                         }

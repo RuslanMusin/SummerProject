@@ -11,6 +11,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.OnCancelListener
 import com.summer.itis.summerproject.ui.base.OnForwardListener
@@ -22,6 +23,9 @@ import kotlinx.android.synthetic.main.fragment_test.*
 import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.ui.tests.add_test.fragments.question.AddQuestionFragment
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
+import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.EDIT_STATUS
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import kotlinx.android.synthetic.main.back_forward.*
 
 
@@ -41,6 +45,7 @@ class TestActivity : BaseBackActivity(), TestView, ChangeToolbarListener {
         get() = AddTestFragment.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(EDIT_STATUS)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_with_frame_and_toolbar)
         initViews()
@@ -56,6 +61,10 @@ class TestActivity : BaseBackActivity(), TestView, ChangeToolbarListener {
                     .add(containerId, fragment, TEST_FRAGMENT)
                     .commit()
         }
+
+    }
+
+    override fun onTestBackPressed() {
 
     }
 

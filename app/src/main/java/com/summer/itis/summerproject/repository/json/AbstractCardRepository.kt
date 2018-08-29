@@ -28,6 +28,7 @@ class AbstractCardRepository {
     private val FIELD_ID = "id"
     private val FIELD_WIKI_URL = "wikiUrl"
     private val FIELD_NAME = "name"
+    private val FIELD_LOWER_NAME = "lowerName"
     private val FIELD_PHOTO_URL = "photoUrl"
     private val FIELD_EXTRACT = "extract"
     private val FIELD_DESCRIPTION = "description"
@@ -45,6 +46,7 @@ class AbstractCardRepository {
             card.id = id
             result[FIELD_ID] = card.id
             result[FIELD_NAME] = card.name
+            result[FIELD_LOWER_NAME] = card.lowerName
             result[FIELD_PHOTO_URL] = card.photoUrl
             result[FIELD_WIKI_URL] = card.wikiUrl
             result[FIELD_EXTRACT] = card.extract
@@ -183,7 +185,7 @@ class AbstractCardRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
-    fun findDefaultAbstractCardsByQuery(queryPart: String, userId: String): Single<List<AbstractCard>> {
+    fun findDefaultAbstractCardsByQuery(userQuery: String, userId: String): Single<List<AbstractCard>> {
         var query: Query = databaseReference.root.child(USERS_ABSTRACT_CARDS).child(userId)
         val single: Single<List<AbstractCard>> = Single.create { e ->
             query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -193,7 +195,8 @@ class AbstractCardRepository {
                         val elementId = snapshot.getValue(ElementId::class.java)
                         elementId?.let { elementIds.add(it.id) }
                     }
-                    query = databaseReference.orderByChild(FIELD_NAME).startAt(queryPart).endAt(queryPart + Const.QUERY_END)
+                    val queryPart = userQuery.toLowerCase()
+                    query = databaseReference.orderByChild(FIELD_LOWER_NAME).startAt(queryPart).endAt(queryPart + Const.QUERY_END)
                     query.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val cards: MutableList<AbstractCard> = ArrayList()
@@ -232,7 +235,7 @@ class AbstractCardRepository {
                     }
                     findAbstractCards(elementIds).subscribe{cards ->
                         val pattern: Pattern = Pattern.compile("${queryPart.toLowerCase()}.*")
-                        val cardsQuery: List<AbstractCard> = cards.filter { e -> pattern.matcher(e.name?.toLowerCase()).matches()}.toList()
+                        val cardsQuery: List<AbstractCard> = cards.filter { e -> pattern.matcher(e.lowerName).matches()}.toMutableList()
                         e.onSuccess(cardsQuery)
                     }
                 }

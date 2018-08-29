@@ -8,7 +8,6 @@ import com.summer.itis.summerproject.ui.base.BaseAdapter
 class TestAdapter(items: MutableList<Test>) : BaseAdapter<Test, TestItemHolder>(items) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestItemHolder {
-//        return TestItemHolder.create(parent.context)
         return TestItemHolder.create(parent)
     }
 

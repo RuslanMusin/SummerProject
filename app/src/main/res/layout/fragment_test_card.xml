@@ -24,187 +24,215 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/li_top"
+                android:id="@+id/linlay_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/margin.large">
 
-                <RelativeLayout
-                    android:id="@+id/profileInfo"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_portrait"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_alignParentLeft="true"
+                    android:src="@mipmap/ic_launcher"
+                    android:alpha="1"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/intrinsic_padding"
-                    android:paddingRight="@dimen/intrinsic_padding"
-                    android:paddingTop="@dimen/intrinsic_padding"
-                    >
-
-                    <RelativeLayout
-                        android:id="@+id/imageContainer"
-                        android:layout_width="@dimen/profile_screen_avatar_size"
-                        android:layout_height="@dimen/profile_screen_avatar_size"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true">
-
-                        <ProgressBar
-                            android:id="@+id/progressBar"
-                            android:layout_width="@dimen/progress_bar_size"
-                            android:layout_height="@dimen/progress_bar_size"
-                            android:layout_centerInParent="true"
-                            android:visibility="visible" />
-
-                        <com.summer.itis.summerproject.ui.widget.CircularImageView
-                            android:id="@+id/card_image"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:border="false"
-                            app:shadow="false"
-                            android:transitionName="@string/post_author_image_transition_name"
-                            tools:targetApi="lollipop"/>
-
-                    </RelativeLayout>
-
-                    <LinearLayout
-                        android:id="@+id/linearLayout"
-                        android:layout_width="180dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="14dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/card_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/large_intrinsic_padding"
-                            android:layout_marginTop="16dp"
-                            android:fontFamily="@font/font_family"
-                            android:paddingTop="@dimen/intrinsic_padding"
-                            android:text="@string/book_name"
-                            android:textAppearance="@style/TextAppearance.Title"
-                            android:textColor="@color/primary_text" />
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/postsCounterTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/profile_screen_margin_between_counters"
-                                android:gravity="center"
-                                android:textAppearance="@style/TextAppearance.Title"
-                                android:visibility="invisible" />
-
-                            <TextView
-                                android:id="@+id/likesCountersTextView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:textAppearance="@style/TextAppearance.Title"
-                                android:visibility="invisible" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/iv_portrait"
+                    android:textAlignment="center"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Ульянов Владимир Ильич" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/tv_test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/primary_dark"
+                android:padding="6dp"
+                android:text="@string/test_name"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/tv_test_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/intelligence"
+                android:textSize="18sp"/>
 
 
             <TextView
                 android:id="@+id/tv_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/desc"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
-
-            <com.summer.itis.summerproject.ui.widget.ExpandableTextView
-                android:id="@+id/card_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                expandableTextView:animDuration="200"
-                expandableTextView:collapseText="@string/collapse_text_label"
-                expandableTextView:expandText="@string/expand_text_label"
-                expandableTextView:maxCollapsedLines="3">
+                android:layout_marginTop="16dp"
+                android:background="@color/primary_dark"
+                android:padding="6dp"
+                android:text="@string/desc"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
+
+            <include layout="@layout/layout_expandable_text_view"/>
+
+            <TextView
+                android:id="@+id/tv_states"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@color/primary_dark"
+                android:padding="6dp"
+                android:text="@string/states"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/expandable_text"
-                    android:layout_width="match_parent"
+                    android:id="@+id/tv_intelligence_title"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:autoLink="web"
-                    android:ellipsize="end"
-                    android:textAppearance="@style/TextAppearance.Second" />
+                    android:layout_marginTop="16dp"
+                    android:text="@string/intelligence"
+                    android:layout_weight="1"
+                    android:textSize="18sp"/>
 
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/tv_intelligence"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/small_intrinsic_padding">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="end"
+                    android:text="5"
+                    android:textSize="18sp"/>
 
-                    <TextView
-                        android:id="@+id/expand_collapse"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:autoLink="web"
-                        android:textAppearance="@style/TextAppearance.Second.Light" />
+            </LinearLayout>
 
-                </RelativeLayout>
-
-            </com.summer.itis.summerproject.ui.widget.ExpandableTextView>
-
-            <TextView
-                android:id="@+id/tv_support"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/support"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_strength"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tv_strength_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/strength"
+                    android:layout_weight="1"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/tv_strength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="end"
+                    android:text="5"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/strength"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_intelligence"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tv_hp_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/hp"
+                    android:layout_weight="1"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/tv_hp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="end"
+                    android:text="5"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/intelligence"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_hp"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/tv_support_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/support"
+                    android:layout_weight="1"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/tv_support"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="end"
+                    android:text="5"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/hp"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="@dimen/margin.xlarge"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tv_prestige"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin.large"
-                android:text="@string/prestige"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/text.16" />
+                <TextView
+                    android:id="@+id/tv_prestige_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prestige"
+                    android:layout_weight="1"
+                    android:textSize="18sp"/>
 
+                <TextView
+                    android:id="@+id/tv_prestige"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:gravity="end"
+                    android:text="5"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

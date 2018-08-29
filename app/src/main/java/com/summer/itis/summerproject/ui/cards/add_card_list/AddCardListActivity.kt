@@ -3,8 +3,8 @@ package com.summer.itis.summerproject.ui.cards.add_card_list
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
@@ -15,17 +15,19 @@ import android.widget.TextView
 import com.annimon.stream.Stream
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.id.progressBar
+import com.summer.itis.summerproject.R.id.toolbar
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity
-import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.cards.add_card.AddCardActivity.Companion.ITEM_JSON
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
-import com.summer.itis.summerproject.ui.tests.add_test.fragments.main.AddTestFragment.Companion.ADD_CARD
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.EDIT_STATUS
 
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -51,18 +53,19 @@ class AddCardListActivity : NavigationBaseActivity(), AddCardListView, BaseAdapt
     private var adapter: AddCardListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_books_list)
+        setStatus(EDIT_STATUS)
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_add_list)
 
-        card = Card()
+            card = Card()
 
-        initViews()
-        initRecycler()
+            initViews()
+            initRecycler()
+
     }
 
     private fun initViews() {
         findViews()
-        //        supportActionBar(toolbar);
         setSupportActionBar(toolbar)
         setBackArrow(toolbar!!)
         setToolbarTitle("Поиск личности")

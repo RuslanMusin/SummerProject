@@ -33,6 +33,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.summer.itis.summerproject.R.string.answer
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.base.OnFourActionListener
@@ -49,6 +50,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.TEST_MANY_TYPE
 import com.summer.itis.summerproject.utils.Const.TEST_ONE_TYPE
@@ -373,6 +375,7 @@ class AddQuestionFragment : Fragment(), View.OnClickListener, OnFourActionListen
 
         question!!.question = etQuestion!!.text.toString()
         question!!.answers = answers.toMutableList()
+        question.id = number.toString()
 
     }
 

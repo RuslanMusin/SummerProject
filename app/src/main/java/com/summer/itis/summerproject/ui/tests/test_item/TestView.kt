@@ -6,4 +6,6 @@ import com.summer.itis.summerproject.model.Test
 
 interface TestView : MvpView {
 
+    fun onTestBackPressed()
+
 }

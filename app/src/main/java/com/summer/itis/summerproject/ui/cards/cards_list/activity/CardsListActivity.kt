@@ -6,9 +6,16 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
+import android.support.v7.widget.SearchView
+import android.view.Menu
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.cards_list.adapter.CardsListPagerAdapter
+import com.summer.itis.summerproject.utils.Const.MY_LIST
+import com.summer.itis.summerproject.utils.Const.OFFICIAL_LIST
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
+import com.summer.itis.summerproject.utils.Const.USER_LIST
 import kotlinx.android.synthetic.main.activity_cards_list.toolbar
 
 class CardsListActivity : EasyNavigationBaseActivity() {
@@ -25,9 +32,12 @@ class CardsListActivity : EasyNavigationBaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        init()
-        supportActionBar(toolbar)
+        setStatus(ONLINE_STATUS)
+            waitEnemy()
+            super.onCreate(savedInstanceState)
+            init()
+            supportActionBar(toolbar)
+
     }
 
     override fun getContentLayout(): Int {
@@ -42,4 +52,7 @@ class CardsListActivity : EasyNavigationBaseActivity() {
         mViewPager.adapter = mPagerAdapter
         mTabLayout.setupWithViewPager(mViewPager)
     }
+
+
+
 }

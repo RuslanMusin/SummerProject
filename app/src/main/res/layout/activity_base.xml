@@ -8,6 +8,23 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <RelativeLayout
+        android:id="@+id/li_offline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/offline_connection"
+            android:textSize="@dimen/text.24"/>
+
+
+    </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="0dp"

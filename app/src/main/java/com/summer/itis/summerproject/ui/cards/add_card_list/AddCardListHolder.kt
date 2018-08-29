@@ -7,29 +7,21 @@ import android.widget.ImageView
 import android.widget.TextView
 
 import com.summer.itis.summerproject.R
+import com.summer.itis.summerproject.R.string.name
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.utils.ImageLoadHelper
+import kotlinx.android.synthetic.main.item_member.view.*
 
 
 class AddCardListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    private val name: TextView
-    private val description: TextView
-    private val imageView: ImageView
-
-    init {
-        name = itemView.findViewById(R.id.tv_name)
-        description = itemView.findViewById(R.id.tv_description)
-        imageView = itemView.findViewById(R.id.iv_cover)
-    }
-
     fun bind(item: Item) {
-        name.text = item.text!!.content
+        itemView.tv_name.text = item.text!!.content
         val desc = item.description!!.content
         if (desc != null) {
-            description.text = cutLongDescription(desc)
+            itemView.tv_description.text = cutLongDescription(desc)
         } else {
-            description.text = imageView.context.getText(R.string.description_default)
+            itemView.tv_description.text = itemView.context.getText(R.string.description_default)
         }
         if (item.image != null) {
             /* if(items.getPhotoUrl().equals(String.valueOf(R.drawable.book_default))) {
@@ -37,7 +29,7 @@ class AddCardListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             } else {
                 ImageLoadHelper.loadPicture(imageView, items.getPhotoUrl());
             }*/
-            ImageLoadHelper.loadPicture(imageView, item.image!!.source!!)
+            ImageLoadHelper.loadPicture(itemView.iv_cover, item.image!!.source!!)
 
         }
     }
@@ -56,7 +48,7 @@ class AddCardListHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val MORE_TEXT = "..."
 
         fun create(context: Context): AddCardListHolder {
-            val view = View.inflate(context, R.layout.item_cards, null)
+            val view = View.inflate(context, R.layout.item_member, null)
             val holder = AddCardListHolder(view)
             return AddCardListHolder(view)
         }

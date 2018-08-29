@@ -31,6 +31,8 @@ import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.W
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.EDIT_STATUS
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.activity_with_frame_and_toolbar.*
 import kotlinx.android.synthetic.main.back_forward.*
@@ -48,6 +50,7 @@ class AddTestActivity : BaseBackActivity(), AddTestView, ChangeToolbarListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(EDIT_STATUS)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_with_frame_and_toolbar)
 

@@ -15,6 +15,7 @@ import com.summer.itis.summerproject.ui.base.*
 import com.summer.itis.summerproject.ui.cards.cards_states.CardsStatesPagerAdapter
 import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import kotlinx.android.synthetic.main.back_forward.*
 import java.util.ArrayList
@@ -34,6 +35,8 @@ class CardStatesActivity : NavigationBaseActivity(), ChangeToolbarListener, View
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         super.onCreate(savedInstanceState)
         val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
         layoutInflater.inflate(getContentLayout(), contentFrameLayout)
@@ -61,7 +64,7 @@ class CardStatesActivity : NavigationBaseActivity(), ChangeToolbarListener, View
     fun getCardsStates(){
         RepositoryProvider
                 .cardRepository
-                .findMyAbstractCardStates(card.id!!, ApplicationHelper.currentUser?.id!!)
+                .findDefaultAbstractCardStates(card.id!!)
                 .subscribe({it -> setCardsStates(it as ArrayList<Card>)})
     }
 

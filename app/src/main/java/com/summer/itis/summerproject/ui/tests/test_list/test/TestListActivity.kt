@@ -19,14 +19,17 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.repository.json.UserRepository.Companion.currentId
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity
 import com.summer.itis.summerproject.ui.tests.test_list.TestAdapter
 import com.summer.itis.summerproject.ui.tests.test_list.fragment.TestListFragment
+import com.summer.itis.summerproject.utils.Const.EDIT_STATUS
 import com.summer.itis.summerproject.utils.Const.MY_LIST
 import com.summer.itis.summerproject.utils.Const.OFFICIAL_LIST
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.USER_LIST
 import io.reactivex.disposables.Disposable
@@ -46,12 +49,15 @@ class TestListActivity : NavigationBaseActivity(), TestListView {
     private var currentType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         super.onCreate(savedInstanceState)
 
         val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
         layoutInflater.inflate(R.layout.activity_test_pager, contentFrameLayout)
 
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        toolbar?.title = getString(R.string.tests)
         supportActionBar(toolbar!!)
 
         viewPager = findViewById<View>(R.id.viewpager) as ViewPager

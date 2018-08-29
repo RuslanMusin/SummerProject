@@ -11,10 +11,37 @@ object Const {
 
     const val FILTER_YEAR = 1950
 
-    const val TAG_LOG = "TAG"
+    const val TAG_LOG = "TEG"
 
     const val MAX_LENGTH = 80
     const val MORE_TEXT = "..."
+
+    const val BOT_ID = "6n5OesjRMGN0jFAhP5jG9hxtaRg2"
+
+    const val ONLINE_GAME = "online_game"
+    const val BOT_GAME = "bot_game"
+
+    //game modes/stadies
+    const val MODE_CHANGE_CARDS = "change_cards"
+    const val MODE_PLAY_GAME = "play_game"
+    const val MODE_CARD_VIEW = "card_view"
+    const val MODE_END_GAME = "end_game"
+
+
+    //Gamer status
+    const val ONLINE_STATUS = "online_status"
+    const val OFFLINE_STATUS = "offline_status"
+    const val STOP_STATUS = "stop_status"
+    const val IN_GAME_STATUS = "in_game_status"
+    const val NOT_ACCEPTED = "not_accepted"
+    const val EDIT_STATUS = "edit_status"
+
+    //SharedPreferences
+    const val USER_DATA_PREFERENCES = "user_data"
+    const val USER_USERNAME = "user_username"
+    const val USER_PASSWORD = "user_password"
+
+    const val ENTITY_NOT_EXIST = "not_exist"
 
     // Http request
     const val MESSAGING_KEY = "Authorization"
@@ -72,6 +99,9 @@ object Const {
     const val TEST_ONE_TYPE = "test_one_type"
     const val TEST_MANY_TYPE = "test_many_type"
 
+    //CardListType
+    const val USER_LIST_CARDS = "user_cards"
+    const val ALL_LIST_CARDS = "all_cards"
     //TestListType
     const val TEST_LIST_TYPE = "test_list"
     const val DEFAULT_ABSTRACT_TESTS ="def_abs_tests"
@@ -109,7 +139,8 @@ object Const {
 
     //image path
     const val IMAGE_START_PATH = "images/users/"
-    const val STUB_PATH = "path"
+    const val AVATAR = "avatar"
+    const val STUB_PATH = "https://upload.wikimedia.org/wikipedia/commons/b/ba/Leonardo_self.jpg"
 
     @JvmField
     val gsonConverter = Gson()

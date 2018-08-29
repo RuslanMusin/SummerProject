@@ -18,6 +18,7 @@ package com.summer.itis.summerproject
  */
 
 
+import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.summer.itis.summerproject.utils.ApplicationHelper
 
@@ -28,6 +29,8 @@ class Application : MultiDexApplication() {
 
         ApplicationHelper.initUserState(this)
     }
+
+
 
     companion object {
 

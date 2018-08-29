@@ -48,6 +48,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.summer.itis.summerproject.utils.Const.MAX_LENGTH
 import com.summer.itis.summerproject.utils.Const.MORE_TEXT
+import com.summer.itis.summerproject.utils.Const.OFFLINE_STATUS
 
 
 //ОСНОВНОЙ КЛАСС HELPER приложения. ОТСЮДА БЕРЕМ ТЕКУЩЕГО ЮЗЕРА ИЗ БД, ГРУЗИМ ФОТКУ ЮЗЕРА В ПРОФИЛЬ,
@@ -56,7 +57,15 @@ class ApplicationHelper {
 
     companion object {
 
-        var currentUser: User? = null
+        lateinit var currentUser: User
+
+        var userInSession: Boolean = false
+
+        var userStatus: String = OFFLINE_STATUS
+
+        var onlineFunction: (() -> Unit)? = null
+
+        var offlineFunction: (() -> Unit)? = null
 
         val storageReference: StorageReference
             get() = FirebaseStorage.getInstance().reference
@@ -86,7 +95,10 @@ class ApplicationHelper {
                     reference?.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             val user = dataSnapshot.getValue(User::class.java)
-                            currentUser = user
+                            user?.let {
+                                currentUser = it
+                                userInSession = true
+                            }
                             Log.d(TAG_LOG,"user in session = ${currentUser?.username}")
                             LoginActivity.start(application.applicationContext)
                             PersonalActivity.start(application.applicationContext, currentUser)
@@ -148,7 +160,7 @@ class ApplicationHelper {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
         }
 
-        fun cutLongDescription(description: String): String {
+        fun cutLongDescription(description: String, maxLength: Int): String {
             return if (description.length < MAX_LENGTH) {
                 description
             } else {

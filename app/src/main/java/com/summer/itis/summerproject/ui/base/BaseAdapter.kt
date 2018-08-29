@@ -8,10 +8,11 @@ import android.view.View
 import com.summer.itis.summerproject.ui.widget.EmptyStateRecyclerView
 
 import android.support.constraint.Constraints.TAG
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 
 abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>) : RecyclerView.Adapter<VH>() {
 
-    private val items: MutableList<T> = ArrayList()
+    val items: MutableList<T> = ArrayList()
 
     private var onItemClickListener: OnItemClickListener<T>? = null
 
@@ -25,9 +26,9 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
 
     private var recyclerView: EmptyStateRecyclerView? = null
 
-    fun getItems(): List<T> {
+    /*fun getItems(): MutableList<T> {
         return items
-    }
+    }*/
 
     init {
         this.items.addAll(list)
@@ -46,7 +47,7 @@ abstract class BaseAdapter<T, VH : RecyclerView.ViewHolder>(list: MutableList<T>
 
     fun changeDataSet(values: List<T>) {
         items.clear()
-        Log.d(TAG, "values size = " + values.size)
+        Log.d(TAG_LOG, "values size = " + values.size)
         items.addAll(values)
         refreshRecycler()
     }

@@ -3,6 +3,7 @@ package com.summer.itis.summerproject.ui.start.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.view.View
@@ -16,6 +17,9 @@ import com.summer.itis.summerproject.R.string.username
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.start.registration.RegistrationActivity
+import com.summer.itis.summerproject.utils.Const.USER_DATA_PREFERENCES
+import com.summer.itis.summerproject.utils.Const.USER_PASSWORD
+import com.summer.itis.summerproject.utils.Const.USER_USERNAME
 import kotlinx.android.synthetic.main.activity_login.*
 
 /**
@@ -38,16 +42,21 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = LoginPresenter(this)
+        initViews()
+        fireAuth = FirebaseAuth.getInstance()
         checkUserSession()
 
 
     }
 
     private fun checkUserSession() {
-        fireAuth = FirebaseAuth.getInstance()
-
-        initViews()
-
+        val sharedPreferences: SharedPreferences = getSharedPreferences(USER_DATA_PREFERENCES,Context.MODE_PRIVATE)
+        if(sharedPreferences.contains(USER_USERNAME)) {
+            val email: String = sharedPreferences.getString(USER_USERNAME,"")
+            val passwored: String = sharedPreferences.getString(USER_PASSWORD,"")
+            presenter?.signIn(email,passwored)
+        }
     }
 
     private fun initViews() {
@@ -64,10 +73,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         tiUsername = findViewById(R.id.ti_username)
         tiPassword = findViewById(R.id.ti_password)
 
-        presenter = LoginPresenter(this)
 
         iv_cover.setOnClickListener(this)
         tv_name.setOnClickListener(this)
+
 //        enterBtn!!.performClick()
     }
 

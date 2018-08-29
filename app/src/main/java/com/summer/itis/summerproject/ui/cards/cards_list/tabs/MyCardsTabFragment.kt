@@ -10,6 +10,7 @@ import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.base.BaseAdapter
 import com.summer.itis.summerproject.ui.cards.card_item.CardActivity
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
+import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.USER_ABSTRACT_TESTS
 import java.util.ArrayList
 
@@ -21,6 +22,7 @@ class MyCardsTabFragment(): AbstractCardsTabFragment(){
     companion object {
         fun newInstance(): MyCardsTabFragment {
             val fragment = MyCardsTabFragment()
+            fragment.type = Const.USER_LIST_CARDS
             return fragment
         }
     }

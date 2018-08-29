@@ -1,9 +1,12 @@
 package com.summer.itis.summerproject.model.game
 
+import com.summer.itis.summerproject.model.Card
+
 class CardChoose {
 
     lateinit var cardId: String
     lateinit var questionId: String
+    var card: Card? = null
 
     constructor() {
 
@@ -11,6 +14,11 @@ class CardChoose {
 
     constructor(cardId: String, questionId: String) {
         this.cardId = cardId
+        this.questionId = questionId
+    }
+
+    constructor(card: Card, questionId: String) {
+        this.card = card
         this.questionId = questionId
     }
 

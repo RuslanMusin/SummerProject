@@ -25,8 +25,11 @@ import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.member.member_list.MemberAdapter
 import com.summer.itis.summerproject.ui.member.member_list.fragment.ReaderListFragment
+import com.summer.itis.summerproject.utils.Const.ADD_FRIEND
 import com.summer.itis.summerproject.utils.Const.FRIEND_LIST
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.READER_LIST
+import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
 import com.summer.itis.summerproject.utils.Const.REQUEST_LIST
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import io.reactivex.disposables.Disposable
@@ -48,6 +51,8 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
     private var currentType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         super.onCreate(savedInstanceState)
 
         val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
@@ -116,9 +121,9 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
                     when (currentType) {
                         READER_LIST -> presenter!!.loadReadersByQuery(query)
 
-                        FRIEND_LIST -> presenter!!.loadFriendsByQuery(query, UserRepository.currentId)
+                        FRIEND_LIST -> presenter!!.loadUsersByQueryAndType(query, UserRepository.currentId, REMOVE_FRIEND)
 
-                        REQUEST_LIST -> presenter!!.loadRequestByQuery(query, UserRepository.currentId)
+                        REQUEST_LIST -> presenter!!.loadUsersByQueryAndType(query, UserRepository.currentId, ADD_FRIEND)
                     }
                     if (!finalSearchView.isIconified) {
                         finalSearchView.isIconified = true
@@ -183,12 +188,12 @@ class ReaderListActivity : NavigationBaseActivity(), ReaderListView {
 
     override fun loadRequests(currentId: String) {
         Log.d(TAG_LOG, "load requests")
-        presenter!!.loadRequests(currentId)
+        presenter!!.loadUsers(currentId, ADD_FRIEND)
     }
 
     override fun loadFriends(currentId: String) {
         Log.d(TAG_LOG, "load friends")
-        presenter!!.loadFriends(currentId)
+        presenter!!.loadUsers(currentId, REMOVE_FRIEND)
 
     }
 

@@ -18,7 +18,6 @@ class GameChangeListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
 
     fun bind(card: Card) {
         itemView.tv_card_person_name.text = card.abstractCard?.name
-        itemView.tv_card_test_name.text = card.test.title
 
         card.abstractCard?.photoUrl?.let {
             Glide.with(itemView.iv_card.context)

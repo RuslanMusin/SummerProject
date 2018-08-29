@@ -7,5 +7,5 @@ interface FindGameView : MvpView {
     fun showNotSearching()
     fun showSearching()
     fun showNotEnoughCards()
-    fun gameFinded()
+    fun gameFinded(gameMode: String)
 }

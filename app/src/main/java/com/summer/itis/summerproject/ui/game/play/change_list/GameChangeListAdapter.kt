@@ -21,12 +21,12 @@ class GameChangeListAdapter(items: MutableList<Card>, val allCards: MutableList<
             Log.d(TAG_LOG,"onLongClicked")
             allCards.getRandom()?.let {
                 allCards.remove(it)
-                getItems().toMutableList().let { cards ->
+                items.toMutableList().let { cards ->
                     cards.removeAt(position)
                     cards.add(position, it)
                     changeDataSet(cards)
                 }
-                if(size - allCards.size >= 2) {
+                if(size - allCards.size >= 2 || allCards.size == 0) {
                     onStop()
                 }
             }

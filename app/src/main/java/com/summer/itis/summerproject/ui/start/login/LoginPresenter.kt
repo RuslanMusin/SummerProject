@@ -1,5 +1,6 @@
 package com.summer.itis.summerproject.ui.start.login
 
+import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import android.widget.Toast
@@ -9,7 +10,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
-import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
 import com.summer.itis.summerproject.model.User
@@ -25,7 +25,13 @@ import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.OFFICIAL_TYPE
 
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
-import com.summer.itis.summerproject.utils.RxUtils
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.gamesRepository
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
+import com.summer.itis.summerproject.utils.Const.USER_DATA_PREFERENCES
+import com.summer.itis.summerproject.utils.Const.USER_PASSWORD
+import com.summer.itis.summerproject.utils.Const.USER_USERNAME
+
 
 class LoginPresenter(private val logView: LoginActivity) {
 
@@ -102,6 +108,8 @@ class LoginPresenter(private val logView: LoginActivity) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG_LOG, "signInWithEmail:success")
                         val user = logView.fireAuth!!.currentUser
+
+                        saveInPreferences(email,password)
                         updateUI(user)
                     } else {
                         // If sign in fails, display a message to the user.
@@ -113,10 +121,16 @@ class LoginPresenter(private val logView: LoginActivity) {
 
                     logView.hideProgressDialog()
                 }
+    }
 
-
-
-
+    private fun saveInPreferences(email: String, password: String) {
+        val mySharedPreferences = logView.getSharedPreferences(USER_DATA_PREFERENCES, Context.MODE_PRIVATE)
+        if(!mySharedPreferences.contains(USER_USERNAME)) {
+            val editor = mySharedPreferences.edit()
+            editor.putString(USER_USERNAME, email)
+            editor.putString(USER_PASSWORD, password)
+            editor.apply()
+        }
     }
         fun validateForm(email: String, password: String): Boolean {
             var valid = true
@@ -145,7 +159,15 @@ class LoginPresenter(private val logView: LoginActivity) {
                 reference?.addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val user = dataSnapshot.getValue(User::class.java)
-                        ApplicationHelper.currentUser = user
+                        user?.let {
+                            ApplicationHelper.currentUser = it
+                            ApplicationHelper.userInSession = true
+                        }
+                        user?.let {
+                            it.status = ONLINE_STATUS
+                            userRepository.changeUserStatus(it).subscribe()
+                                gamesRepository.removeRedundantLobbies(true)
+                        }
                         logView.goToProfile()
 
 //                        workWithDbCard()

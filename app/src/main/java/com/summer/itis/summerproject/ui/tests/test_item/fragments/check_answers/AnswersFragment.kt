@@ -21,6 +21,7 @@ import com.summer.itis.summerproject.R.string.answer
 import com.summer.itis.summerproject.model.Answer
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.OnBackPressedListener
 import com.summer.itis.summerproject.ui.base.OnFourActionListener
@@ -33,6 +34,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.T
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragment
 import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*

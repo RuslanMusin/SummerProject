@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.DrawerLayout
+import android.util.Log
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.ui.base.EasyNavigationBaseActivity
 import com.summer.itis.summerproject.ui.game.play.PlayGameActivity
+import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import kotlinx.android.synthetic.main.layout_find_game.*
 
 class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
@@ -20,8 +22,8 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
         return R.layout.activity_find_game
     }
 
-    override fun gameFinded() {
-        PlayGameActivity.start(this)
+    override fun gameFinded(gameMode: String) {
+        PlayGameActivity.start(this, gameMode)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +37,11 @@ class FindGameActivity : EasyNavigationBaseActivity(), FindGameView {
 
         btn_cancel.setOnClickListener {
             presenter.cancelSearching()
+        }
+
+        btn_find_bot.setOnClickListener{
+            Log.d(TAG_LOG,"find bot")
+//            presenter.findBotGame()
         }
 
     }

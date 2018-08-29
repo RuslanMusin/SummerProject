@@ -28,23 +28,23 @@ class ReaderListPresenter : MvpPresenter<ReaderListView>() {
 
     @SuppressLint("CheckResult")
     fun loadReadersByQuery(query: String) {
-        RepositoryProvider.userRepository!!
+        RepositoryProvider.userRepository
                 .loadReadersByQuery(query)
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
                 .doAfterTerminate(Action { viewState.hideLoading() })
-                .subscribe({ this.setReaders(it) }, { viewState.handleError(it) })
+                .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
     }
 
     @SuppressLint("CheckResult")
-    fun loadFriendsByQuery(query: String, userId: String) {
+    fun loadUsersByQueryAndType(query: String, userId: String, type: String) {
         RepositoryProvider.userRepository!!
-                .loadFriendsByQuery(query, userId)
+                .findUsersByTypeByQuery(query, userId, type)
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
                 .doAfterTerminate(Action { viewState.hideLoading() })
-                .subscribe({ this.setFriendsByQuery(it) }, { viewState.handleError(it) })
+                .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
     }
 
-    @SuppressLint("CheckResult")
+   /* @SuppressLint("CheckResult")
     fun loadRequestByQuery(query: String, userId: String) {
         RepositoryProvider.userRepository!!
                 .loadRequestByQuery(query, userId)
@@ -52,23 +52,14 @@ class ReaderListPresenter : MvpPresenter<ReaderListView>() {
                 .doAfterTerminate(Action { viewState.hideLoading() })
                 .subscribe({ this.setRequestsByQuery(it) }, { viewState.handleError(it) })
     }
-
+*/
     @SuppressLint("CheckResult")
-    fun loadFriends(userId: String) {
+    fun loadUsers(userId: String, type: String) {
         RepositoryProvider.userRepository!!
-                .findFriends(userId)
+                .findUsersByIdAndType(userId, type)
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
                 .doAfterTerminate(Action { viewState.hideLoading() })
-                .subscribe({ this.setFriends(it) }, { viewState.handleError(it) })
-    }
-
-    @SuppressLint("CheckResult")
-    fun loadRequests(userId: String) {
-        RepositoryProvider.userRepository!!
-                .findRequests(userId)
-                .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
-                .doAfterTerminate(Action { viewState.hideLoading() })
-                .subscribe({ this.setRequests(it) }, { viewState.handleError(it) })
+                .subscribe( {viewState.changeDataSet(it)}, { viewState.handleError(it) })
     }
 
     @SuppressLint("CheckResult")
@@ -79,7 +70,7 @@ class ReaderListPresenter : MvpPresenter<ReaderListView>() {
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
                 .doAfterTerminate(Action { viewState.hideLoading() })
                 .doAfterTerminate(Action { viewState.setNotLoading() })
-                .subscribe({ this.setReaders(it) }, { viewState.handleError(it) })
+                .subscribe({ viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
     }
 
     @SuppressLint("CheckResult")
@@ -90,7 +81,7 @@ class ReaderListPresenter : MvpPresenter<ReaderListView>() {
                 .doOnSubscribe(Consumer<Disposable> { viewState.showLoading(it) })
                 .doAfterTerminate(Action { viewState.hideLoading() })
                 .doAfterTerminate(Action { viewState.setNotLoading() })
-                .subscribe({ this.setReaders(it) }, { viewState.handleError(it) })
+                .subscribe({  viewState.changeDataSet(it.toMutableList()) }, { viewState.handleError(it) })
 
     }
 

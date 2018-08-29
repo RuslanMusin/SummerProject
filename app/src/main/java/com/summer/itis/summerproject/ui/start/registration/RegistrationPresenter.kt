@@ -18,6 +18,8 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
 import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.AVATAR
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -68,10 +70,13 @@ class RegistrationPresenter(private val regView: RegistrationActivity) {
 
         user.email = email
         user.username = username
+        user.lowerUsername = username.toLowerCase()
 
         user.id = firebaseUser.uid
 
-        val uri = regView.imageUri
+        user.isStandartPhoto = regView.isStandartPhoto
+
+       /* val uri = regView.imageUri
         val path: String
         if (uri != null) {
             path = (IMAGE_START_PATH + user.id + SEP
@@ -79,12 +84,14 @@ class RegistrationPresenter(private val regView: RegistrationActivity) {
         } else {
             path = STUB_PATH
         }
-
-        user.photoUrl = path
+*/
+        user.photoUrl = regView.photoUrl
 
         regView.user = user
 
-        if (!path.equals(STUB_PATH)) {
+        if (!regView.isStandartPhoto) {
+            user.photoUrl = (Const.IMAGE_START_PATH + user.id + Const.SEP
+                    + AVATAR)
             val childRef = ApplicationHelper.storageReference.child(user.photoUrl!!)
 
             //uploading the image
@@ -124,7 +131,10 @@ class RegistrationPresenter(private val regView: RegistrationActivity) {
     private fun updateUI(firebaseUser: FirebaseUser?) {
         regView.hideProgressDialog()
         if (firebaseUser != null) {
-            ApplicationHelper.currentUser = regView.user
+            regView.user?.let {
+                ApplicationHelper.currentUser = it
+                ApplicationHelper.userInSession = true
+            }
             regView.goToBookList()
         }
     }

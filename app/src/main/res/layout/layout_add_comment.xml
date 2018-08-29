@@ -34,7 +34,7 @@
             android:minHeight="@dimen/new_comment_min_height"
             android:padding="@dimen/intrinsic_padding" />
 
-        <Button
+       <!-- <Button
             android:id="@+id/sendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,7 +46,21 @@
             android:paddingLeft="@dimen/large_intrinsic_padding"
             android:paddingRight="@dimen/large_intrinsic_padding"
             android:text="@string/send_comment_button_label"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white" />-->
+
+        <ImageButton
+            android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/intrinsic_padding"
+            android:enabled="false"
+            android:minWidth="0dp"
+            android:src="@drawable/ic_send_black_24dp"
+            android:scaleType="centerCrop"
+            android:paddingLeft="@dimen/large_intrinsic_padding"
+            android:paddingRight="@dimen/large_intrinsic_padding"
+           />
     </LinearLayout>
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.ui.cards.card_item.CardActivity
 import com.summer.itis.summerproject.ui.cards.cards_info.CardsActivity
+import com.summer.itis.summerproject.utils.Const.ALL_LIST_CARDS
 import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
 import java.util.ArrayList
 
@@ -17,6 +18,7 @@ class AllCardsTabFragment(): AbstractCardsTabFragment(){
     companion object {
         fun newInstance(): AllCardsTabFragment {
             val fragment = AllCardsTabFragment()
+            fragment.type = ALL_LIST_CARDS
             return fragment
         }
     }

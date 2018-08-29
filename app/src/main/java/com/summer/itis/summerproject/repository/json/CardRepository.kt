@@ -213,6 +213,14 @@ class CardRepository {
         return single.compose(RxUtils.asyncSingle())
     }
 
+    fun findCardsByType(userId: String, type: String): Single<List<Card>> {
+        if(type.equals(OFFICIAL_TYPE)) {
+            return findOfficialMyCards(userId)
+        } else {
+            return findMyCards(userId)
+        }
+    }
+
     fun findOfficialMyCards(userId: String): Single<List<Card>> {
         val single:Single<List<Card>> =  Single.create { e ->
             findMyCards(userId).subscribe { cards ->

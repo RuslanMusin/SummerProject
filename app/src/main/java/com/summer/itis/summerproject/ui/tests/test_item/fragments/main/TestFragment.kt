@@ -38,6 +38,7 @@ import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.QUESTION_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_FRAGMENT
 import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.TEST_JSON
+import com.summer.itis.summerproject.ui.tests.test_item.TestView
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.finish.FinishFragment
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 import com.summer.itis.summerproject.ui.widget.ExpandableTextView
@@ -51,6 +52,7 @@ import com.summer.itis.summerproject.utils.Const.gsonConverter
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_test.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -86,6 +88,7 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         args.putString(TEST_JSON, gsonConverter.toJson(test))
         val fragment = FinishFragment.newInstance(args)
         (activity as BaseBackActivity).changeFragment(fragment)*/
+
         TestListActivity.start(activity as Activity)
     }
 
@@ -133,12 +136,12 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
             tv_card_done.text = getText(R.string.test_wasnt_done)
         }
         tv_author.text = test.authorName
-        (extv_desc as ExpandableTextView).text = test.desc
+        expand_text_view.text = test.desc
         nameEditText.text = test.title
         test.card?.abstractCard?.photoUrl?.let {
-            Glide.with(iv_crossing.context)
+            Glide.with(iv_portrait.context)
                     .load(it)
-                    .into(iv_crossing)
+                    .into(iv_portrait)
         }
     }
 
@@ -199,6 +202,8 @@ class TestFragment : MvpAppCompatFragment(), View.OnClickListener, OnCommentClic
         val comment = comments.get(position)
         val commentString = comment.authorName + ", "
         commentEditText.setText(commentString)
+        commentEditText.isPressed = true
+        commentEditText.setSelection(commentString.length)
     }
 
     override fun onAuthorClick(authorId: String) {

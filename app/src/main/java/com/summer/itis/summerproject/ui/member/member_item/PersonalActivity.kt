@@ -1,6 +1,7 @@
 package com.summer.itis.summerproject.ui.member.member_item
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,20 +11,30 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
 
 import com.bumptech.glide.Glide
 
 import com.google.gson.Gson
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.User
+import com.summer.itis.summerproject.model.game.Lobby
+import com.summer.itis.summerproject.model.game.LobbyPlayerData
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.cardRepository
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.repository.json.UserRepository
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
+import com.summer.itis.summerproject.ui.cards.one_card_list.OneCardListActivity
 import com.summer.itis.summerproject.ui.tests.one_test_list.OneTestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
 
 import com.summer.itis.summerproject.utils.Const.ADD_FRIEND
 import com.summer.itis.summerproject.utils.Const.ADD_REQUEST
+import com.summer.itis.summerproject.utils.Const.DEFAULT_ABSTRACT_TESTS
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.OWNER_TYPE
 import com.summer.itis.summerproject.utils.Const.REMOVE_FRIEND
 import com.summer.itis.summerproject.utils.Const.REMOVE_REQUEST
@@ -33,6 +44,9 @@ import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
 import com.summer.itis.summerproject.utils.Const.USER_ID
 import com.summer.itis.summerproject.utils.Const.USER_KEY
 import com.summer.itis.summerproject.utils.Const.USER_TESTS
+import com.summer.itis.summerproject.utils.Const.USER_TYPE
+import kotlinx.android.synthetic.main.dialog_fast_game.*
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import kotlinx.android.synthetic.main.layout_personal.*
 
 
@@ -41,17 +55,23 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     private lateinit var toolbar: Toolbar
     private var tvName: TextView? = null
     private var btnAddFriend: AppCompatButton? = null
-    private var ivPhoto: ImageView? = null
 
-    var user: User? = null
+    lateinit var user: User
     //SET-GET
 
 
     var type: String? = null
 
-    private var presenter: PersonalPresenter? = null
+    lateinit var presenter: PersonalPresenter
+
+    lateinit var gameDialog: MaterialDialog
+    lateinit var types: List<String>
+
+    var mProgressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(ONLINE_STATUS)
+        waitEnemy()
         super.onCreate(savedInstanceState)
 
         val contentFrameLayout = findViewById<FrameLayout>(R.id.container)
@@ -74,15 +94,17 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
             setSupportActionBar(toolbar)
             setBackArrow(toolbar)
         }
+        toolbar.title = user?.username
 
         btnAddFriend!!.setOnClickListener(this)
         li_tests!!.setOnClickListener(this)
+        li_cards.setOnClickListener(this)
+        btn_play_game.setOnClickListener(this)
 
     }
 
     private fun findViews() {
         toolbar = findViewById(R.id.toolbar)
-        ivPhoto = findViewById(R.id.iv_crossing)
 
         btnAddFriend = findViewById(R.id.btn_add_friend)
         tvName = findViewById(R.id.nameEditText)
@@ -96,17 +118,22 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     }
 
     private fun setUserData() {
-        tvName!!.text = user!!.username
+        tvName!!.text = user.username
 
-        val path = user!!.photoUrl
-        if (!path.equals(STUB_PATH)) {
-            val imageReference = user!!.photoUrl?.let { ApplicationHelper.storageReference.child(it) }
+        expand_text_view.text = user.desc
+
+        if (!user.isStandartPhoto) {
+            val imageReference = user.photoUrl?.let { ApplicationHelper.storageReference.child(it) }
 
             Log.d(TAG_LOG, "name " + (imageReference?.path ?: ""))
 
             Glide.with(this)
                     .load(imageReference)
-                    .into(ivPhoto!!)
+                    .into(iv_portrait!!)
+        } else {
+            Glide.with(this)
+                    .load(user.photoUrl)
+                    .into(iv_portrait!!)
         }
 
         when (type) {
@@ -118,7 +145,10 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
             REMOVE_REQUEST -> btnAddFriend!!.setText(R.string.remove_request)
 
-            OWNER_TYPE -> btnAddFriend!!.visibility = View.GONE
+            OWNER_TYPE -> {
+                btnAddFriend!!.visibility = View.GONE
+                btn_play_game.visibility = View.GONE
+            }
         }
     }
 
@@ -131,7 +161,91 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
             R.id.btn_add_friend -> actWithUser()
 
             R.id.li_tests -> showTests()
+
+            R.id.li_cards -> showCards()
+
+            R.id.btn_play_game -> playGame()
         }
+    }
+
+    private fun playGame() {
+        changePlayButton(false)
+        userRepository.checkUserStatus(user.id).subscribe { isOnline ->
+            if (isOnline) {
+                gameDialog = MaterialDialog.Builder(this)
+                        .customView(R.layout.dialog_fast_game, false)
+                        .onNeutral { dialog, which ->
+                            dialog.cancel()
+                            changePlayButton(true)
+                        }
+                        .build()
+
+                gameDialog.btn_create_game.setOnClickListener{ createGame() }
+
+                types = listOf(getString(R.string.user_type), getString(R.string.official_type))
+                gameDialog.spinner.setItems(types)
+                gameDialog.seekBarCards.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
+                    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                        val strProgress: String = seekBar?.progress.toString()
+                        gameDialog.tvCards.text = strProgress
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    }
+
+                })
+
+
+                gameDialog.show()
+
+            } else {
+                showSnackBar(R.string.enemy_not_online)
+                changePlayButton(true)
+            }
+        }
+
+    }
+
+    fun createGame() {
+        val lobby: Lobby = Lobby()
+        lobby.cardNumber = gameDialog.seekBarCards.progress
+        if(lobby.cardNumber >= 5) {
+            if (types[gameDialog.spinner.selectedIndex].equals(getString(R.string.official_type))) {
+                lobby.type = Const.OFFICIAL_TYPE
+            }
+            cardRepository.findCardsByType(user.id,lobby.type).subscribe{ cards ->
+                val cardNumber = cards.size
+                if(cardNumber >= lobby.cardNumber) {
+                    cardRepository.findCardsByType(UserRepository.currentId, lobby.type).subscribe { myCards ->
+                        val mySize = myCards.size
+                        if (mySize >= lobby.cardNumber) {
+                            gameDialog.hide()
+                            showProgressDialog()
+                            lobby.isFastGame = true
+                            val playerData = LobbyPlayerData()
+                            playerData.playerId = UserRepository.currentId
+                            playerData.online = true
+                            lobby.creator = playerData
+                            user?.id?.let { presenter.playGame(it, lobby) }
+                        } else {
+                            showSnackBar(R.string.you_dont_have_card_min)
+                        }
+                    }
+                } else {
+                    showSnackBar(R.string.enemy_doesnt_have_card_min)
+                }
+            }
+
+        } else {
+            showSnackBar(R.string.set_card_min)
+        }
+    }
+
+    fun changePlayButton(isClickable: Boolean) {
+       btn_play_game.isClickable = isClickable
     }
 
     private fun showTests() {
@@ -139,6 +253,12 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
         intent.putExtra(TEST_LIST_TYPE, USER_TESTS)
         intent.putExtra(USER_ID,user?.id)
         OneTestListActivity.start(this,intent)
+    }
+
+    private fun showCards() {
+        val intent: Intent = Intent(this,OneCardListActivity::class.java)
+        intent.putExtra(USER_ID,user?.id)
+        OneCardListActivity.start(this,intent)
     }
 
     private fun actWithUser() {
@@ -157,7 +277,7 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
 
             REMOVE_FRIEND -> {
                 user!!.id?.let { UserRepository().removeFriend(UserRepository.currentId, it) }
-                type = ADD_FRIEND
+                type = ADD_REQUEST
                 btnAddFriend!!.setText(R.string.add_friend)
             }
 
@@ -172,6 +292,28 @@ class PersonalActivity : NavigationBaseActivity(), View.OnClickListener {
     private fun changeData() {
         //        startActivity(ChangeUserDataActivity.makeIntent(TestActivity.this));
     }
+
+    fun showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = ProgressDialog(this)
+            mProgressDialog?.let {
+                it.setMessage(getString(R.string.loading))
+                it.isIndeterminate = true
+                it.setCancelable(false)
+            }
+
+        }
+
+        mProgressDialog!!.show()
+    }
+
+    fun hideProgressDialog() {
+        showSnackBar("Противник не принял приглашение")
+        if (mProgressDialog != null && mProgressDialog!!.isShowing) {
+            mProgressDialog!!.dismiss()
+        }
+    }
+
 
     companion object {
 

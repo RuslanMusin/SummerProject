@@ -29,9 +29,11 @@ import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*
 import com.afollestad.materialdialogs.MaterialDialog
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.OnCancelListener
 import com.summer.itis.summerproject.ui.base.OnFourActionListener
 import com.summer.itis.summerproject.ui.tests.ChangeToolbarListener
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 
 
 class QuestionFragment : Fragment(), View.OnClickListener, OnFourActionListener {

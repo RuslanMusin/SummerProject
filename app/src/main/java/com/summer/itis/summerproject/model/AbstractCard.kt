@@ -13,6 +13,8 @@ class AbstractCard() : Parcelable{
 
     var name: String? = null
 
+    var lowerName: String? = null
+
     var photoUrl: String? = null
 
     var extract: String? = null

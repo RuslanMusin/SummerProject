@@ -20,6 +20,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.R.id.*
+import com.summer.itis.summerproject.R.string.card
+import com.summer.itis.summerproject.R.string.comments
 import com.summer.itis.summerproject.model.AbstractCard
 import com.summer.itis.summerproject.model.Comment
 import com.summer.itis.summerproject.model.User
@@ -33,6 +35,7 @@ import com.summer.itis.summerproject.ui.member.member_item.PersonalActivity
 import com.summer.itis.summerproject.ui.tests.one_test_list.OneTestListActivity
 import com.summer.itis.summerproject.utils.ApplicationHelper
 import com.summer.itis.summerproject.utils.Const.ABSTRACT_CARD_ID
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.TEST_LIST_TYPE
 import com.summer.itis.summerproject.utils.Const.USER_ID
@@ -42,6 +45,7 @@ import kotlinx.android.synthetic.main.activity_card.*
 import kotlinx.android.synthetic.main.fragment_recycler_list.*
 import kotlinx.android.synthetic.main.layout_add_comment.*
 import kotlinx.android.synthetic.main.layout_card.*
+import kotlinx.android.synthetic.main.layout_expandable_text_view.*
 import java.util.*
 
 class CardActivity : NavigationBaseActivity(), CardView, View.OnClickListener, OnCommentClickListener {
@@ -72,16 +76,18 @@ class CardActivity : NavigationBaseActivity(), CardView, View.OnClickListener, O
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_card)
+        setStatus(ONLINE_STATUS)
+            waitEnemy()
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_card)
 
-        card = gsonConverter.fromJson(intent.getStringExtra(CARD_JSON),AbstractCard::class.java)
-        testType = intent.getStringExtra(TEST_LIST_TYPE)
+            card = gsonConverter.fromJson(intent.getStringExtra(CARD_JSON), AbstractCard::class.java)
+            testType = intent.getStringExtra(TEST_LIST_TYPE)
 
-        initViews()
-        initRecycler()
+            initViews()
+            initRecycler()
 
-        card.id?.let { presenter.loadComments(it) }
+            card.id?.let { presenter.loadComments(it) }
 
     }
 

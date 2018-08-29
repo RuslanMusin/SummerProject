@@ -10,6 +10,7 @@ import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Answer
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.ui.game.play.PlayGameActivity
+import com.summer.itis.summerproject.ui.game.play.PlayView
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_question.*
 import java.util.*
@@ -59,7 +60,7 @@ class GameQuestionFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.btn_next_question -> {
                 checkAnswers()
-                (activity as PlayGameActivity).onAnswer(question.userRight)
+                (activity as PlayView).onAnswer(question.userRight)
             }
         }
     }

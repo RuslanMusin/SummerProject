@@ -15,11 +15,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.bumptech.glide.Glide
 
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.base.OnBackPressedListener
@@ -40,6 +42,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.fragments.main.TestFragm
 import com.summer.itis.summerproject.ui.tests.test_list.test.TestListActivity
 
 import com.summer.itis.summerproject.utils.Const.COMA
+import com.summer.itis.summerproject.utils.Const.ONLINE_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_add_test.*
@@ -187,8 +190,11 @@ class AddTestFragment : Fragment(), View.OnClickListener, OnBackPressedListener 
 
         if (reqCode == ADD_CARD && resultCode == Activity.RESULT_OK) {
             val card = gsonConverter.fromJson(data!!.getStringExtra(CARD_EXTRA), Card::class.java)
-            tvAddedCards!!.text = card.abstractCard?.name
+            tvAddedCards!!.text = card.abstractCard.name
             test!!.card = card
+            Glide.with(this)
+                    .load(card.abstractCard.photoUrl)
+                    .into(iv_cover)
             tv_test_card_name.setError(null);
         }
     }

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import com.summer.itis.summerproject.R
 import com.summer.itis.summerproject.model.Question
 import com.summer.itis.summerproject.model.Test
+import com.summer.itis.summerproject.repository.RepositoryProvider
 import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.testRepository
 import com.summer.itis.summerproject.ui.base.BaseBackActivity
 import com.summer.itis.summerproject.ui.base.OnBackPressedListener
@@ -27,6 +28,7 @@ import com.summer.itis.summerproject.ui.tests.test_item.TestActivity.Companion.W
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.check_answers.AnswersFragment
 import com.summer.itis.summerproject.ui.tests.test_item.fragments.winned_card.TestCardFragment
 import com.summer.itis.summerproject.utils.ApplicationHelper
+import com.summer.itis.summerproject.utils.Const
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 import com.summer.itis.summerproject.utils.Const.gsonConverter
 import kotlinx.android.synthetic.main.fragment_finish_test.*

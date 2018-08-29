@@ -18,11 +18,13 @@ import com.summer.itis.summerproject.R.string.card
 import com.summer.itis.summerproject.model.Card
 import com.summer.itis.summerproject.model.pojo.opensearch.Item
 import com.summer.itis.summerproject.model.pojo.query.Page
+import com.summer.itis.summerproject.repository.RepositoryProvider.Companion.userRepository
 import com.summer.itis.summerproject.ui.base.BaseActivity
 import com.summer.itis.summerproject.ui.base.NavigationBaseActivity
 import com.summer.itis.summerproject.ui.cards.add_card_list.AddCardListActivity.Companion.CARD_EXTRA
 import com.summer.itis.summerproject.ui.tests.add_test.AddTestActivity
 import com.summer.itis.summerproject.utils.Const
+import com.summer.itis.summerproject.utils.Const.EDIT_STATUS
 import com.summer.itis.summerproject.utils.Const.TAG_LOG
 
 import com.summer.itis.summerproject.utils.Const.gsonConverter
@@ -39,34 +41,40 @@ class AddCardActivity : NavigationBaseActivity(), AddCardView, SeekBar.OnSeekBar
     private lateinit var seeksChanges: MutableList<SeekBar>
     private var numberSeek: Int = 0
 
-    private var balance: Int = 0
+    private var balance: Int = 50
 
     @InjectPresenter
     lateinit var presenter: AddCardPresenter
 
     private var item: Item? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_card)
+    private var isBalanced: Boolean = true
 
-        card = Card()
-        seekBars = listOf<SeekBar>(seekBarSupport,seekBarIntelligence,seekBarPrestige,seekBarHp,seekBarStrength)
-        seeksChanges = ArrayList()
-        item = gsonConverter.fromJson(intent.getStringExtra(ITEM_JSON), Item::class.java)
-        card?.abstractCard?.wikiUrl = item!!.url!!.content
-        card?.abstractCard?.description = item!!.description!!.content
-        item!!.text!!.content?.let { presenter.query(it) }
-        setBalance()
-        initViews()
-        setListeners()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        setStatus(EDIT_STATUS)
+
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_add_card)
+
+            card = Card()
+            seekBars = listOf<SeekBar>(seekBarSupport, seekBarIntelligence, seekBarPrestige, seekBarHp, seekBarStrength)
+            seeksChanges = ArrayList()
+            item = gsonConverter.fromJson(intent.getStringExtra(ITEM_JSON), Item::class.java)
+            card?.abstractCard?.wikiUrl = item!!.url!!.content
+            card?.abstractCard?.description = item!!.description!!.content
+            item!!.text!!.content?.let { presenter.query(it) }
+            setBalance()
+            initViews()
+            setListeners()
+
     }
 
     fun setBalance() {
-        balance = 0
+        var newBalance = 0
         for(seek in seekBars) {
-            balance += seek.progress
+            newBalance += seek.progress
         }
+        balance = newBalance
         Log.d(TAG_LOG,"set balance = $balance")
     }
 
@@ -104,9 +112,12 @@ class AddCardActivity : NavigationBaseActivity(), AddCardView, SeekBar.OnSeekBar
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         changeTvSeekbar(seekBar)
+//        Log.d(TAG_LOG,"isBalanced = $isBalanced")
         if(fromUser) {
             Log.d(TAG_LOG, "from user")
+            Log.d(TAG_LOG,"set balance")
             setBalance()
+            Log.d(TAG_LOG,"balance with otheres")
             balanceWithOthers(seekBar)
         }
     }
@@ -157,14 +168,14 @@ class AddCardActivity : NavigationBaseActivity(), AddCardView, SeekBar.OnSeekBar
             for (numb in seeksChanges.indices) {
                 val changeSeek = seeksChanges[numberSeek]
                 numberSeek = if(numberSeek != (seeksChanges.size-1)) (numberSeek+1) else 0
-                Log.d(TAG_LOG,"numberSeek = " + numberSeek)
+//                Log.d(TAG_LOG,"numberSeek = " + numberSeek)
                 if(balance == 50) {
                     return
                 }
                 if(balance > 50 && changeSeek.progress > 0) {
                     changeSeek.progress--
                     balance--
-                } else if(changeSeek.progress < 50) {
+                } else if(balance < 50) {
                     changeSeek.progress++
                     balance++
                 }
